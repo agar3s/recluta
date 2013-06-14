@@ -25,6 +25,17 @@ urlpatterns = patterns('',
     url(r'offer/(?P<pk>\d+)/$', OfferUpdate.as_view(), name='offer_update'),
     url(r'offer/(?P<pk>\d+)/delete/$', OfferDelete.as_view(), name='offer_delete'),
     
+    url(r"^login/$", "django.contrib.auth.views.login",
+    {"template_name": "login.html"}, name="login"),
+    url(r"^logout/$", "django.contrib.auth.views.logout_then_login",
+    name="logout"),
+
+    url(r"^users/(?P<slug>\w+)/$", UserProfileDetailView.as_view(),
+        name="profile"),
+    
+    url(r"edit_profile/$", auth(UserProfileEditView.as_view()),
+        name="edit_profile")
+    
     # url(r'^$', 'Reclutamiento.views.home', name='home'),
     # url(r'^Reclutamiento/', include('Reclutamiento.foo.urls')),
 
