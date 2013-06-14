@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<a class="btn btn-info btn-large" href="{% url 'developer_add' %}" ></a>
+<table class='table table-bordered table-striped table-hover'>
+   <thead>
+      <tr class="warning">
+          <td>
+            Nombre
+          </td>
+          <td>
+            Eliminar
+          </td>
+      </tr>
+   </thead>
+<tbody> 
+{% for developer in object_list %}
+<tr class="">
+  <td>
+     <a href="{{ developer.direccion_para_actualizar }}"
+      data-name="{{ developer.name }}" data-mail="{{ developer.mail }}"
+      >{{ developer.name }}</a>    
+  </td>   
+  <td>
+    <a class='btn btn-primary' href="{{ developer.direccion_para_eliminar }}">
+    <i class="icon-trash"></i>
+    Delete
+    </a>
+    
+  </td>
+  </tr>
+
+     </tr>
+   {% endfor %}
+ </tbody>
+</table>
+{% endblock %}

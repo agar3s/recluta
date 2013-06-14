@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<a class="btn btn-info btn-large" href="{% url 'offer_add' %}" >ADD NEW LABOUR SUPPLY</a>
+<table class='table table-bordered table-striped table-hover'>
+   <thead>
+      <tr class="warning">
+          <td>
+            OFFER COMPANY THAT PUBLISHES
+          </td>
+          <td>
+            DELETE OFFER
+          </td>
+      </tr>
+   </thead>
+<tbody> 
+{% for offer in object_list %}
+<tr class="">
+  <td>
+     <a href="{{ offer.direccion_para_actualizar }}"
+      data-offer_company_that_publishes="{{ offer.offer_company_that_publishes }}"
+      >{{ offer.offer_company_that_publishes }}</a>    
+  </td>   
+  <td>
+    <a class='btn btn-primary' href="{{ offer.direccion_para_eliminar }}">
+    <i class="icon-trash"></i>
+    Delete
+    </a>
+    
+  </td>
+  </tr>
+
+     </tr>
+   {% endfor %}
+ </tbody>
+</table>
+{% endblock %}
