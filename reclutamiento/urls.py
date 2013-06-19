@@ -30,6 +30,8 @@ urlpatterns = patterns('',
     url(r"^logout/$", "django.contrib.auth.views.logout_then_login",
     name="logout"),
 
+    url(r"^accounts/", include("registration.backends.simple.urls")),
+
     url(r"^users/(?P<slug>\w+)/$", UserProfileDetailView.as_view(),
         name="profile"),
     

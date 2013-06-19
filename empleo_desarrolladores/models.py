@@ -6,6 +6,7 @@ from django.contrib import admin
 class Developer(models.Model):
     name = models.CharField(max_length=100)
     mail = models.EmailField()
+    password = models.CharField(max_length=200)
 
     def address_to_update(self):
         return reverse_lazy('developer_update', args=[self.pk])
@@ -42,11 +43,10 @@ class Offer(models.Model):
     mandatory_skills = models.TextField(null=False)
     optional_skills = models.TextField(null=False)
     job_description = models.TextField(null=False)
-    obligations_under = models.TextField(null=False)
-
-    def address_to_update(self):
+    
+    def address_to_update(self): 
         return reverse_lazy('offer_update', args=[self.pk])
-                
+    
     def adress_to_delete(self):
         return reverse_lazy('offer_delete', args=[self.pk])
 
