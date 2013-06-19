@@ -5,6 +5,12 @@ from django.views.generic import ListView, DetailView
 from models import Developer, Offer, Company, UserProfile
 from forms import DeveloperForm, CompanyForm, OfferForm, UserProfileForm
 from django.contrib.auth import get_user_model
+from django.views.generic.base import View
+from django.shortcuts import render_to_response
+
+class Home(View):
+    def get(self, request):
+        return render_to_response('home.html')
 
 class DeveloperList(ListView):
     model = Developer

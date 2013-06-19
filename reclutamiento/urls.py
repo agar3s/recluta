@@ -2,14 +2,14 @@ from django.conf.urls import patterns, include, url
 from empleo_desarrolladores.views import DeveloperList, DeveloperCreate, DeveloperUpdate, DeveloperDelete, DeveloperUpdate
 from empleo_desarrolladores.views import  UserProfileEditView, UserProfileDetailView
 from empleo_desarrolladores.views import CompanyList, CompanyCreate, CompanyUpdate, CompanyDelete, CompanyUpdate
-from empleo_desarrolladores.views import OfferList, OfferCreate, OfferUpdate, OfferDelete, OfferUpdate
+from empleo_desarrolladores.views import OfferList, OfferCreate, OfferDelete, OfferUpdate, Home
 from django.contrib.auth.decorators import login_required as auth
 from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^$', OfferList.as_view(), name='home'),
+    url(r'^$', Home.as_view(), name='home'),
     url(r'^developer/list$', DeveloperList.as_view(), name='developer_list'),
     url(r'^developer/add/$', DeveloperCreate.as_view(), name='developer_add'),
     url(r'developer/(?P<pk>\d+)/$', DeveloperUpdate.as_view(), name='developer_update'),
