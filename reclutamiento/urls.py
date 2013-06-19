@@ -9,7 +9,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^$', DeveloperList.as_view(), name='offer_list'),
+    url(r'^$', OfferList.as_view(), name='home'),
     url(r'^developer/list$', DeveloperList.as_view(), name='developer_list'),
     url(r'^developer/add/$', DeveloperCreate.as_view(), name='developer_add'),
     url(r'developer/(?P<pk>\d+)/$', DeveloperUpdate.as_view(), name='developer_update'),
@@ -26,7 +26,7 @@ urlpatterns = patterns('',
     url(r'offer/(?P<pk>\d+)/delete/$', OfferDelete.as_view(), name='offer_delete'),
     
     url(r"^login/$", "django.contrib.auth.views.login",
-    {"template_name": "login.html"}, name="login"),
+    {"template_name": "registration/login.html"}, name="login"),
     url(r"^logout/$", "django.contrib.auth.views.logout_then_login",
     name="logout"),
 
