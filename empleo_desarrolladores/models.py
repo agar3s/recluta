@@ -50,6 +50,9 @@ class Offer(models.Model):
     def adress_to_delete(self):
         return reverse_lazy('offer_delete', args=[self.pk])
 
+    def address_to_details(self):
+        return reverse_lazy('offer_detail', args=[self.pk])
+
     def __unicode__(self):
         return self.offer.job_title
 

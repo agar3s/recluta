@@ -73,6 +73,14 @@ class OfferDelete(DeleteView):
     template_name = 'offer_delete.html'
     success_url = reverse_lazy('offer_list')
 
+class OfferDetailsView(DetailView):
+    template_name = 'offer_detail.html'
+    model = Offer
+#    slug = None
+
+#    def get_object(self, queryset=None):
+#        return queryset.get(slug=self.slug)
+
 class UserProfileDetailView(DetailView):
     model = get_user_model()
     slug_field = "username"
