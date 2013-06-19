@@ -39,7 +39,7 @@ class Offer(models.Model):
         (55, 'De 5.000.000 en Adelante'),
         )
     salary = models.IntegerField(max_length=2, choices = SALARY_CHOICES, default = 0)
-    Offer_valid_time = models.DateTimeField()
+    offer_valid_time = models.DateTimeField()
     mandatory_skills = models.TextField(null=False)
     optional_skills = models.TextField(null=False)
     job_description = models.TextField(null=False)

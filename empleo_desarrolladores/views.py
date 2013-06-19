@@ -10,7 +10,8 @@ from django.shortcuts import render_to_response
 
 class Home(View):
     def get(self, request):
-        return render_to_response('home.html')
+        ofertas = Offer.objects.all()
+        return render_to_response('home.html', {'ofertas': ofertas})
 
 class DeveloperList(ListView):
     model = Developer
