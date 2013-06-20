@@ -2,7 +2,24 @@
 {% block content %}
 <ol>
 {% for juan in ofertas %}
- <li><a href="{{ juan.address_to_details }}">{{ juan.job_title }}</a></li>
+ <li>
+ 
+ <div>
+ <br>
+ <h1>{{ juan.job_title }}</h1>
+ <h3>{{ juan.offer_company_that_publishes }}</h3>
+ <p>
+ {{ juan.job_description }}
+ </p>
+ {{ juan.mandatory_skills }}
+ {{ juan.location }}
+ <a href="{{ juan.address_to_details }}">Ver Más</a>
+ </br>
+ </div>
+ 
+ 
+ 
+ </li>
 {% endfor %}
 </ol>
 {% endblock %}

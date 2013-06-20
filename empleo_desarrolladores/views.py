@@ -76,10 +76,6 @@ class OfferDelete(DeleteView):
 class OfferDetailsView(DetailView):
     template_name = 'offer_detail.html'
     model = Offer
-#    slug = None
-
-#    def get_object(self, queryset=None):
-#        return queryset.get(slug=self.slug)
 
 class UserProfileDetailView(DetailView):
     model = get_user_model()

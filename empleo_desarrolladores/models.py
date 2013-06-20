@@ -20,6 +20,7 @@ class Developer(models.Model):
 class Offer(models.Model):
     offer_company_that_publishes = models.CharField(max_length=100)
     job_title = models.CharField(max_length=100)
+    location = models.CharField(max_length=100, null=True, default='Bogota')
     TYPE_OF_CONTRACT = (
         ('TF', 'Termino Fijo'),
         ('FR', 'Freelance'),
