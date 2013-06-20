@@ -1,4 +1,32 @@
 {% extends 'base.html' %}
 {% block content  %}
- {{ object.job_title }}
+ <li>
+   <div>
+     <br>
+       <h1>{{ object.job_title }}</h1>
+       <h3>{{ object.offer_company_that_publishes }}</h3>
+        <p>
+        {{ object.location }}
+        </p>
+        <p>
+        {{ object.type_contract }}
+        </p>
+        <p>
+        {{ object.salary }}
+        </p>
+        <p>
+        {{ object.offer_valid_time }}
+        </p>
+        <p>
+         {{ object.mandatory_skills }}
+        </p>
+        <p>
+         {{ object.job_description }} 
+        </p>
+        <p>
+         {{ object.optional_skills }}
+        </p>
+     </br>  
+   </div>
+ </li>
 {% endblock  %}
