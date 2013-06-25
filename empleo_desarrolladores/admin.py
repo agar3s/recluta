@@ -1,11 +1,7 @@
 from django.contrib import admin
-from .models import Developer, Company, Offer, UserProfile
+from .models import Company, Offer, UserProfile
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth import get_user_model
-
-class DeveloperAdmin(admin.ModelAdmin):
-    pass
-admin.site.register(Developer, DeveloperAdmin)
 
 class CompanyAdmin(admin.ModelAdmin):
     pass

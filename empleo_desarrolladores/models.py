@@ -3,19 +3,6 @@ from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.models import User
 from django.contrib import admin
 
-class Developer(models.Model):
-    name = models.CharField(max_length=100)
-    mail = models.EmailField()
-    password = models.CharField(max_length=200)
-
-    def address_to_update(self):
-        return reverse_lazy('developer_update', args=[self.pk])
-                
-    def adress_to_delete(self):
-        return reverse_lazy('developer_delete', args=[self.pk])
-
-    def __unicode__(self):
-        return self.developer.name
 
 class Offer(models.Model):
     offer_company_that_publishes = models.CharField(max_length=100)
@@ -77,8 +64,20 @@ class Company(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, unique=True)
+    name = models.CharField(max_length=100, null=True)
+    mail = models.EmailField(null=True)
+    password = models.CharField(max_length=200, null=True)
     biography = models.TextField(null=True)
             
+    def address_to_update(self):
+        return reverse_lazy('developer_update', args=[self.pk])
+
+    def adress_to_delete(self):
+        return reverse_lazy('developer_delete', args=[self.pk])
+
+    def __unicode__(self):
+        return self.developer.name
+
     def __unicode__(self):
         return "%s's profile" % self.user
 

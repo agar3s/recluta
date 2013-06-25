@@ -1,9 +1,5 @@
 from django import forms
-from models import Developer, Offer, Company, UserProfile
-
-class DeveloperForm(forms.ModelForm):
-    class Meta:
-        model = Developer
+from models import Offer, Company, UserProfile
 
 class OfferForm(forms.ModelForm):
     class Meta:

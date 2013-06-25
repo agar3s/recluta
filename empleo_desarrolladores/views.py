@@ -2,8 +2,8 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView 
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView
-from models import Developer, Offer, Company, UserProfile
-from forms import DeveloperForm, CompanyForm, OfferForm, UserProfileForm
+from models import  Offer, Company, UserProfile
+from forms import CompanyForm, OfferForm, UserProfileForm
 from django.contrib.auth import get_user_model
 from django.views.generic.base import View
 from django.shortcuts import render_to_response
@@ -14,22 +14,22 @@ class Home(View):
         return render_to_response('home.html', {'ofertas': ofertas})
 
 class DeveloperList(ListView):
-    model = Developer
+    model = UserProfile
     template_name = 'developer_list.html'
 
 class DeveloperCreate(CreateView):
-    model = Developer
-    form_class = DeveloperForm
+    model = UserProfile
+    form_class = UserProfileForm
     template_name = 'developer_create.html'
     success_url = reverse_lazy('developer_list')
 
 class DeveloperUpdate(UpdateView):
-    model = Developer
+    model = UserProfile
     template_name = 'developer_create.html'
     success_url = reverse_lazy('developer_list')
 
 class DeveloperDelete(DeleteView):
-    model = Developer
+    model = UserProfile
     template_name = 'developer_delete.html'
     success_url = reverse_lazy('developer_list')
 
