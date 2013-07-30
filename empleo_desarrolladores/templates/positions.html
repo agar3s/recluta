@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+	{% for offer in offers %}
+		{% ifnotequal offer.state 1 %}
+			<div class="bordered">
+				<div class="row-fluid">
+					<div class="span9">
+						<a href="/positions/details/{{offer.id}}"><h3>{{offer.job_title}}</h3></a>
+					</div>	
+					<div class="span3">
+						<div class="span6">
+							<p class="pull-right"><i class="icon-user"></i>{{offer.applicants.count}}</p>
+						</div>
+						<div class="span6">
+						{% ifequal offer.state 0 %}
+							<button class="btn btn-warning pull-right" style="margin-top:10px;">Draft</button>
+						{% else %}
+							<button class="btn btn-success pull-right" style="margin-top:10px;">Live</button>
+						{% endifequal %}	
+						</div>					
+					</div>
+				</div>
+				<div class="row_fluid">
+					<a href="/positions/terminate/{{offer.id}}" class="pull-right">Terminate</a>
+				</div>
+			</div>
+			<br>
+		{% endifnotequal %}
+	{% empty %}
+		<div class="bordered">
+			<p align="center">
+				<h3>Create an Offer!</h3>
+			</p>
+		</div>
+	{% endfor %}
+	<div class="row-fluid">
+		<a href="{% url 'create_position_view' %}" class="btn btn-primary pull-right">Create</a>
+		<a href="{% url 'old_positions_list_view' %}" class="btn pull-right">Old</a>
+	</div>
+{% endblock %}

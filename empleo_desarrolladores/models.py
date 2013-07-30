@@ -4,37 +4,74 @@ from django.contrib.auth.models import User
 from django.contrib import admin
 
 
+class Company(models.Model):
+    nit = models.CharField(max_length=30)
+    company_name = models.CharField(max_length=100)
+    location = models.CharField(max_length=100)
+    website = models.CharField(max_length=100, blank=True, null=True)
+    email = models.EmailField(max_length=100)
+    phone = models.IntegerField(max_length=100)
+    image = models.ImageField(upload_to='companies', blank=True, null=True)
+
+    def address_to_update(self):
+        return reverse_lazy('company_update', args=[self.pk])
+
+    def adress_to_delete(self):
+        return reverse_lazy('company_delete', args=[self.pk])
+
+    def __unicode__(self):
+        return self.company_name
+
+
+class Applicant(models.Model):
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    mail = models.EmailField(unique=True)
+
+    def __unicode__(self):
+        return self.mail
+
+    def full_name(self):
+        return self.first_name+" "+self.last_name
+
+
 class Offer(models.Model):
-    offer_company_that_publishes = models.CharField(max_length=100)
+
     job_title = models.CharField(max_length=100)
     location = models.CharField(max_length=100, null=True, default='Bogota')
     TYPE_OF_CONTRACT = (
-        ('TF', 'Termino Fijo'),
-        ('FR', 'Freelance'),
-        )
-    type_contract = models.CharField(max_length=2, choices=TYPE_OF_CONTRACT, default = 'TF')
+        ('FT', 'Full Time'),
+        ('PT', 'Part Time'),
+        ('TL', 'Telecommute'),
+        ('CT', 'Contractor'),
+    )
+    type_contract = models.CharField(max_length=2, choices=TYPE_OF_CONTRACT, default='FT')
     SALARY_CHOICES = (
-        (0, 'A Convenir'),
-        (10, 'De 550.000 a 1.000.000'),
-        (15, 'De 1.000.000 a 1.500.000'),
-        (20, 'De 1.500.000 a 2.000.000'),
-        (25, 'De 2.000.000 a 2.500.000'),
-        (30, 'De 2.500.000 a 3.000.000'),
-        (35, 'De 3.000.000 a 3.500.000'),
-        (40, 'De 3.500.000 a 4.000.000'),
-        (45, 'De 4.000.000 a 4.500.000'),
-        (50, 'De 4.500.000 a 5.000.000'),
-        (55, 'De 5.000.000 en Adelante'),
-        )
-    salary = models.IntegerField(max_length=2, choices = SALARY_CHOICES, default = 0)
+        (0, 'Negotiable'),
+        (10, '550.000 - 1.000.000'),
+        (15, '1.000.000 - 1.500.000'),
+        (20, '1.500.000 - 2.000.000'),
+        (25, '2.000.000 - 2.500.000'),
+        (30, '2.500.000 - 3.000.000'),
+        (35, '3.000.000 - 3.500.000'),
+        (40, '3.500.000 - 4.000.000'),
+        (45, '4.000.000 - 4.500.000'),
+        (50, '4.500.000 - 5.000.000'),
+        (55, '5.000.000 - More'),
+    )
+
+    STATE_CHOICES = ((0, 'Draft'), (1, 'Terminate'), (2, 'Live'))
+    state = models.IntegerField(choices=STATE_CHOICES, default=0)
+    applicants = models.ManyToManyField(Applicant, through="OfferApplicant")
+    salary = models.IntegerField(max_length=2, choices=SALARY_CHOICES, default=0)
     offer_valid_time = models.DateTimeField()
-    mandatory_skills = models.TextField(null=False)
-    optional_skills = models.TextField(null=False)
+    skills = models.TextField(null=True)
     job_description = models.TextField(null=False)
-    
-    def address_to_update(self): 
+    company = models.ForeignKey(Company, null=True)
+
+    def address_to_update(self):
         return reverse_lazy('offer_update', args=[self.pk])
-    
+
     def adress_to_delete(self):
         return reverse_lazy('offer_delete', args=[self.pk])
 
@@ -42,33 +79,13 @@ class Offer(models.Model):
         return reverse_lazy('offer_detail', args=[self.pk])
 
     def __unicode__(self):
-        return self.offer.job_title
+        return self.job_title
 
-class Company(models.Model):
-    nit = models.CharField(max_length=30) 
-    company_name = models.CharField(max_length=100)
-    location = models.CharField(max_length=100)
-    website = models.CharField(max_length=100)
-    email = models.EmailField(max_length=100)
-    phone = models.IntegerField(max_length=100)
-    image = models.ImageField(upload_to='companies')
-
-    def address_to_update(self):
-        return reverse_lazy('company_update', args=[self.pk])
-                
-    def adress_to_delete(self):
-        return reverse_lazy('company_delete', args=[self.pk])
-
-    def __unicode__(self):
-        return self.company.company_name
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, unique=True)
-    name = models.CharField(max_length=100, null=True)
-    mail = models.EmailField(null=True)
-    password = models.CharField(max_length=200, null=True)
-    biography = models.TextField(null=True)
-            
+    company = models.ForeignKey(Company, null=True, blank=True)
+
     def address_to_update(self):
         return reverse_lazy('developer_update', args=[self.pk])
 
@@ -76,14 +93,22 @@ class UserProfile(models.Model):
         return reverse_lazy('developer_delete', args=[self.pk])
 
     def __unicode__(self):
-        return self.developer.name
-
-    def __unicode__(self):
         return "%s's profile" % self.user
+
 
 def create_profile(sender, instance, created, **kwargs):
     if created:
         profile, created = UserProfile.objects.get_or_create(user=instance)
+
+
+class OfferApplicant(models.Model):
+
+    offer = models.ForeignKey(Offer)
+    applicant = models.ForeignKey(Applicant)
+    observation = models.TextField()
+
+    def __unicode__(self):
+        return "Offer: " + self.offer.job_title + " Applicant: " + self.applicant.mail
 
 from django.db.models.signals import post_save
 post_save.connect(create_profile, sender=User)

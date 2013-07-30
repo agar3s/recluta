@@ -1,23 +1,44 @@
 <!DOCTYPE html>
 <html>
     <head>
-     <link href="//netdna.bootstrapcdn.com/bootswatch/2.3.2/flatly/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
     </head>
     <body>
-        <div class="navbar navbar-static-top">
+        <div class="navbar navbar-fixed-top">
             <div class="navbar-inner">
+                <div class="">
+                                   
+                    <a class="brand span4" href="/">DEVELOPER JOBS</a>
 
-                <a class="brand" href="/">PORQUE TRABAJO SI HAY</a>
-                <ul class="nav">
-                    <li><a href="{% url 'offer_list' %}">Offers</a></li>
-                    {% if user.is_authenticated %}
-                        <li><a href="{% url 'logout' %}">Logout</a></li>
-                        <li><a href="{% url 'edit_profile' %}">Edit Profile</a></li>
-                    {% else %}
-                        <li><a href="/accounts/register/">Register</a></li>
-                        <li><a href="{% url 'login' %}">Login</a></li>
-                    {% endif %}
-                </ul>
+                    <!-- <form action="" class="navbar-search">
+                        <input type="text" class="search-query span6" placeholder="Search Offers">
+                    </form> -->
+                    <form action="/?q=" class="navbar-search">
+                        <div class="input-append">
+                            <input type="text" name="q" id="id_q" class="span7" placeholder="Search Offers...">
+                            <button type="submit" class="btn" style="width:100px"><i class="icon-search"></i></button>
+                        </div>
+                    </form>
+
+                        
+                
+                    <ul class="nav pull-right">
+                        <!-- <li><a href="#">How it works?</a></li> -->
+                        {% if user.is_authenticated %}
+                            <li><a href="{% url 'position_list_view' %}">Positions</a></li>
+                            <li><a href="{% url 'edit_profile' %}">Edit Profile</a></li>
+                            <li><a href="{% url 'logout' %}">Logout</a></li>
+
+                            
+                        {% else %}
+                            <li><a href="/accounts/register/">Register</a></li>
+                            <li><a href="{% url 'login' %}">Login</a></li>
+                        {% endif %}
+                    </ul>
+
+                </div>
             </div>
         </div>
         <div class='container'>
@@ -25,5 +46,6 @@
         {% endblock %}
         </div>
         <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+
     </body>
 </html>

@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    {% if query %}
+        <ul class="unstyled">
+        {% for result in page.object_list %}
+                <li >
+                    <div class="bordered">
+                        <br>
+                        <div class="row-fluid">
+                            <div class="span9">
+                                <h3>{{ result.object.job_title }}</h3>
+                            </div>
+                            <div class="span3">
+                                <p class="pull-right">
+                                    {{result.object.offer_valid_time}}
+                                    <br>
+                                    <br>
+                                    <span class="pull-right"><i class="icon-user"></i>{{result.object.applicants.count}}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row-fluid">
+                            <div class="span3"><h5>{{ result.object.company }}</h5></div>
+                            <div class="span9"><h6>{{ result.object.location }}</h6></div>    
+                        </div>
+                        <div class="row-fluid">
+                            <p align="justify">
+                                {{ result.object.job_description|truncatewords:"40" }}...
+                            </p>
+                        </div>
+                        <div class="row-fluid">
+                            <div class="span9">
+                                <p align="justify">
+                                    {{ result.object.skills|truncatewords:"20"}}...
+                                </p>
+                            </div>
+                            <div class="span3">
+                                <a href="/offer/{{result.object.id}}/" class="btn btn-primary pull-right">More</a>  
+                            </div>    
+                        </div>
+                    </div> 
+                </li>
+                <br>
+        {% empty %}
+            <p>No results found.</p>
+        {% endfor %}
+        </ul>
+
+        {% if page.has_previous or page.has_next %}
+            <div>
+                {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; Previous{% if page.has_previous %}</a>{% endif %}
+                |
+                {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}Next &raquo;{% if page.has_next %}</a>{% endif %}
+            </div>
+        {% endif %}
+    {% else %}
+     <ul class="unstyled" >
+        {% for offer in offers %} 
+            <li >
+                <div class="bordered">
+                    <br>
+                    <div class="row-fluid">
+                        <div class="span9">
+                            <h3>{{ offer.job_title }}</h3>
+                        </div>
+                        <div class="span3">
+                            <p class="pull-right">
+                                {{offer.offer_valid_time}}
+                                <br>
+                                <br>
+                                <span class="pull-right"><i class="icon-user"></i>{{offer.applicants.count}}</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row-fluid">
+                        <div class="span3"><h5>{{ offer.company  }}</h5></div>
+                        <div class="span9"><h6>{{ offer.location }}</h6></div>    
+                    </div>
+                    <div class="row-fluid">
+                        <p align="justify">
+                            {{ offer.job_description|truncatewords:"40" }}...
+                        </p>
+                    </div>
+                    <div class="row-fluid">
+                        <div class="span9">
+                            <p align="justify">
+                                {{ offer.skills|truncatewords:"20" }}...
+                            </p>
+                        </div>
+                        <div class="span3">
+                            <a href="/offer/{{offer.id}}/" class="btn btn-primary pull-right">More</a>  
+                        </div>    
+                    </div>
+                </div> 
+            </li>
+            <br>
+        {% endfor %}
+    </ul>
+    
+    {% endif %}
+    
+{% endblock %}

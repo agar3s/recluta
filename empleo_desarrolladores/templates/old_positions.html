@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+	{% for offer in offers %}
+		<div class="bordered">
+			<div class="row-fluid">
+				<div class="span9">
+					<a href="/positions/details/{{offer.id}}"><h3>{{offer.job_title}}</h3></a>
+				</div>	
+			</div>
+		</div>
+		<br>
+	{% empty %}
+		<h3>No Old offer!</h3>
+	{% endfor %}
+	<a href="/positions/" class="btn btn-primary">Return</a>
+{% endblock %}

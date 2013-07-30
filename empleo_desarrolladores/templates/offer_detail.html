@@ -1,32 +1,59 @@
 {% extends 'base.html' %}
 {% block content  %}
- <li>
-   <div>
-     <br>
-       <h1>{{ object.job_title }}</h1>
-       <h3>{{ object.offer_company_that_publishes }}</h3>
-        <p>
-        {{ object.location }}
+    <div class="bordered">
+        <div class="row-fluid">
+            <div class="span11">
+                <h1>{{ offer.job_title }}</h1>
+            </div>
+        </div>
+        
+        <div class="row-fluid">
+            <div class="span6">
+                 <h3>{{ offer.offer_company_that_publishes }}</h3>
+            </div>
+            <div class="span6">
+                <p class="pull-right">
+                    <strong>Salary:</strong> {{offer.salary}}
+                </p>
+            </div>
+        </div>
+       <div class="row-fluid">
+            <div class="span6">
+                <p>
+                    <strong>Location:</strong> {{ offer.location }}
+                </p>
+            </div>
+            <div class="span6">
+                <p class="pull-right">
+                    <strong>Time offer:</strong> {{ offer.offer_valid_time }}
+                </p>
+            </div>
+        </div>
+        
+        <p align="justify">
+            <strong>Description:</strong> {{ offer.job_description }} 
         </p>
-        <p>
-        {{ object.type_contract }}
-        </p>
-        <p>
-        {{ object.salary }}
-        </p>
-        <p>
-        {{ object.offer_valid_time }}
-        </p>
-        <p>
-         {{ object.mandatory_skills }}
-        </p>
-        <p>
-         {{ object.job_description }} 
-        </p>
-        <p>
-         {{ object.optional_skills }}
+        <p align="justify">
+            <strong>Skills: </strong> {{ offer.skills }}
         </p>
      </br>  
-   </div>
- </li>
+     <a class="btn btn-primary pull-right" href="#window" role="button" data-toggle="modal">Apply</a>
+     <div id="window" class="modal hide fade">
+         <div class="modal-header">
+             <button type="button" class="close" data-dismiss="modal" area-hidden="true">X</button>
+             <h3>Apply to {{offer.job_title}}</h3>
+         </div>
+         <div class="modal-body">
+            <form action= "" method= "POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{form.as_p}}
+                <input type= "submit" value= "Apply" class="btn btn-primary">
+                <input type= "reset" value= "Clean" class="btn">
+            </form>
+         </div>
+         <div class="modal-footer">
+             <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+         </div>
+     </div>
+    </div>
 {% endblock  %}

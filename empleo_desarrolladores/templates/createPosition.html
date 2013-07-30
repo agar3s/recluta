@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1> FORM FOR CREATING JOB OFFERS </h1>
-<form class="form-horizontal" action="." method="POST">
+<form action="." method="POST">
+    <legend>Create a Position </legend>
     {% for field in form %}
     <div class="control-group {% if field.errors %}error{% endif %}" >
         <label class="control-label">
         {{ field.label }}</label>
-        <div class="controls">
+        <div class="controls form-group">
             {{ field }}
             <span class="help-inline">{{ field.errors }}</span>
         </div>
@@ -14,10 +14,12 @@
     {% endfor %}
     {% csrf_token %}
       <div class="control-group">
-        <div class="controls">
-            <button type="submit" class="btn btn-success btn-large">Guardar</button>
-            <a href="{% url 'offer_list' %}" class="btn btn-primary">Cancelar</a>
+        <div class="controls" align="center">
+            <a href="{% url 'position_list_view' %}" class="btn">Cancel</a>
+            <button type="submit" class="btn btn-primary" name="_save">Save</button>
+            <button type="submit" class="btn btn-success" name="_publish">Publish </button>
         </div>
     </div>
 </form>
+{{info}}    
 {% endblock %}

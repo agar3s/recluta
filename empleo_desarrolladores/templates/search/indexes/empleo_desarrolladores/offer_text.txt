@@ -1,0 +1,4 @@
+{{ object.company }}
+{{ object.job_title }}
+{{ object.location }}
+{{ object.job_description }}
