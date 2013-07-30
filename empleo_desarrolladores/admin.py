@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Company, Offer, UserProfile
+from .models import Company, Offer, UserProfile, Applicant, OfferApplicant
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth import get_user_model
 
@@ -20,3 +20,5 @@ class UserProfileAdmin(UserAdmin):
 
 admin.site.unregister(get_user_model())
 admin.site.register(get_user_model(), UserProfileAdmin)
+admin.site.register(Applicant)
+admin.site.register(OfferApplicant)
