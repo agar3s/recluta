@@ -1,0 +1,42 @@
+body {
+    padding-top: 70px;
+    padding-bottom: 50px;
+}
+
+.bordered {
+    border-color: #000;
+    margin-top: 0;
+    border-radius: 10px;
+    padding: 40px;
+    padding-top: 0;
+    margin: 0;
+    background-color: #e9eaee;
+}
+
+#id_job_title {
+    width: 90%;
+}
+
+#id_job_description {
+    width: 90%;
+}
+
+
+#id_location {
+    width: 90%;
+}
+
+
+#id_skills {
+    width: 90%;
+}
+
+
+#id_type_contract {
+    width: 90%;
+}
+
+
+#id_salary {
+    width: 90%;
+}

@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block content %}
+{% ifequal offer.state 1%}
+    <div class="bordered">
+        <div class="row-fluid">
+            <div class="span11">
+                <h1>{{ offer.job_title }}</h1>
+            </div>
+        </div>
+        
+        <div class="row-fluid">
+            <div class="span6">
+                 <h3>{{ offer.company }}</h3>
+            </div>
+            <div class="span6">
+                <p class="pull-right">
+                    <strong>Salary:</strong> {{offer.salary}}
+                </p>
+            </div>
+        </div>
+       <div class="row-fluid">
+            <div class="span6">
+                <p>
+                    <strong>Location:</strong> {{ offer.location }}
+                </p>
+            </div>
+            <div class="span6">
+                <p class="pull-right">
+                    <strong>Time offer:</strong> {{ offer.offer_valid_time }}
+                </p>
+            </div>
+        </div>
+        
+        <p align="justify">
+            <strong>Description:</strong> {{ offer.job_description }} 
+        </p>
+        <p>
+            <strong>Skills: </strong>{{ offer.skills }}
+        </p>
+     </br>  
+    </div>
+{% else %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span6">
+            <form action="." method="POST" class="span12">
+                <legend> Edit the Position</legend>
+                {% for field in form %}
+                <div class="control-group {% if field.errors %}error{% endif %}" >
+                    <label class="control-label">
+                    {{ field.label }}</label>
+                    <div class="controls col-lg-10">
+                        {{ field }}
+                        <span class="help-inline">{{ field.errors }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+                {% csrf_token %}
+                <div class="control-group">
+                    <div class="controls" align="center">
+                        <a href="{% url 'position_list_view' %}" class="btn">Cancel</a>
+                        <button type="submit" class="btn btn-primary" name="_save">Save</button>
+                        <button type="submit" class="btn btn-success" name="_publish">Publish </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="span6">
+            <h3>Applicants</h3>
+            
+            <table class="table table-bordered">
+                <thead>
+                    <tr >
+                        <th>Full Name </th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                {% for applicant in applicants %}
+                <tbody>
+                    <tr class="info">
+                        <td>{{applicant.applicant.full_name}}</td>
+                        <td>{{applicant.applicant.mail}}</td>
+                    </tr>
+                </tbody>
+            
+            {% empty %}
+               <h4>This offer don't have applicants yet</h4> 
+            {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endifequal %}
+{% endblock %}
