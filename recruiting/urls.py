@@ -1,7 +1,6 @@
 from django.conf.urls.defaults import patterns, include, url
 from empleo_desarrolladores.views import  UserProfileEditView, UserProfileDetailView
 from empleo_desarrolladores.views import CompanyList, CompanyCreate, CompanyUpdate, CompanyDelete, CompanyUpdate
-from empleo_desarrolladores.views import Home
 from django.contrib.auth.decorators import login_required as auth
 from django.contrib import admin
 admin.autodiscover()
@@ -10,7 +9,8 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^',include('empleo_desarrolladores.urls')),
-    url(r'^$', Home.as_view(), name='home'),
+    url(r'^',include('search.urls')),
+     # url(r'^$', Home.as_view(), name='home'),
     url(r'^company/list$', CompanyList.as_view(), name='company_list'),
     url(r'^company/add/$', CompanyCreate.as_view(), name='company_add'),
     url(r'company/(?P<pk>\d+)/$', CompanyUpdate.as_view(), name='company_update'),
