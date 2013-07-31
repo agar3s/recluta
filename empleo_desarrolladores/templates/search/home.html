@@ -3,50 +3,73 @@
 {% block content %}
 
     {% if query %}
-        <ul class="unstyled">
-        {% for result in page.object_list %}
-                <li >
-                    <div class="bordered">
-                        <br>
-                        <div class="row-fluid">
-                            <div class="span9">
-                                <h3>{{ result.object.job_title }}</h3>
-                            </div>
-                            <div class="span3">
-                                <p class="pull-right">
-                                    {{result.object.offer_valid_time}}
-                                    <br>
-                                    <br>
-                                    <span class="pull-right"><i class="icon-user"></i>{{result.object.applicants.count}}</span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="row-fluid">
-                            <div class="span3"><h5>{{ result.object.company }}</h5></div>
-                            <div class="span9"><h6>{{ result.object.location }}</h6></div>    
-                        </div>
-                        <div class="row-fluid">
-                            <p align="justify">
-                                {{ result.object.job_description|truncatewords:"40" }}...
-                            </p>
-                        </div>
-                        <div class="row-fluid">
-                            <div class="span9">
-                                <p align="justify">
-                                    {{ result.object.skills|truncatewords:"20"}}...
-                                </p>
-                            </div>
-                            <div class="span3">
-                                <a href="/offer/{{result.object.id}}/" class="btn btn-primary pull-right">More</a>  
-                            </div>    
-                        </div>
-                    </div> 
+        <!-- Begin faceting. -->
+       <div class="row-fluid"> 
+        <div class="span2 well sidebar-nav">
+            <dt>Location</dt>
+            <ul class="nav nav-list">
+                <li>
+                    {% if facets.fields.location %}
+                        
+                        {# Provide only the top 5 locations #}
+                        {% for location in facets.fields.location|slice:":5" %}
+                            <dd><a href="{{ request.get_full_path }}&amp;selected_facets=location_exact:{{ location.0|urlencode }}">{{ location.0 }}</a> ({{ location.1 }})</dd>
+                        {% endfor %}
+                    {% else %}
+                        <p>No location facets.</p>
+                    {% endif %}
                 </li>
-                <br>
-        {% empty %}
-            <p>No results found.</p>
-        {% endfor %}
-        </ul>
+            </ul>
+        </div>
+        <!-- End faceting -->
+        <div class="span10">
+            <ul class="unstyled">
+            {% for result in page.object_list %}
+                    <li >
+                        <div class="bordered">
+                            <br>
+                            <div class="row-fluid">
+                                <div class="span9">
+                                    <h3>{{ result.object.job_title }}</h3>
+                                </div>
+                                <div class="span3">
+                                    <p class="pull-right">
+                                        {{result.object.offer_valid_time}}
+                                        <br>
+                                        <br>
+                                        <span class="pull-right"><i class="icon-user"></i>{{result.object.applicants.count}}</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="span3"><h5>{{ result.object.company }}</h5></div>
+                                <div class="span9"><h6>{{ result.object.location }}</h6></div>    
+                            </div>
+                            <div class="row-fluid">
+                                <p align="justify">
+                                    {{ result.object.job_description|truncatewords:"40" }}...
+                                </p>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="span9">
+                                    <p align="justify">
+                                        {{ result.object.skills|truncatewords:"20"}}...
+                                    </p>
+                                </div>
+                                <div class="span3">
+                                    <a href="/offer/{{result.object.id}}/" class="btn btn-primary pull-right">More</a>  
+                                </div>    
+                            </div>
+                        </div> 
+                    </li>
+                    <br>
+            {% empty %}
+                <p>No results found.</p>
+            {% endfor %}
+            </ul>
+        </div>
+
+        </div>
 
         {% if page.has_previous or page.has_next %}
             <div>
@@ -56,49 +79,55 @@
             </div>
         {% endif %}
     {% else %}
-     <ul class="unstyled" >
-        {% for offer in offers %} 
-            <li >
-                <div class="bordered">
+    <div class="row-fluid">
+        <div class="span2 well sidebar-nav">
+            <dt>Location</dt>
+        </div>
+        <div class="span10">
+             <ul class="unstyled" >
+                {% for offer in offers %} 
+                    <li >
+                        <div class="bordered">
+                            <br>
+                            <div class="row-fluid">
+                                <div class="span9">
+                                    <h3>{{ offer.job_title }}</h3>
+                                </div>
+                                <div class="span3">
+                                    <p class="pull-right">
+                                        {{offer.offer_valid_time}}
+                                        <br>
+                                        <br>
+                                        <span class="pull-right"><i class="icon-user"></i>{{offer.applicants.count}}</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="span3"><h5>{{ offer.company  }}</h5></div>
+                                <div class="span9"><h6>{{ offer.location }}</h6></div>    
+                            </div>
+                            <div class="row-fluid">
+                                <p align="justify">
+                                    {{ offer.job_description|truncatewords:"40" }}...
+                                </p>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="span9">
+                                    <p align="justify">
+                                        {{ offer.skills|truncatewords:"20" }}...
+                                    </p>
+                                </div>
+                                <div class="span3">
+                                    <a href="/offer/{{offer.id}}/" class="btn btn-primary pull-right">More</a>  
+                                </div>    
+                            </div>
+                        </div> 
+                    </li>
                     <br>
-                    <div class="row-fluid">
-                        <div class="span9">
-                            <h3>{{ offer.job_title }}</h3>
-                        </div>
-                        <div class="span3">
-                            <p class="pull-right">
-                                {{offer.offer_valid_time}}
-                                <br>
-                                <br>
-                                <span class="pull-right"><i class="icon-user"></i>{{offer.applicants.count}}</span>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="row-fluid">
-                        <div class="span3"><h5>{{ offer.company  }}</h5></div>
-                        <div class="span9"><h6>{{ offer.location }}</h6></div>    
-                    </div>
-                    <div class="row-fluid">
-                        <p align="justify">
-                            {{ offer.job_description|truncatewords:"40" }}...
-                        </p>
-                    </div>
-                    <div class="row-fluid">
-                        <div class="span9">
-                            <p align="justify">
-                                {{ offer.skills|truncatewords:"20" }}...
-                            </p>
-                        </div>
-                        <div class="span3">
-                            <a href="/offer/{{offer.id}}/" class="btn btn-primary pull-right">More</a>  
-                        </div>    
-                    </div>
-                </div> 
-            </li>
-            <br>
-        {% endfor %}
-    </ul>
-    
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
     {% endif %}
     
 {% endblock %}

@@ -5,18 +5,10 @@ from django.views.generic import DetailView
 from models import Offer, Company, UserProfile, Applicant, OfferApplicant
 from forms import CompanyForm, OfferForm, UserProfileForm, ApplicantForm, MySearchForm, CreateOfferForm
 from django.contrib.auth import get_user_model
-from django.views.generic.base import View
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
-from haystack.views import basic_search
 from django.contrib.auth.decorators import login_required
-
-
-class Home(View):
-    def get(self, request):
-        offers = Offer.objects.filter(state=2)
-        return basic_search(request, extra_context={'offers': offers}, form_class=MySearchForm, template='search/home.html', results_per_page=5)
 
 class CompanyList(ListView):
     model = Company
