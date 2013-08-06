@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load pagination_tags %}
 {% block content %}
 
     {% if query %}
@@ -24,7 +24,8 @@
         <!-- End faceting -->
         <div class="span10">
             <ul class="unstyled">
-            {% for result in page.object_list %}
+            {% autopaginate results 3 %}
+            {% for result in results %}
                     <li >
                         <div class="bordered">
                             <br>
@@ -67,17 +68,10 @@
                 <p>No results found.</p>
             {% endfor %}
             </ul>
+            <center>{% paginate %}</center>
         </div>
-
+        
         </div>
-
-        {% if page.has_previous or page.has_next %}
-            <div>
-                {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; Previous{% if page.has_previous %}</a>{% endif %}
-                |
-                {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}Next &raquo;{% if page.has_next %}</a>{% endif %}
-            </div>
-        {% endif %}
     {% else %}
     <div class="row-fluid">
         <div class="span2 well sidebar-nav">
@@ -85,6 +79,7 @@
         </div>
         <div class="span10">
              <ul class="unstyled" >
+                {% autopaginate offers 3 %}
                 {% for offer in offers %} 
                     <li >
                         <div class="bordered">
@@ -125,7 +120,11 @@
                     </li>
                     <br>
                 {% endfor %}
+                
             </ul>
+            
+            <center>{% paginate %}</center>
+            
         </div>
     </div>
     {% endif %}

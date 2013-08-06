@@ -6,11 +6,19 @@
 				<div class="span9">
 					<a href="/positions/details/{{offer.id}}"><h3>{{offer.job_title}}</h3></a>
 				</div>	
+				<div class="span3">
+					<p class="pull-right">
+					    {{offer.offer_valid_time}}
+					    <br>
+					    <br>
+					    <span class="pull-right"><i class="icon-user"></i>{{offer.applicants.count}}</span>
+					</p>
+				</div>
 			</div>
 		</div>
 		<br>
 	{% empty %}
 		<h3>No Old offer!</h3>
 	{% endfor %}
-	<a href="/positions/" class="btn btn-primary">Return</a>
+	<a href="/positions/" class="btn btn-primary pull-right">Return</a>
 {% endblock %}
