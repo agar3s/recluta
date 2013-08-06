@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
+	<div class="row-fluid">
+		<a href="{% url 'create_position_view' %}" class="btn btn-primary pull-right">Create</a>
+		<a href="{% url 'old_positions_list_view' %}" class="btn pull-right">Old</a>
+	</div>
+	<br>
+	<br>
 	{% for offer in offers %}
 		{% ifnotequal offer.state 1 %}
 			<div class="bordered">
@@ -9,13 +15,13 @@
 					</div>	
 					<div class="span3">
 						<div class="span6">
-							<p class="pull-right"><i class="icon-user"></i>{{offer.applicants.count}}</p>
+							<span class="pull-right"><i class="icon-user"></i>{{offer.applicants.count}}</span>
 						</div>
 						<div class="span6">
 						{% ifequal offer.state 0 %}
-							<button class="btn btn-warning pull-right" style="margin-top:10px;">Draft</button>
+							<span class="label label-warning pull-right" style="margin-top:10px;">Draft</span>
 						{% else %}
-							<button class="btn btn-success pull-right" style="margin-top:10px;">Live</button>
+							<span class="label label-success pull-right" style="margin-top:10px;">Live</span>
 						{% endifequal %}	
 						</div>					
 					</div>
@@ -33,8 +39,5 @@
 			</p>
 		</div>
 	{% endfor %}
-	<div class="row-fluid">
-		<a href="{% url 'create_position_view' %}" class="btn btn-primary pull-right">Create</a>
-		<a href="{% url 'old_positions_list_view' %}" class="btn pull-right">Old</a>
-	</div>
+	
 {% endblock %}
