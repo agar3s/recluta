@@ -40,3 +40,8 @@ body {
 #id_salary {
     width: 90%;
 }
+
+
+input.required, error {
+border: 2px solid red;
+}
