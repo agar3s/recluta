@@ -120,6 +120,7 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'django.contrib.humanize',
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -191,3 +192,10 @@ HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 # Settings registration
 
 ACCOUNT_ACTIVATION_DAYS = 7
+
+#Email configuration
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'emailmypos@gmail.com'
+EMAIL_HOST_PASSWORD = 'mypospassword'
+EMAIL_USE_TLS = True
