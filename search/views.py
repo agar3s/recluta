@@ -16,5 +16,5 @@ def homeSearch(request):
 	view = HomeSearchView(form_class=FacetedSearchForm, 
 		searchqueryset=sqs, 
 		template='search/home.html',
-		results_per_page=20)
+		results_per_page=10)
 	return view(request)

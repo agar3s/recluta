@@ -41,13 +41,42 @@
             <p>No results found.</p>
         {% endfor %}
         </ul>
+        
         {% if page.has_previous or page.has_next %}
-            <div>
-                {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; Previous{% if page.has_previous %}</a>{% endif %}
-                {% for pagina in paginator.page_range %}
-                    <a href="?q={{ query }}&amp;page={{ pagina }}">{{pagina}}</a>
+            <div class="pagination pagination-centered">
+                <ul>
+                {% if page.has_previous %}
+                    <li><a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">
+                    &laquo; 
+                    </a></li>
+                {% else %}
+                    <li class="disabled">
+                        <a href="">
+                            &laquo; 
+                        </a>
+                    </li>
+                {% endif %}
+                {% for page1 in paginator.page_range %}
+                    {% ifequal page1 page.number %}
+                    <li class="active"><a href="?q={{ query }}&amp;page={{ page1 }}">{{page1}}</a></li>
+                    {% else %}
+                    <li><a href="?q={{ query }}&amp;page={{ page1 }}">{{page1}}</a></li>
+                    {% endifequal %}
                 {% endfor %}
-                {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}Next &raquo;{% if page.has_next %}</a>{% endif %}
+                {% if page.has_next %}
+                    <li>
+                    <a href="?q={{ query }}&amp;page={{ page.next_page_number }}">
+                    &raquo;
+                    </a>
+                    </li>
+                {% else %}
+                    <li class="disabled">
+                        <a href="">
+                            &raquo;
+                        </a>
+                    </li>
+                {% endif %}
+                </ul>
             </div>
         {% endif %}
         
