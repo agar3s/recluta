@@ -14,12 +14,12 @@ urlpatterns = patterns('',
     url(r'^company/add/$', CompanyCreate.as_view(), name='company_add'),
     url(r'company/(?P<pk>\d+)/$', CompanyUpdate.as_view(), name='company_update'),
     url(r'company/(?P<pk>\d+)/delete/$', CompanyDelete.as_view(), name='company_delete'),
+
+    # Registration Urls
+
     url(r"^login/$", "django.contrib.auth.views.login",{"template_name": "registration/login.html"}, name="login"),
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}, name='logout'),
-    url(r"^accounts/", include("registration.backends.default.urls")),
-    url(r"edit_profile/$", auth(UserProfileEditView.as_view()),name="edit_profile"),
-    # url(r'^$', 'Reclutamiento.views.home', name='home'),
-    # url(r'^Reclutamiento/', include('Reclutamiento.foo.urls')),
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    url(r'^accounts/', include("registration.urls")),
+    # Aun falta editar la vista de edicion de la cuenta
+    url(r'edit_profile/$', auth(UserProfileEditView.as_view()),name="edit_profile"),
 )

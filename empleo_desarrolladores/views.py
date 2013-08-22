@@ -102,10 +102,13 @@ def createPositionView(request):
             elif '_publish' in request.POST:
                 offer.state = 2
             offer.offer_valid_time = form.cleaned_data['offer_valid_time']
-            offer.skills = form.cleaned_data['skills']
+            skills = form.cleaned_data['skills']
             offer.job_description = form.cleaned_data['job_description']
             offer.company = company
             offer.save()
+
+            for skill in skills:
+                offer.skills.add(skill)
             return HttpResponseRedirect("/positions/list")
     else:
         form = CreateOfferForm()
@@ -131,21 +134,28 @@ def positionDetailsView(request, id_offer):
             elif '_publish' in request.POST:
                 offer.state = 2
             offer.offer_valid_time = form.cleaned_data['offer_valid_time']
-            offer.skills = form.cleaned_data['skills']
+            skills = form.cleaned_data['skills']
             offer.job_description = form.cleaned_data['job_description']
             offer.company = company
             offer.save()
+            for skill in skills:
+                offer.skills.add(skill)
             return HttpResponseRedirect("/positions/list")
     if request.method == "GET":
         if offer.company != user.company:
             return HttpResponseRedirect("/positions/list")
+
+        s = []
+        for skill in offer.skills.all():
+            s.append(skill.name)
+
         form = CreateOfferForm(initial={
             'job_title': offer.job_title,
             'location': offer.location,
             'type_contract': offer.type_contract,
             'salary': offer.salary,
             'offer_valid_time': offer.offer_valid_time,
-            'skills': offer.skills,
+            'skills': ','.join(s),
             'job_description': offer.job_description,
         })
     ctx = {'form': form, 'offer': offer, 'applicants': applicants}

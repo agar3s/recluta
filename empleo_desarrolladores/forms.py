@@ -2,7 +2,7 @@ from django import forms
 from models import Offer, Company, UserProfile
 from haystack.forms import HighlightedSearchForm
 from django.contrib.admin.widgets import AdminDateWidget
-
+from taggit.forms import *
 
 class MySearchForm(HighlightedSearchForm):
     q = forms.CharField(required=False, label="", widget=forms.TextInput(attrs={'placeholder': 'Search Offers ...', 'class': 'span6'}))
@@ -35,7 +35,7 @@ class ApplicantForm(forms.Form):
 class CreateOfferForm(forms.Form):
     job_title = forms.CharField(widget=forms.TextInput())
     job_description = forms.CharField(widget=forms.Textarea())
-    skills = forms.CharField(widget=forms.TextInput())
+    skills = TagField()
     location = forms.CharField(widget=forms.TextInput())
     type_contract = forms.ChoiceField(choices=Offer.TYPE_OF_CONTRACT)
     salary = forms.ChoiceField(choices=Offer.SALARY_CHOICES)

@@ -1,7 +1,6 @@
 from django.db import models
-from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.models import User
-from django.contrib import admin
+from taggit.managers import TaggableManager
 
 
 class Company(models.Model):
@@ -12,12 +11,6 @@ class Company(models.Model):
     email = models.EmailField(max_length=100)
     phone = models.IntegerField(max_length=100)
     image = models.ImageField(upload_to='companies', blank=True, null=True)
-
-    def address_to_update(self):
-        return reverse_lazy('company_update', args=[self.pk])
-
-    def adress_to_delete(self):
-        return reverse_lazy('company_delete', args=[self.pk])
 
     def __unicode__(self):
         return self.company_name
@@ -65,18 +58,9 @@ class Offer(models.Model):
     applicants = models.ManyToManyField(Applicant, through="OfferApplicant")
     salary = models.IntegerField(max_length=2, choices=SALARY_CHOICES, default=0)
     offer_valid_time = models.DateTimeField()
-    skills = models.TextField(null=True)
+    skills = TaggableManager()
     job_description = models.TextField(null=False)
     company = models.ForeignKey(Company, null=True)
-
-    def address_to_update(self):
-        return reverse_lazy('offer_update', args=[self.pk])
-
-    def adress_to_delete(self):
-        return reverse_lazy('offer_delete', args=[self.pk])
-
-    def address_to_details(self):
-        return reverse_lazy('offer_detail', args=[self.pk])
 
     def __unicode__(self):
         return self.job_title
@@ -86,19 +70,8 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, unique=True)
     company = models.ForeignKey(Company, null=True, blank=True)
 
-    def address_to_update(self):
-        return reverse_lazy('developer_update', args=[self.pk])
-
-    def adress_to_delete(self):
-        return reverse_lazy('developer_delete', args=[self.pk])
-
     def __unicode__(self):
         return "%s's profile" % self.user
-
-
-def create_profile(sender, instance, created, **kwargs):
-    if created:
-        profile, created = UserProfile.objects.get_or_create(user=instance)
 
 
 class OfferApplicant(models.Model):
@@ -109,6 +82,10 @@ class OfferApplicant(models.Model):
 
     def __unicode__(self):
         return "Offer: " + self.offer.job_title + " Applicant: " + self.applicant.mail
+
+def create_profile(sender, instance, created, **kwargs):
+    if created:
+        profile, created = UserProfile.objects.get_or_create(user=instance)
 
 from django.db.models.signals import post_save
 post_save.connect(create_profile, sender=User)
