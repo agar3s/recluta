@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content  %}
-    <div class="bordered">
+    <div class="bordered2">
         <div class="row-fluid">
             <div class="span11">
                 <h1>{{ offer.job_title }}</h1>
@@ -13,7 +13,30 @@
             </div>
             <div class="span6">
                 <p class="pull-right">
-                    <strong>Salary:</strong> {{offer.salary}}
+                    <strong>Salary:</strong> 
+                    {% if offer.salary == 0%}
+                        Negotiable
+                    {% elif offer.salary == 10 %}
+                        550.000 - 1.000.000
+                    {% elif offer.salary == 15 %}
+                        1.000.000 - 1.500.000
+                    {% elif offer.salary == 20 %}
+                        1.500.000 - 2.000.000
+                    {% elif offer.salary == 25 %}
+                        2.000.000 - 2.500.000
+                    {% elif offer.salary == 30 %}
+                        2.500.000 - 3.000.000
+                    {% elif offer.salary == 35 %}
+                        3.000.000 - 3.500.000
+                    {% elif offer.salary == 40 %}
+                        3.500.000 - 4.000.000
+                    {% elif offer.salary == 45 %}
+                        4.000.000 - 4.500.000
+                    {% elif offer.salary == 50 %}
+                        4.500.000 - 5.000.000
+                    {% elif offer.salary == 55 %}
+                        5.000.000 - More
+                    {% endif %}
                 </p>
             </div>
         </div>
@@ -34,7 +57,11 @@
             <strong>Description:</strong> {{ offer.job_description }} 
         </p>
         <p align="justify">
-            <strong>Skills: </strong> {{ offer.skills }}
+            <strong>Skills: </strong> 
+            {% for tag in offer.skills.all %}
+                <span class="label label-info">{{tag.name}}</span>
+            {% endfor %}
+            
         </p>
      </br>  
      <a class="btn btn-primary pull-right" href="#window" role="button" data-toggle="modal">Apply</a>

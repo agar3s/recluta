@@ -100,7 +100,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'pagination.middleware.PaginationMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     #'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -120,6 +119,7 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'django.contrib.humanize',
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -129,7 +129,8 @@ INSTALLED_APPS = (
     'registration',
     'south',
     'haystack',
-    'pagination_bootstrap',
+    'taggit',
+    "djcelery",
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
@@ -191,3 +192,10 @@ HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 # Settings registration
 
 ACCOUNT_ACTIVATION_DAYS = 7
+
+#Email configuration
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'emailmypos@gmail.com'
+EMAIL_HOST_PASSWORD = 'mypospassword'
+EMAIL_USE_TLS = True
