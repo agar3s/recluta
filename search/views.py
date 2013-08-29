@@ -12,7 +12,7 @@ class HomeSearchView(FacetedSearchView):
 		
 
 def homeSearch(request):
-	sqs = SearchQuerySet().facet('location')
+	sqs = SearchQuerySet().order_by('offer_valid_time')
 	view = HomeSearchView(form_class=FacetedSearchForm, 
 		searchqueryset=sqs, 
 		template='search/home.html',

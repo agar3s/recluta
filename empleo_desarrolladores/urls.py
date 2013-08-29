@@ -7,4 +7,8 @@ urlpatterns = patterns('empleo_desarrolladores.views',
     url(r'^positions/create/$', 'createPositionView', name='create_position_view'),
     url(r'^positions/terminate/(?P<id_offer>.*)/$', 'terminatePositionView', name='terminate_position_view'),
     url(r'^positions/old/$', 'oldPositionsListView', name='old_positions_list_view'),
+    url(r'edit_profile/$', 'userProfileEditView',name="edit_profile"),
+    url(r'^company/complete$', 'completeCompanyInfoView',name="complete_company"),
+    url(r'^company/details$', 'companyDetailView',name="company_detail"),
+
 )

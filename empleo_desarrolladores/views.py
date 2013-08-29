@@ -1,60 +1,11 @@
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.views.generic.list import ListView
-from django.core.urlresolvers import reverse_lazy, reverse
-from django.views.generic import DetailView
 from models import Offer, Company, UserProfile, Applicant, OfferApplicant
-from forms import CompanyForm, OfferForm, UserProfileForm, ApplicantForm, MySearchForm, CreateOfferForm
-from django.contrib.auth import get_user_model
+from forms import CompanyForm, ApplicantForm, CreateOfferForm, UserEditForm
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 
-class CompanyList(ListView):
-    model = Company
-    template_name = 'company_list.html'
-
-
-class CompanyCreate(CreateView):
-    model = Company
-    form_class = CompanyForm
-    template_name = 'company_create.html'
-    success_url = reverse_lazy('company_list')
-
-
-class CompanyUpdate(UpdateView):
-    model = Company
-    template_name = 'company_create.html'
-    success_url = reverse_lazy('company_list')
-
-
-class CompanyDelete(DeleteView):
-    model = Company
-    template_name = 'company_delete.html'
-    success_url = reverse_lazy('company_list')
-
-
-class UserProfileDetailView(DetailView):
-    model = get_user_model()
-    slug_field = "username"
-    template_name = "user_detail.html"
-
-    def get_object(self, queryset=None):
-        user = super(UserProfileDetailView, self).get_object(queryset)
-        UserProfile.objects.get_or_create(user=user)
-        return user
-
-
-class UserProfileEditView(UpdateView):
-    model = UserProfile
-    form_class = UserProfileForm
-    template_name = "edit_profile.html"
-
-    def get_object(self, queryset=None):
-        return UserProfile.objects.get_or_create(user=self.request.user)[0]
-
-    def get_success_url(self):
-        return reverse("profile", kwargs={"slug": self.request.user})
 
 
 def offerDetailsView(request, id_offer):
@@ -84,11 +35,33 @@ def offerDetailsView(request, id_offer):
     ctx = {'form': form, 'offer': offer}
     return render_to_response('offer_detail.html', ctx, context_instance=RequestContext(request))
 
+@login_required()
+def userProfileEditView(request):
+    user = UserProfile.objects.get(id=request.user.id)
+    if request.method== 'POST':
+        form = UserEditForm(request.POST)
+        if form.is_valid():
+            user.user.first_name = form.cleaned_data['first_name']
+            user.user.last_name = form.cleaned_data['last_name']
+            user.user.email = form.cleaned_data['email']
+            user.user.save()
+            return HttpResponseRedirect("/")
+    else:
+        form = UserEditForm(initial={
+            'first_name':user.user.first_name,
+            'last_name':user.user.last_name,
+            'email':user.user.email,
+            })
+    ctx = {'form':form}
+    return render_to_response('edit_profile.html',ctx,context_instance=RequestContext(request))
+
 
 @login_required()
 def createPositionView(request):
     user = UserProfile.objects.get(id=request.user.id)
     company = user.company
+    if not company:
+        return HttpResponseRedirect('/positions/list')
     if request.method == 'POST':
         form = CreateOfferForm(request.POST)
         if form.is_valid():
@@ -176,8 +149,11 @@ def terminatePositionView(request, id_offer):
 @login_required()
 def positionsListView(request):
     user = UserProfile.objects.get(user=request.user)
-    company = Company.objects.get(id=user.company.id)
-    offers = Offer.objects.filter(company=company)
+    if user.company:
+        company = Company.objects.get(id=user.company.id)
+        offers = Offer.objects.filter(company=company).order_by('-state')
+    else:
+        offers = []
     ctx = {'offers': offers}
     return render_to_response('positions.html', ctx, context_instance=RequestContext(request))
 
@@ -188,3 +164,65 @@ def oldPositionsListView(request):
     offers = Offer.objects.filter(state=1, company=user.company)
     ctx = {'offers': offers}
     return render_to_response('old_positions.html', ctx, context_instance=RequestContext(request))
+
+@login_required()
+def completeCompanyInfoView(request):
+    user = request.user.userprofile
+    company = Company()
+    if request.method=='POST':
+        form = CompanyForm(request.POST)
+        if form.is_valid():
+            company.nit = form.cleaned_data['nit']
+            company.name = form.cleaned_data['name']
+            company.location = form.cleaned_data['locationCompany']
+            company.website = form.cleaned_data['website']
+            company.email = form.cleaned_data['email']
+            company.phone = form.cleaned_data['phone']
+            image = form.cleaned_data['image']
+            if image:
+                company.image = image
+            company.save()
+            user.company = company
+            user.save()
+            return HttpResponseRedirect('/positions/list')
+    else:
+        form = CompanyForm()
+    ctx = {'form':form}
+    return render_to_response('company_form.html', ctx, context_instance=RequestContext(request))
+
+@login_required()
+def companyDetailView(request):
+    user = request.user.userprofile
+    company = user.company
+    if request.method=='POST':
+        form = CompanyForm(request.POST)
+        if form.is_valid():
+            company.nit = form.cleaned_data['nit']
+            company.name = form.cleaned_data['name']
+            company.location = form.cleaned_data['locationCompany']
+            company.website = form.cleaned_data['website']
+            company.email = form.cleaned_data['email']
+            company.phone = form.cleaned_data['phone']
+            image = form.cleaned_data['image']
+            if image:
+                company.image = image
+            company.save()
+            return HttpResponseRedirect('/positions/list')
+    else:
+        form = CompanyForm(initial={
+                'nit':company.nit,
+                'name':company.name,
+                'locationCompany':company.location,
+                'website':company.website,
+                'email':company.email,
+                'phone':company.phone,
+            })
+    ctx={'form':form, 'company':company}
+    return render_to_response('company_edit.html', ctx, context_instance=RequestContext(request))
+
+def processorUrlSite(request):
+    ctx = {
+        'site_url': settings.SITE_URL,
+        'site_name': settings.SITE_NAME,
+    }
+    return ctx
