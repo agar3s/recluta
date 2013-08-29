@@ -1,23 +1,7 @@
 from django import forms
-from models import Offer, Company, UserProfile
-from haystack.forms import HighlightedSearchForm
+from models import Offer, UserProfile
 from django.contrib.admin.widgets import AdminDateWidget
 from taggit.forms import *
-
-class MySearchForm(HighlightedSearchForm):
-    q = forms.CharField(required=False, label="", widget=forms.TextInput(attrs={'placeholder': 'Search Offers ...', 'class': 'span6'}))
-
-
-class OfferForm(forms.ModelForm):
-    class Meta:
-        model = Offer
-        exclude = ("applicants",)
-
-
-class CompanyForm(forms.ModelForm):
-    class Meta:
-        model = Company
-
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
@@ -40,3 +24,17 @@ class CreateOfferForm(forms.Form):
     type_contract = forms.ChoiceField(choices=Offer.TYPE_OF_CONTRACT)
     salary = forms.ChoiceField(choices=Offer.SALARY_CHOICES)
     offer_valid_time = forms.DateField(widget=AdminDateWidget())
+
+class CompanyForm(forms.Form):
+    nit = forms.CharField(widget=forms.TextInput())
+    name = forms.CharField(widget=forms.TextInput())
+    locationCompany = forms.CharField(label='Location',widget=forms.TextInput())
+    website = forms.CharField(widget=forms.TextInput())
+    email = forms.EmailField(widget=forms.TextInput())
+    phone = forms.IntegerField(widget=forms.TextInput())
+    image = forms.ImageField(required=False)
+
+class UserEditForm(forms.Form):
+    first_name = forms.CharField(widget=forms.TextInput())
+    last_name = forms.CharField(widget=forms.TextInput())
+    email = forms.EmailField(widget=forms.TextInput())

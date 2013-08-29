@@ -1,19 +1,24 @@
 from django.db import models
 from django.contrib.auth.models import User
 from taggit.managers import TaggableManager
-
+from django.utils import timezone
 
 class Company(models.Model):
+
+    def url(self, filename):
+        path = "media_data/company_image/%s/%s" % (self.company_name, str(filename))
+        return path
+
     nit = models.CharField(max_length=30)
-    company_name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
     location = models.CharField(max_length=100)
     website = models.CharField(max_length=100, blank=True, null=True)
     email = models.EmailField(max_length=100)
     phone = models.IntegerField(max_length=100)
-    image = models.ImageField(upload_to='companies', blank=True, null=True)
+    image = models.ImageField(upload_to=url, blank=True, null=True)
 
     def __unicode__(self):
-        return self.company_name
+        return self.name
 
 
 class Applicant(models.Model):
@@ -65,6 +70,8 @@ class Offer(models.Model):
     def __unicode__(self):
         return self.job_title
 
+    def valid_time(self):
+        return self.offer_valid_time > timezone.now() 
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, unique=True)

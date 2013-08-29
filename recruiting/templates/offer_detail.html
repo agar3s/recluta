@@ -52,17 +52,24 @@
                 </p>
             </div>
         </div>
-        
-        <p align="justify">
-            <strong>Description:</strong> {{ offer.job_description }} 
-        </p>
-        <p align="justify">
-            <strong>Skills: </strong> 
-            {% for tag in offer.skills.all %}
-                <span class="label label-info">{{tag.name}}</span>
-            {% endfor %}
-            
-        </p>
+        <div class="row-fluid">
+            <strong>Company: </strong>{{offer.company}}
+        </div>
+        <br>
+        <div class="row-fluid">
+            <div class="span12">
+                <p align="justify">
+                    <strong>Description:</strong> {{ offer.job_description }} 
+                </p>
+                <p align="justify">
+                    <strong>Skills: </strong> 
+                    {% for tag in offer.skills.all %}
+                        <span class="label label-info">{{tag.name}}</span>
+                    {% endfor %}
+                    
+                </p>
+            </div>
+        </div>
      </br>  
      <a class="btn btn-primary pull-right" href="#window" role="button" data-toggle="modal">Apply</a>
      <div id="window" class="modal hide fade">

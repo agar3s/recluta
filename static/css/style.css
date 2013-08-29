@@ -31,6 +31,12 @@ body {
     background-color: #e9eaee;
 }
 
+.fixed {
+    position: fixed;
+    bottom:0px;
+    left: 50%;
+}
+
 #id_job_title {
     width: 90%;
 }

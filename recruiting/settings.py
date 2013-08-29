@@ -1,8 +1,16 @@
 # Django settings for recruiting project.
 import os.path
+import djcelery
+from datetime import timedelta
+from celery.schedules import crontab
+
+djcelery.setup_loader()
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+
+SITE_URL='localhost:8000'
+SITE_NAME='Developer Jobs'
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -56,7 +64,7 @@ MEDIA_ROOT = ''
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://example.com/media/", "http://media.example.com/"
-MEDIA_URL = ''
+MEDIA_URL = '/media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -91,6 +99,8 @@ SECRET_KEY = 'k+ij$ahh(z9cr-b_cv7l_p*it#$f%4)(q=89*q8m==hlk6gg=x'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
+    
+    
 #     'django.template.loaders.eggs.Loader',
 )
 
@@ -113,6 +123,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    os.path.join(os.path.dirname(__file__),'templates'),
 )
 
 INSTALLED_APPS = (
@@ -175,7 +186,9 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
 "django.core.context_processors.static",
 "django.core.context_processors.tz",
 "django.contrib.messages.context_processors.messages",
-"django.core.context_processors.request")
+"django.core.context_processors.request",
+"empleo_desarrolladores.views.processorUrlSite",
+)
 
 #Search Configuration
 
@@ -199,3 +212,16 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'emailmypos@gmail.com'
 EMAIL_HOST_PASSWORD = 'mypospassword'
 EMAIL_USE_TLS = True
+
+# Celery
+BROKER_URL = "amqp://guest:guest@localhost:5672//"
+
+CELERYBEAT_SCHEDULE = {
+    'verify-time-offer': {
+        'task': 'empleo_desarrolladores.tasks.terminate_offers',
+        'schedule': crontab(),
+        'args': ()
+    },
+}
+
+CELERY_TIMEZONE = 'UTC'
