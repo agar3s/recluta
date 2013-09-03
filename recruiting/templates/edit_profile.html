@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bordered2">
+<h2 align="center">Edit Profile</h2>
+	<span class="pull-right"><strong>Username :</strong> {{ user.username }}</span>
+	<form method="post" action="">
+	  {% csrf_token %}
+	  {{ form.as_p }}
+	  <input type="submit" value="Save" class="btn btn-primary">
+	  <a href="{% url 'auth_password_change' %}" class="btn">Change Password </a>
+	</form>
+	<span class="pull-right"><a href="{% url 'company_detail' %}">View the company information</a></span>
+</div>
+{% endblock %}

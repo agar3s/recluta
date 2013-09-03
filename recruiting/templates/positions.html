@@ -1,8 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
 	<div class="row-fluid">
-		<a href="{% url 'create_position_view' %}" class="btn btn-primary pull-right">Create</a>
-		<a href="{% url 'old_positions_list_view' %}" class="btn pull-right">Old</a>
+		{% if user.userprofile.company %}
+			<a href="{% url 'create_position_view' %}" class="btn btn-primary pull-right">Create</a>
+			<a href="{% url 'old_positions_list_view' %}" class="btn pull-right">Old</a>
+		{% else %}
+			<a href="{% url 'complete_company' %}" class="pull-right">Complete the company information to create an Offer</a>
+		{% endif%}
 	</div>
 	<br>
 	<br>
@@ -32,9 +36,9 @@
 			</div>
 		{% endifnotequal %}
 	{% empty %}
-		<div class="bordered">
-			<p align="center">
-				<h3>Create an Offer!</h3>
+		<div class="bordered2" align="center">
+			<p>
+				<h1>Create an Offer!</h1>
 			</p>
 		</div>
 	{% endfor %}
