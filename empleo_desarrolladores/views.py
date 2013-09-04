@@ -85,7 +85,8 @@ def createPositionView(request):
             return HttpResponseRedirect("/positions/list")
     else:
         form = CreateOfferForm()
-    ctx = {'form': form}
+    offers = len(Offer.objects.filter(company=company,state=2))
+    ctx = {'form': form, 'offers':offers}
     return render_to_response('createPosition.html', ctx, context_instance=RequestContext(request))
 
 
@@ -131,7 +132,8 @@ def positionDetailsView(request, id_offer):
             'skills': ','.join(s),
             'job_description': offer.job_description,
         })
-    ctx = {'form': form, 'offer': offer, 'applicants': applicants}
+    offers = len(Offer.objects.filter(company=company,state=2))
+    ctx = {'form': form, 'offer': offer, 'applicants': applicants, 'offers':offers}
     return render_to_response('position_detail.html', ctx, context_instance=RequestContext(request))
 
 
@@ -178,9 +180,6 @@ def completeCompanyInfoView(request):
             company.website = form.cleaned_data['website']
             company.email = form.cleaned_data['email']
             company.phone = form.cleaned_data['phone']
-            image = form.cleaned_data['image']
-            if image:
-                company.image = image
             company.save()
             user.company = company
             user.save()
@@ -203,9 +202,6 @@ def companyDetailView(request):
             company.website = form.cleaned_data['website']
             company.email = form.cleaned_data['email']
             company.phone = form.cleaned_data['phone']
-            image = form.cleaned_data['image']
-            if image:
-                company.image = image
             company.save()
             return HttpResponseRedirect('/positions/list')
     else:
