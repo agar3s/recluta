@@ -32,7 +32,7 @@ class CompanyForm(forms.Form):
     website = forms.CharField(widget=forms.TextInput())
     email = forms.EmailField(widget=forms.TextInput())
     phone = forms.IntegerField(widget=forms.TextInput())
-    image = forms.ImageField(required=False)
+    # image = forms.ImageField(required=False)
 
 class UserEditForm(forms.Form):
     first_name = forms.CharField(widget=forms.TextInput())
