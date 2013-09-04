@@ -1,5 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
+{% if offers > 4 and offer.state == 0 %}
+    <div class="row_fluid">
+        <div class="alert alert-warning">
+            <button type="button" class="close" data-dismiss="alert">x</button>
+            <strong>Info :</strong> You can't publish this offer because you can publish maximum 5 offers
+        </div>
+    </div>
+    
+    {% endif %}
 {% ifequal offer.state 1%}
     <div class="row-fluid">
         <div class="span6">
@@ -110,7 +119,9 @@
                     <div class="controls" align="center">
                         <a href="{% url 'position_list_view' %}" class="btn">Cancel</a>
                         <button type="submit" class="btn btn-primary" name="_save">Save</button>
-                        <button type="submit" class="btn btn-success" name="_publish">Publish </button>
+                        {% if offers < 5 %}
+                            <button type="submit" class="btn btn-success" name="_publish">Publish </button>
+                        {% endif %}
                     </div>
                 </div>
             </form>
