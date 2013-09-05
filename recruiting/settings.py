@@ -207,11 +207,14 @@ HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 ACCOUNT_ACTIVATION_DAYS = 7
 
 #Email configuration
+EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'emailmypos@gmail.com'
+DEFAULT_FROM_EMAIL = 'emailmypos@gmail.com'
+SERVER_EMAIL = 'emailmypos@gmail.com'
 EMAIL_HOST_PASSWORD = 'mypospassword'
-EMAIL_USE_TLS = True
+
 
 # Celery
 BROKER_URL = "amqp://guest:guest@localhost:5672//"
