@@ -207,14 +207,14 @@ HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 ACCOUNT_ACTIVATION_DAYS = 7
 
 #Email configuration
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'emailmypos@gmail.com'
-DEFAULT_FROM_EMAIL = 'emailmypos@gmail.com'
-SERVER_EMAIL = 'emailmypos@gmail.com'
-EMAIL_HOST_PASSWORD = 'mypospassword'
 
+#Email configuration
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = "Codetag <notification@codetag.me>"
+EMAIL_HOST = "smtp.postmarkapp.com"
+EMAIL_HOST_USER = "b8d676a1-5b44-44d1-9ca4-ee943fc7fc04"
+EMAIL_HOST_PASSWORD = "b8d676a1-5b44-44d1-9ca4-ee943fc7fc04"
+SERVER_EMAIL = "Codetag <notification@codetag.me>"
 
 # Celery
 BROKER_URL = "amqp://guest:guest@localhost:5672//"

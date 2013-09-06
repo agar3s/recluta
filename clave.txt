@@ -1,2 +1,0 @@
-ssh ubuntu@ec2-54-211-107-141.compute-1.amazonaws.com
-
