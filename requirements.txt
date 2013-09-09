@@ -6,7 +6,7 @@ anyjson==0.3.3
 argparse==1.2.1
 billiard==2.7.3.32
 celery==3.0.22
-distribute==0.6.24
+distribute==0.6.32
 django-celery==3.0.21
 django-debug-toolbar==0.9.4
 django-extensions==1.1.1
