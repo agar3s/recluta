@@ -1,6 +1,6 @@
 Django==1.5.1
 PIL==1.1.7
-South==0.8
+South==0.8.1
 amqp==1.0.13
 anyjson==0.3.3
 argparse==1.2.1
@@ -16,6 +16,7 @@ django-registration==1.0
 django-taggit==0.10
 ipython==0.13.2
 kombu==2.5.13
+psycopg2==2.5.1
 pyelasticsearch==0.5
 python-dateutil==2.1
 pytz==2013b
