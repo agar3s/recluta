@@ -10,7 +10,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
 
         # Changing field 'Offer.salary'
-        db.alter_column(u'empleo_desarrolladores_offer', 'salary', self.gf('django.db.models.fields.CharField')(max_length=2))
+        db.alter_column(u'empleo_desarrolladores_offer', 'salary', self.gf('django.db.models.fields.IntegerField')(max_length=2))
 
     def backwards(self, orm):
 
