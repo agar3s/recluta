@@ -1,16 +1,95 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
-
-Replace this with more appropriate tests for your application.
-"""
-
+from datetime import datetime
+from django.utils import timezone
+from django.http import HttpRequest
 from django.test import TestCase
+from empleo_desarrolladores.models import Company, Applicant, Offer
+from empleo_desarrolladores.views import offerDetailsView
 
+class CompanyTest(TestCase):
+    def test_url_should_return_the_path_to_the_company_logo(self):
+        company = Company()
+        company.name = 'codetag'
 
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
+        self.assertEqual(company.url('my_file.jpg'), 'media_dat/company_image/codetag/my_file.jpg')
+
+class ApplicantTest(TestCase):
+    def test_full_name_should_return_a_string_containing_first_and_last_names_separated_by_a_space(self):
+        applicant = Applicant()
+        applicant.first_name = "yo"
+        applicant.last_name = "robot"
+
+        self.assertEqual(applicant.full_name(), "yo robot")
+
+    def test_full_name_should_return_an_empty_string_when_first_and_last_name_are_empty(self):
+        applicant = Applicant()
+
+        self.assertEqual(applicant.full_name(), "")
+
+class OfferTest(TestCase):
+    def test_valid_time_should_return_true_when_the_offer_valid_time_is_greater_than_current_date(self):
+        now = datetime.now()
+        tomorrow = datetime(now.year, now.month, now.day+1, 0, 0, 0)
+        offer = Offer()
+        offer.offer_valid_time = timezone.make_aware(tomorrow, timezone.get_default_timezone())
+
+        self.assertEqual(offer.valid_time(), True)
+
+    def test_valid_time_should_return_true_when_the_offer_valid_time_is_equal_to_current_date(self):
+        offer = Offer()
+        offer.offer_valid_time = timezone.make_aware(datetime.now(), timezone.get_default_timezone())
+
+        self.assertEqual(offer.valid_time(), True)
+
+    def test_valid_time_should_retun_false_when_the_offer_valid_time_is_lower_than_curret_date(self):
+        now = datetime.now()
+        yesterday = datetime(now.year, now.month, now.day-1, 0, 0, 0)
+        offer = Offer()
+        offer.offer_valid_time = timezone.make_aware(yesterday, timezone.get_default_timezone())
+
+        self.assertEqual(offer.valid_time(), False)
+
+class OfferDetailsViewTest(TestCase):
+    def test_GET_should_redirect_to_home_when_the_given_offer_has_state_1(self):
+        offer = Offer(offer_valid_time = datetime.now(), state=1)
+        offer.save()
+        request = HttpRequest()
+        request.method = 'GET'
+        result = offerDetailsView(request, offer.id)
+
+        self.assertEqual(result.status_code, 302)
+        self.assertEqual(result['location'], '/')
+
+    def test_GET_should_redirect_to_home_when_the_given_offer_has_state_0(self):
+        offer = Offer(offer_valid_time = datetime.now(), state=0)
+        offer.save()
+        request = HttpRequest()
+        request.method = 'GET'
+        result = offerDetailsView(request, offer.id)
+
+        self.assertEqual(result.status_code, 302)
+        self.assertEqual(result['location'], '/')
+
+    def test_GET_should_render_the_offer_detail_template_when_the_offers_state_is_not_1_nor_0(self):
+        offer = Offer(offer_valid_time = datetime.now(), state=3)
+        offer.save()
+        request = HttpRequest()
+        request.method = 'GET'
+        result = offerDetailsView(request, offer.id)
+
+        self.assertEqual(result.status_code, 200)
+
+    def test_POST_should_redirect_to_home_when_the_given_data_is_valid(self):
+        offer = Offer(offer_valid_time = datetime.now(), state=0)
+        offer.save()
+
+        request = HttpRequest()
+        request.method = 'POST'
+        request.POST['first_name'] = 'yo'
+        request.POST['last_name'] = 'bender'
+        request.POST['mail'] = 'bender@gmail.com'
+        request.POST['observation'] = 'well, none'
+
+        result = offerDetailsView(request, offer.id)
+
+        self.assertEqual(result.status_code, 302)
+        self.assertEqual(result['location'], '/')
