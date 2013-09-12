@@ -1,16 +1,18 @@
 from datetime import datetime
 from django.utils import timezone
+from django.contrib.auth import authenticate, login
 from django.http import HttpRequest
 from django.test import TestCase
-from empleo_desarrolladores.models import Company, Applicant, Offer
-from empleo_desarrolladores.views import offerDetailsView
+from empleo_desarrolladores.models import Company, Applicant, Offer, UserProfile
+from django.contrib.auth.models import User
+from empleo_desarrolladores.views import offerDetailsView, userProfileEditView
 
 class CompanyTest(TestCase):
     def test_url_should_return_the_path_to_the_company_logo(self):
         company = Company()
         company.name = 'codetag'
-
-        self.assertEqual(company.url('my_file.jpg'), 'media_dat/company_image/codetag/my_file.jpg')
+        
+        self.assertEqual(company.url('my_file.jpg'), 'media_data/company_image/codetag/my_file.jpg')
 
 class ApplicantTest(TestCase):
     def test_full_name_should_return_a_string_containing_first_and_last_names_separated_by_a_space(self):
@@ -22,7 +24,7 @@ class ApplicantTest(TestCase):
 
     def test_full_name_should_return_an_empty_string_when_first_and_last_name_are_empty(self):
         applicant = Applicant()
-
+        
         self.assertEqual(applicant.full_name(), "")
 
 class OfferTest(TestCase):
@@ -35,8 +37,10 @@ class OfferTest(TestCase):
         self.assertEqual(offer.valid_time(), True)
 
     def test_valid_time_should_return_true_when_the_offer_valid_time_is_equal_to_current_date(self):
+        now = datetime.now()
+        today = datetime(now.year,now.month, now.day, 23,59,59)
         offer = Offer()
-        offer.offer_valid_time = timezone.make_aware(datetime.now(), timezone.get_default_timezone())
+        offer.offer_valid_time = timezone.make_aware(today, timezone.get_default_timezone())
 
         self.assertEqual(offer.valid_time(), True)
 
@@ -93,3 +97,26 @@ class OfferDetailsViewTest(TestCase):
 
         self.assertEqual(result.status_code, 302)
         self.assertEqual(result['location'], '/')
+
+class UserProfileEditViewTest(TestCase):
+    def test_POST_should_redirect_to_home_when_the_given_data_is_valid(self):
+        
+        user = User()
+        user.username = 'yo'
+        user.password = 'pass'
+        user.save()
+
+        user_authenticate = authenticate(username=user.username, password=user.password)
+        request = HttpRequest()
+        login(request, user_authenticate)
+        request.method = 'POST'
+        request.POST['first_name'] = 'ignus'
+        request.POST['last_name'] = 'smart'
+        request.POST['mail'] = 'ignus@gmail.com'
+
+        result = userProfileEditView(request)
+
+        self.assertEqual(result.status_code, 302)
+        self.assertEqual(result['location'],'/')
+
+

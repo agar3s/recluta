@@ -6,7 +6,7 @@ from django.utils import timezone
 class Company(models.Model):
 
     def url(self, filename):
-        path = "media_data/company_image/%s/%s" % (self.company_name, str(filename))
+        path = "media_data/company_image/%s/%s" % (self.name, str(filename))
         return path
 
     nit = models.CharField(max_length=30)
@@ -30,7 +30,7 @@ class Applicant(models.Model):
         return self.mail
 
     def full_name(self):
-        return self.first_name+" "+self.last_name
+        return ('%s %s' % (self.first_name, self.last_name)).strip()
 
 
 class Offer(models.Model):
@@ -71,7 +71,7 @@ class Offer(models.Model):
         return self.job_title
 
     def valid_time(self):
-        return self.offer_valid_time > timezone.now() 
+        return self.offer_valid_time >= timezone.now() 
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, unique=True)
