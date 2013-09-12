@@ -108,6 +108,7 @@ class UserProfileEditViewTest(TestCase):
 
         user_authenticate = authenticate(username=user.username, password=user.password)
         request = HttpRequest()
+	import pdb; pdb.set_trace()
         login(request, user_authenticate)
         request.method = 'POST'
         request.POST['first_name'] = 'ignus'
