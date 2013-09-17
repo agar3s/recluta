@@ -4,7 +4,7 @@ from django.http import HttpRequest
 from django.test import TestCase
 from empleo_desarrolladores.models import Company, Applicant, Offer
 from django.contrib.auth.models import User
-from empleo_desarrolladores.views import offerDetailsView, userProfileEditView, createPositionView, terminatePositionView
+from empleo_desarrolladores.views import offerDetailsView, userProfileEditView, createPositionView, terminatePositionView, positionsListView, oldPositionsListView, completeCompanyInfoView, companyDetailView
 from django.test.client import RequestFactory
 
 class CompanyTest(TestCase):
@@ -217,3 +217,56 @@ class TerminatePositionViewTest(TestCase):
         self.assertEqual(result.status_code, 302)
         self.assertEqual(result['location'],'/positions/list')
 
+class PositionsListViewTest(TestCase):
+    def test_GET_should_render_the_positions_list_template(self):
+        
+        user = User.objects.create_user(username='yo',password='pass')
+
+        factory = RequestFactory()
+        request = factory.get('/positions/list/')
+        request.user = user
+        result = positionsListView(request)
+
+        self.assertEqual(result.status_code, 200)
+
+class OldPositionListViewTest(TestCase):
+    def test_GET_should_redirect_positions_list_template(self):
+        
+        user = User.objects.create_user(username='yo',password='pass')
+
+        factory = RequestFactory()
+        request = factory.get('/positions/old/')
+        request.user = user
+        result = oldPositionsListView(request)
+
+        self.assertEqual(result.status_code, 200)
+
+class CompleteCompanyInfoViewTest(TestCase):
+    def test_POST__should_redirect_to_positions_list_when_the_given_data_is_valid(self):
+        
+        user = User.objects.create_user(username='yo',password='pass')
+
+        factory = RequestFactory()
+        request = factory.post('/company/complete/')
+        request.user = user
+        request.POST['nit'] = 23432
+        request.POST['name'] = 'CompanyName'
+        request.POST['locationCompany'] = 'Bogota'
+        request.POST['website']='company.com'
+        request.POST['email']='company@gmail.com'
+        request.POST['phone']=23433434
+        result = completeCompanyInfoView(request)
+
+        self.assertEqual(result.status_code, 302)
+        self.assertEqual(result['location'],'/positions/list')
+
+    def test_GET_should_render_the_complete_company_info_template(self):
+        
+        user = User.objects.create_user(username='yo',password='pass')
+
+        factory = RequestFactory()
+        request = factory.get('/compnay/complete/')
+        request.user = user
+        result = completeCompanyInfoView(request)
+
+        self.assertEqual(result.status_code, 200)    
