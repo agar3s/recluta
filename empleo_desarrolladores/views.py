@@ -37,20 +37,20 @@ def offerDetailsView(request, id_offer):
 
 @login_required()
 def userProfileEditView(request):
-    user = UserProfile.objects.get(id=request.user.id)
+    user = request.user
     if request.method== 'POST':
         form = UserEditForm(request.POST)
         if form.is_valid():
-            user.user.first_name = form.cleaned_data['first_name']
-            user.user.last_name = form.cleaned_data['last_name']
-            user.user.email = form.cleaned_data['email']
-            user.user.save()
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.email = form.cleaned_data['email']
+            user.save()
             return HttpResponseRedirect("/")
     else:
         form = UserEditForm(initial={
-            'first_name':user.user.first_name,
-            'last_name':user.user.last_name,
-            'email':user.user.email,
+            'first_name':user.first_name,
+            'last_name':user.last_name,
+            'email':user.email,
             })
     ctx = {'form':form}
     return render_to_response('edit_profile.html',ctx,context_instance=RequestContext(request))

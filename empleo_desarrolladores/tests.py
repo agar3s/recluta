@@ -1,11 +1,11 @@
 from datetime import datetime
 from django.utils import timezone
-from django.contrib.auth import authenticate, login
 from django.http import HttpRequest
 from django.test import TestCase
-from empleo_desarrolladores.models import Company, Applicant, Offer, UserProfile
+from empleo_desarrolladores.models import Company, Applicant, Offer
 from django.contrib.auth.models import User
-from empleo_desarrolladores.views import offerDetailsView, userProfileEditView
+from empleo_desarrolladores.views import offerDetailsView, userProfileEditView, createPositionView, terminatePositionView
+from django.test.client import RequestFactory
 
 class CompanyTest(TestCase):
     def test_url_should_return_the_path_to_the_company_logo(self):
@@ -101,23 +101,119 @@ class OfferDetailsViewTest(TestCase):
 class UserProfileEditViewTest(TestCase):
     def test_POST_should_redirect_to_home_when_the_given_data_is_valid(self):
         
-        user = User()
-        user.username = 'yo'
-        user.password = 'pass'
-        user.save()
+        factory = RequestFactory()
+        user = User.objects.create_user(username='yo',password='pass')
 
-        user_authenticate = authenticate(username=user.username, password=user.password)
-        request = HttpRequest()
-	import pdb; pdb.set_trace()
-        login(request, user_authenticate)
-        request.method = 'POST'
+        request = factory.post('/edit_profile/')
+        request.user = user
         request.POST['first_name'] = 'ignus'
         request.POST['last_name'] = 'smart'
-        request.POST['mail'] = 'ignus@gmail.com'
-
+        request.POST['email'] = 'ignus@gmail.com'
+        
         result = userProfileEditView(request)
-
         self.assertEqual(result.status_code, 302)
         self.assertEqual(result['location'],'/')
 
+    def test_GET_should_render_the_user_profile_edit_template(self):
+        
+        factory = RequestFactory()
+        user = User.objects.create_user(username='yo',password='pass')
+
+        request = factory.get('/edit_profile/')
+        request.user = user
+        result = userProfileEditView(request)
+
+        self.assertEqual(result.status_code, 200)
+
+class CreatePositionViewTest(TestCase):
+    def test_POST_save_should_redirect_to_positions_list_when_the_given_data_is_valid(self):
+        
+        factory = RequestFactory()
+        user = User.objects.create_user(username='yo',password='pass')
+
+        request = factory.post('/positions/create/')
+        request.user = user
+        request.POST['job_title'] = 'Developer'
+        request.POST['location'] = 'Bogota'
+        request.POST['type_contract'] = 1
+        request.POST['salary']=15
+        request.POST['offer_valid_time']='23-12-2013'
+        request.POST['skills']='Java'
+        request.POST['job_description']='This is a description'
+        request.POST['_save']=1
+        result = createPositionView(request)
+        self.assertEqual(result.status_code, 302)
+        self.assertEqual(result['location'],'/positions/list')
+
+    def test_POST_publish_should_redirect_to_positions_list_when_the_given_data_is_valid(self):
+        
+        user = User.objects.create_user(username='yo',password='pass')
+
+        factory = RequestFactory()
+        request = factory.post('/positions/create/')
+        request.user = user
+        request.POST['job_title'] = 'Developer'
+        request.POST['location'] = 'Bogota'
+        request.POST['type_contract'] = 1
+        request.POST['salary']=15
+        request.POST['offer_valid_time']='23-12-2013'
+        request.POST['skills']='Java'
+        request.POST['job_description']='This is a description'
+        request.POST['_publish']=1
+        result = createPositionView(request)
+
+        self.assertEqual(result.status_code, 302)
+        self.assertEqual(result['location'],'/positions/list')
+
+    def test_GET_should_render_the_user_profile_edit_template(self):
+        
+        user = User.objects.create_user(username='yo',password='pass')
+
+        factory = RequestFactory()
+        request = factory.get('/positions/create/')
+        request.user = user
+        result = userProfileEditView(request)
+
+        self.assertEqual(result.status_code, 200)
+
+class TerminatePositionViewTest(TestCase):
+
+    def test_GET_should_redirect_positions_list_when_user_company_equals_offer_company(self):
+        
+        company = Company()        
+
+        user = User.objects.create_user(username='yo',password='pass')
+        user.userprofile.company = company
+
+        offer = Offer(offer_valid_time = datetime.now(), state=0)
+        offer.company = company
+        offer.save()
+
+        factory = RequestFactory()
+        request = factory.get('/positions/terminate/%s' % offer.id)
+        request.user = user
+        result = terminatePositionView(request, offer.id)
+
+        self.assertEqual(result.status_code, 302)
+        self.assertEqual(result['location'],'/positions/list')
+
+    def test_GET_should_redirect_positions_list_when_user_company_different_offer_company(self):
+        
+        company1 = Company()
+        company2 = Company()        
+
+        user = User.objects.create_user(username='yo',password='pass')
+        user.userprofile.company = company2
+
+        offer = Offer(offer_valid_time = datetime.now(), state=0)
+        offer.company = company1
+        offer.save()
+
+        factory = RequestFactory()
+        request = factory.get('/positions/terminate/%s' % offer.id)
+        request.user = user
+        result = terminatePositionView(request, offer.id)
+
+        self.assertEqual(result.status_code, 302)
+        self.assertEqual(result['location'],'/positions/list')
 
