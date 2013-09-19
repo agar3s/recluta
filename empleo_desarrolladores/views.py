@@ -9,6 +9,9 @@ from datetime import datetime, timedelta
 
 
 
+def plansAndPricingView(request):
+    return render_to_response('plans_and_pricing.html')
+
 def offerDetailsView(request, id_offer):
     offer = Offer.objects.get(id=id_offer)
     offerApplicant = OfferApplicant()

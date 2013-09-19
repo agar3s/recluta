@@ -74,6 +74,34 @@ body {
 }
 
 
-input.required, error {
-border: 2px solid red;
+input.required,
+error {
+    border: 2px solid red;
+}
+
+.promo-header {
+    text-align: center;
+}
+
+.plans-and-pricing {
+    margin: 30px auto 0 auto;
+}
+
+.plan {
+    padding: 10px;
+    border: 1px solid #e1e1e8;
+    box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.1);
+}
+.plan ol {
+    list-style: none;
+    margin: 20px 0;
+}
+.plan li {
+    margin-top: 10px;
+}
+.plan .btn {
+    margin: 20px;
+}
+.suggested-plan {
+    background: #f7f7f9;
 }
