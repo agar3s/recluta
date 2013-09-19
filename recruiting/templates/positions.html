@@ -4,8 +4,6 @@
 		{% if user.userprofile.company %}
 			<a href="{% url 'create_position_view' %}" class="btn btn-primary pull-right">Create</a>
 			<a href="{% url 'old_positions_list_view' %}" class="btn pull-right">Old</a>
-		{% else %}
-			<a href="{% url 'complete_company' %}" class="pull-right">Complete the company information to create an Offer</a>
 		{% endif%}
 	</div>
 	<br>
@@ -38,7 +36,12 @@
 	{% empty %}
 		<div class="bordered2" align="center">
 			<p>
+				{% if user.userprofile.company %}
 				<h1>Create an Offer!</h1>
+				{% else %}
+				<h1>Complete the company information to create an Offer</h1> 
+				<a href="{% url 'complete_company' %}" class="pull-right btn btn-primary" >Here</a>
+				{% endif %}
 			</p>
 		</div>
 	{% endfor %}

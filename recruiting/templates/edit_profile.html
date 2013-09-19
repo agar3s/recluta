@@ -10,6 +10,8 @@
 	  <input type="submit" value="Save" class="btn btn-primary">
 	  <a href="{% url 'auth_password_change' %}" class="btn">Change Password </a>
 	</form>
+	{% if user.userprofile.company %}
 	<span class="pull-right"><a href="{% url 'company_detail' %}">View the company information</a></span>
+	{% endif %}
 </div>
 {% endblock %}
