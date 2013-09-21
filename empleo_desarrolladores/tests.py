@@ -165,7 +165,7 @@ class CreatePositionViewTest(TestCase):
         self.assertEqual(result.status_code, 302)
         self.assertEqual(result['location'],'/positions/list')
 
-    def test_GET_should_render_the_user_profile_edit_template(self):
+    def test_GET_should_render_the_create_position_template(self):
         
         user = User.objects.create_user(username='yo',password='pass')
 
@@ -178,29 +178,79 @@ class CreatePositionViewTest(TestCase):
 
     def userprofile_matching_id(self):
 
-        user = User.objects.create_user(username='yo',password='pass')
-        user.save()
+        user1 = User.objects.create_user(username='yo',password='pass')
+        user1.save()
 
         user2 = User.objects.create_user(username='tu',password='pass')
         user2.save()
 
-        other_user_profile = UserProfile()
-        other_user_profile.user = user2
-        other_user_profile.save()
+        profile1 = UserProfile()
+        profile1.user = user2
+        profile1.save()
 
-        myuserprofile = UserProfile()
-        myuserprofile.user = user
-        myuserprofile.save()
+        profile2 = UserProfile()
+        profile2.user = user1
+        profile2.save()
 
-        get_my_user_profile = UserProfile.objects.get(id=user.id)
+        get_my_user_profile = UserProfile.objects.get(id=user1.id)
 
         factory = RequestFactory()
         request = factory.get('/positions/create/')
-        request.user = user
+        request.user = user1
         result = createPositionView(request)
 
-        self.assertEqual(user.userprofile.id, get_my_user_profile.id)
+        self.assertEqual(user1.userprofile.id, get_my_user_profile.id)
         self.assertEqual(result.status_code, 200)
+
+    def offer_company_is_equal_to_request_user_company(self):
+
+        user1 = User.objects.create_user(username='yo',password='pass')
+        user1.save()
+
+        user2 = User.objects.create_user(username='tu',password='pass')
+        user2.save()
+
+        company1= Company()
+        company1.nit = 12343
+        company1.name = "company1"
+        company1.email = "company1@mail.com"
+        company1.location = "Bogota"
+        company1.website = "company1.com"
+        company1.phone = 3454345
+        company1.save()
+
+        company2= Company()
+        company2.nit = 12345
+        company2.name = "company2"
+        company2.email = "company2@mail.com"
+        company2.location = "Bogota"
+        company2.website = "company2.com"
+        company2.phone = 3454344
+        company2.save()
+
+        profile1 = UserProfile()
+        profile1.user = user2
+        profile1.company = company1
+        profile1.save()
+
+        profile2 = UserProfile()
+        profile2.user = user1
+        profile2.company = company2
+        profile2.save()
+
+        factory = RequestFactory()
+        request = factory.post('/positions/create/')
+        request.user = user1
+        request.POST['job_title'] = 'Developer'
+        request.POST['location'] = 'Bogota'
+        request.POST['type_contract'] = 1
+        request.POST['salary']=15
+        request.POST['offer_valid_time']='23-12-2013'
+        request.POST['skills']='Java'
+        request.POST['job_description']='This is a description'
+        result = createPositionView(request)
+
+        self.assertEqual(result.status_code, 302)
 
 
 class TerminatePositionViewTest(TestCase):
@@ -292,7 +342,7 @@ class CompleteCompanyInfoViewTest(TestCase):
         user = User.objects.create_user(username='yo',password='pass')
 
         factory = RequestFactory()
-        request = factory.get('/compnay/complete/')
+        request = factory.get('/company/complete/')
         request.user = user
         result = completeCompanyInfoView(request)
 
