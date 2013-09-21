@@ -2,7 +2,7 @@ from datetime import datetime
 from django.utils import timezone
 from django.http import HttpRequest
 from django.test import TestCase
-from empleo_desarrolladores.models import Company, Applicant, Offer
+from empleo_desarrolladores.models import Company, Applicant, Offer, UserProfile
 from django.contrib.auth.models import User
 from empleo_desarrolladores.views import offerDetailsView, userProfileEditView, createPositionView, terminatePositionView, positionsListView, oldPositionsListView, completeCompanyInfoView, companyDetailView
 from django.test.client import RequestFactory
@@ -172,9 +172,36 @@ class CreatePositionViewTest(TestCase):
         factory = RequestFactory()
         request = factory.get('/positions/create/')
         request.user = user
-        result = userProfileEditView(request)
+        result = createPositionView(request)
 
         self.assertEqual(result.status_code, 200)
+
+    def userprofile_matching_id(self):
+
+        user = User.objects.create_user(username='yo',password='pass')
+        user.save()
+
+        user2 = User.objects.create_user(username='tu',password='pass')
+        user2.save()
+
+        other_user_profile = UserProfile()
+        other_user_profile.user = user2
+        other_user_profile.save()
+
+        myuserprofile = UserProfile()
+        myuserprofile.user = user
+        myuserprofile.save()
+
+        get_my_user_profile = UserProfile.objects.get(id=user.id)
+
+        factory = RequestFactory()
+        request = factory.get('/positions/create/')
+        request.user = user
+        result = createPositionView(request)
+
+        self.assertEqual(user.userprofile.id, get_my_user_profile.id)
+        self.assertEqual(result.status_code, 200)
+
 
 class TerminatePositionViewTest(TestCase):
 
@@ -270,3 +297,4 @@ class CompleteCompanyInfoViewTest(TestCase):
         result = completeCompanyInfoView(request)
 
         self.assertEqual(result.status_code, 200)    
+
