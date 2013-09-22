@@ -12,9 +12,13 @@
 		{% ifnotequal offer.state 1 %}
 			<div class="row-fluid bordered1">
 				
-					<div class="span9">
-						<a href="/positions/details/{{offer.id}}"><h4>{{offer.job_title| upper}}</h4></a>
+					<div class="span7">
+						<a href="/positions/details/{{offer.id}}"><h5>{{offer.job_title| upper}}</h5></a>
 					</div>	
+
+					<div class="span2">
+						<span class="pull-right">{{offer.offer_valid_time}}</span>
+					</div>
 					
 					<div class="span1">
 						<span class="pull-right"><i class="icon-user"></i>{{offer.applicants.count}}</span>

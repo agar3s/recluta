@@ -5,6 +5,7 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from datetime import datetime, timedelta
 
 
 
@@ -75,7 +76,7 @@ def createPositionView(request):
                 offer.state = 0
             elif '_publish' in request.POST:
                 offer.state = 2
-            offer.offer_valid_time = form.cleaned_data['offer_valid_time']
+            offer.offer_valid_time = datetime.now() + timedelta(days=30)
             skills = form.cleaned_data['skills']
             offer.job_description = form.cleaned_data['job_description']
             offer.company = company
@@ -108,7 +109,7 @@ def positionDetailsView(request, id_offer):
                 offer.state = 0
             elif '_publish' in request.POST:
                 offer.state = 2
-            offer.offer_valid_time = form.cleaned_data['offer_valid_time']
+            offer.offer_valid_time = datetime.now() + timedelta(days=30)
             skills = form.cleaned_data['skills']
             offer.job_description = form.cleaned_data['job_description']
             offer.company = company

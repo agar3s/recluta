@@ -1,6 +1,5 @@
 from django import forms
 from models import Offer, UserProfile
-from django.contrib.admin.widgets import AdminDateWidget
 from taggit.forms import *
 
 class UserProfileForm(forms.ModelForm):
@@ -23,7 +22,6 @@ class CreateOfferForm(forms.Form):
     location = forms.CharField(widget=forms.TextInput())
     type_contract = forms.ChoiceField(choices=Offer.TYPE_OF_CONTRACT)
     salary = forms.ChoiceField(choices=Offer.SALARY_CHOICES)
-    offer_valid_time = forms.DateField(widget=AdminDateWidget())
 
 class CompanyForm(forms.Form):
     nit = forms.CharField(widget=forms.TextInput())
