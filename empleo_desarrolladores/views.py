@@ -1,4 +1,4 @@
-from models import Offer, Company, UserProfile, Applicant, OfferApplicant
+from models import Offer, Company, Applicant, OfferApplicant
 from forms import CompanyForm, ApplicantForm, CreateOfferForm, UserEditForm
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -58,7 +58,8 @@ def userProfileEditView(request):
 
 @login_required()
 def createPositionView(request):
-    user = UserProfile.objects.get(id=request.user.id)
+
+    user = request.user.userprofile
     company = user.company
     if not company:
         return HttpResponseRedirect('/positions/list')
@@ -92,7 +93,7 @@ def createPositionView(request):
 
 @login_required()
 def positionDetailsView(request, id_offer):
-    user = UserProfile.objects.get(id=request.user.id)
+    user = request.user.userprofile
     company = user.company
     offer = Offer.objects.get(id=id_offer)
     applicants = OfferApplicant.objects.filter(offer=offer)
@@ -139,7 +140,7 @@ def positionDetailsView(request, id_offer):
 
 @login_required()
 def terminatePositionView(request, id_offer):
-    user = UserProfile.objects.get(id=request.user.id)
+    user = request.user.userprofile
     offer = Offer.objects.get(id=id_offer)
     if offer.company != user.company:
             return HttpResponseRedirect("/positions/list")
@@ -150,7 +151,7 @@ def terminatePositionView(request, id_offer):
 
 @login_required()
 def positionsListView(request):
-    user = UserProfile.objects.get(user=request.user)
+    user = request.user.userprofile
     if user.company:
         company = Company.objects.get(id=user.company.id)
         offers = Offer.objects.filter(company=company).order_by('-state')
@@ -162,7 +163,7 @@ def positionsListView(request):
 
 @login_required()
 def oldPositionsListView(request):
-    user = UserProfile.objects.get(id=request.user.id)
+    user = request.user.userprofile
     offers = Offer.objects.filter(state=1, company=user.company)
     ctx = {'offers': offers}
     return render_to_response('old_positions.html', ctx, context_instance=RequestContext(request))

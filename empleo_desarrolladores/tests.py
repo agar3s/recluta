@@ -169,6 +169,17 @@ class CreatePositionViewTest(TestCase):
         
         user = User.objects.create_user(username='yo',password='pass')
 
+        company = Company()
+        company.nit = 12343
+        company.name = "company1"
+        company.email = "company1@mail.com"
+        company.location = "Bogota"
+        company.website = "company1.com"
+        company.phone = 3454345
+        company.save()
+
+        user.userprofile.company = company
+
         factory = RequestFactory()
         request = factory.get('/positions/create/')
         request.user = user
@@ -176,33 +187,10 @@ class CreatePositionViewTest(TestCase):
 
         self.assertEqual(result.status_code, 200)
 
-    def userprofile_matching_id(self):
+    def test_GET_should_display_the_number_of_public_offers_published_by_the_users_company(self):
 
-        user1 = User.objects.create_user(username='yo',password='pass')
-        user1.save()
-
-        user2 = User.objects.create_user(username='tu',password='pass')
-        user2.save()
-
-        profile1 = UserProfile()
-        profile1.user = user2
-        profile1.save()
-
-        profile2 = UserProfile()
-        profile2.user = user1
-        profile2.save()
-
-        get_my_user_profile = UserProfile.objects.get(id=user1.id)
-
-        factory = RequestFactory()
-        request = factory.get('/positions/create/')
-        request.user = user1
-        result = createPositionView(request)
-
-        self.assertEqual(user1.userprofile.id, get_my_user_profile.id)
-        self.assertEqual(result.status_code, 200)
-
-    def offer_company_is_equal_to_request_user_company(self):
+        from django.db import connection
+        connection.cursor().execute("INSERT INTO auth_user(username,password,last_login,is_superuser, first_name, last_name, email, is_staff, is_active, date_joined) VALUES ('admin', 'pass', '2013-6-14', '1', 'name1', 'lastname1', 'email@m.com', '0', '1', '2013-5-14');")
 
         user1 = User.objects.create_user(username='yo',password='pass')
         user1.save()
@@ -228,29 +216,29 @@ class CreatePositionViewTest(TestCase):
         company2.phone = 3454344
         company2.save()
 
-        profile1 = UserProfile()
-        profile1.user = user2
-        profile1.company = company1
-        profile1.save()
+        user1.userprofile.company = company1
+        user1.userprofile.save()
 
-        profile2 = UserProfile()
-        profile2.user = user1
-        profile2.company = company2
-        profile2.save()
+        user2.userprofile.company = company2
+        user2.userprofile.save()
+
+        offer = Offer()
+        offer.company = company1
+        offer.state = 2
+        offer.location = 'Bogota'
+        offer.type_contract = 0
+        offer.offer_valid_time = '2013-10-10'
+        offer.skills = 'Java,Python'
+        offer.job_description = 'description'
+        offer.save()
 
         factory = RequestFactory()
-        request = factory.post('/positions/create/')
+        request = factory.get('/positions/create/')
         request.user = user1
-        request.POST['job_title'] = 'Developer'
-        request.POST['location'] = 'Bogota'
-        request.POST['type_contract'] = 1
-        request.POST['salary']=15
-        request.POST['offer_valid_time']='23-12-2013'
-        request.POST['skills']='Java'
-        request.POST['job_description']='This is a description'
         result = createPositionView(request)
 
-        self.assertEqual(result.status_code, 302)
+        self.assertIn('You have 1 offers published', result.content)
+        self.assertEqual(result.status_code, 200)
 
 
 class TerminatePositionViewTest(TestCase):
@@ -307,7 +295,7 @@ class PositionsListViewTest(TestCase):
         self.assertEqual(result.status_code, 200)
 
 class OldPositionListViewTest(TestCase):
-    def test_GET_should_redirect_positions_list_template(self):
+    def test_GET_should_redirect_old_positions_list_template(self):
         
         user = User.objects.create_user(username='yo',password='pass')
 
@@ -317,6 +305,8 @@ class OldPositionListViewTest(TestCase):
         result = oldPositionsListView(request)
 
         self.assertEqual(result.status_code, 200)
+
+    
 
 class CompleteCompanyInfoViewTest(TestCase):
     def test_POST__should_redirect_to_positions_list_when_the_given_data_is_valid(self):
