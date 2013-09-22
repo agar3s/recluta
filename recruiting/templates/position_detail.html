@@ -7,8 +7,10 @@
             <strong>Info :</strong> You can't publish this offer because you can publish maximum 5 offers
         </div>
     </div>
-    
-    {% endif %}
+{% endif %}
+<div class="row-fluid">
+    <h4 class="pull-right">You have {{offers}} offers published</h4>
+</div>
 {% ifequal offer.state 1%}
     <div class="row-fluid">
         <div class="span6">
