@@ -2,7 +2,7 @@ from datetime import datetime
 from django.utils import timezone
 from django.http import HttpRequest
 from django.test import TestCase
-from empleo_desarrolladores.models import Company, Applicant, Offer
+from empleo_desarrolladores.models import Company, Applicant, Offer, UserProfile
 from django.contrib.auth.models import User
 from empleo_desarrolladores.views import offerDetailsView, userProfileEditView, createPositionView, terminatePositionView, positionsListView, oldPositionsListView, completeCompanyInfoView, companyDetailView
 from django.test.client import RequestFactory
@@ -165,16 +165,81 @@ class CreatePositionViewTest(TestCase):
         self.assertEqual(result.status_code, 302)
         self.assertEqual(result['location'],'/positions/list')
 
-    def test_GET_should_render_the_user_profile_edit_template(self):
+    def test_GET_should_render_the_create_position_template(self):
         
         user = User.objects.create_user(username='yo',password='pass')
+
+        company = Company()
+        company.nit = 12343
+        company.name = "company1"
+        company.email = "company1@mail.com"
+        company.location = "Bogota"
+        company.website = "company1.com"
+        company.phone = 3454345
+        company.save()
+
+        user.userprofile.company = company
 
         factory = RequestFactory()
         request = factory.get('/positions/create/')
         request.user = user
-        result = userProfileEditView(request)
+        result = createPositionView(request)
 
         self.assertEqual(result.status_code, 200)
+
+    def test_GET_should_display_the_number_of_public_offers_published_by_the_users_company(self):
+
+        from django.db import connection
+        connection.cursor().execute("INSERT INTO auth_user(username,password,last_login,is_superuser, first_name, last_name, email, is_staff, is_active, date_joined) VALUES ('admin', 'pass', '2013-6-14', '1', 'name1', 'lastname1', 'email@m.com', '0', '1', '2013-5-14');")
+
+        user1 = User.objects.create_user(username='yo',password='pass')
+        user1.save()
+
+        user2 = User.objects.create_user(username='tu',password='pass')
+        user2.save()
+
+        company1= Company()
+        company1.nit = 12343
+        company1.name = "company1"
+        company1.email = "company1@mail.com"
+        company1.location = "Bogota"
+        company1.website = "company1.com"
+        company1.phone = 3454345
+        company1.save()
+
+        company2= Company()
+        company2.nit = 12345
+        company2.name = "company2"
+        company2.email = "company2@mail.com"
+        company2.location = "Bogota"
+        company2.website = "company2.com"
+        company2.phone = 3454344
+        company2.save()
+
+        user1.userprofile.company = company1
+        user1.userprofile.save()
+
+        user2.userprofile.company = company2
+        user2.userprofile.save()
+
+        offer = Offer()
+        offer.company = company1
+        offer.state = 2
+        offer.location = 'Bogota'
+        offer.type_contract = 0
+        offer.offer_valid_time = '2013-10-10'
+        offer.skills = 'Java,Python'
+        offer.job_description = 'description'
+        offer.save()
+
+        factory = RequestFactory()
+        request = factory.get('/positions/create/')
+        request.user = user1
+        result = createPositionView(request)
+
+        self.assertIn('You have 1 offers published', result.content)
+        self.assertEqual(result.status_code, 200)
+
 
 class TerminatePositionViewTest(TestCase):
 
@@ -230,7 +295,7 @@ class PositionsListViewTest(TestCase):
         self.assertEqual(result.status_code, 200)
 
 class OldPositionListViewTest(TestCase):
-    def test_GET_should_redirect_positions_list_template(self):
+    def test_GET_should_redirect_old_positions_list_template(self):
         
         user = User.objects.create_user(username='yo',password='pass')
 
@@ -240,6 +305,8 @@ class OldPositionListViewTest(TestCase):
         result = oldPositionsListView(request)
 
         self.assertEqual(result.status_code, 200)
+
+    
 
 class CompleteCompanyInfoViewTest(TestCase):
     def test_POST__should_redirect_to_positions_list_when_the_given_data_is_valid(self):
@@ -265,8 +332,9 @@ class CompleteCompanyInfoViewTest(TestCase):
         user = User.objects.create_user(username='yo',password='pass')
 
         factory = RequestFactory()
-        request = factory.get('/compnay/complete/')
+        request = factory.get('/company/complete/')
         request.user = user
         result = completeCompanyInfoView(request)
 
         self.assertEqual(result.status_code, 200)    
+
