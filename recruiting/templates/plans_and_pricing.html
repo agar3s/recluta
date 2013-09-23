@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row-fluid">
+  <h1 class="promo-header">30-day Free Trial on All Accounts</h1>
+</div>
+<ol class="row-fluid plans-and-pricing">
+	<li class="span4 plan">
+    <article>
+      <header>
+        <hgroup>
+          <h1>Startup</h1>
+          <h2>U$20.00/month</h2>
+        </hgroup>
+      </header>
+      <ol>
+        <li>1 job post a month</li>
+      </ol>
+      <p class="plan-description">You create a job post, when it si due, you receive the list of applicants so you can choose the one that best suits you startup.</p>
+      <a href="/accounts/register/?plan=startup" class="btn">Choose this plan</a>
+    </article>
+	</li>
+	<li class="span4 plan suggested-plan">
+    <article>
+      <header>
+        <hgroup>
+          <h1>Small business</h1>
+          <h2>U$50.00/month</h2>
+        </hgroup>
+      </header>
+      <ol>
+        <li>3 job posts a month</li>
+        <li>1 technical test inside the platform</li>
+      </ol>
+      <p class="plan-description">You can create up to 3 job posts a month, when they are due, you choose to which one you want to include a technical test. When the test is due, you receive the list of applicants and the test results</p>
+      <a href="/accounts/register/?plan=small" class="btn btn-primary btn-large">Choose this plan</a>
+    </article>
+	</li>
+	<li class="span4 plan">
+    <article>
+      <header>
+        <hgroup>
+          <h1>Enterprise</h1>
+          <h2>U$200.00/month</h2>
+        </hgroup>
+      </header>
+      <ol>
+        <li>Infinite job posts a month</li>
+        <li>Infinite technical tests inside the platform</li>
+        <li>* Individual 30min interviews using Skype/Hangout</li>
+      </ol>
+      <p class="plan-description">You can create as many job posts as you neet to, when each offer is due, an invitation will be sent to all applicants to do the technical test. When this whole process is done, you will receive the detailed results.</p>
+      <p class="plan-description">* If you need us to interview those applicants who passed the test just tell us how many interviews you need, we will keep track of the questions and answers during the interview and we then give you the results plus our recomendations. Each interview has an extra fee of U$40.00.</p>
+      <a href="/accounts/register/?plan=enterprise" class="btn">Choose this plan</a>
+    </article>
+	</li>
+</ol>
+<div class="row-fluid">
+  <h4>If yo have a question or need more details about our plans, just drop us a line to <a href="mailto:jobs-support@codetag.me">jobs-support@codetag.me</a></h4>
+</div>
+{% endblock %}
