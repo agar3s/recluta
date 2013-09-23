@@ -5,6 +5,7 @@ from django.test import TestCase
 from empleo_desarrolladores.models import Company, Applicant, Offer, UserProfile
 from django.contrib.auth.models import User
 from empleo_desarrolladores.views import offerDetailsView, userProfileEditView, createPositionView, terminatePositionView, positionsListView, oldPositionsListView, completeCompanyInfoView, companyDetailView
+from empleo_desarrolladores.views import plansAndPricingView
 from django.test.client import RequestFactory
 
 class CompanyTest(TestCase):
@@ -338,3 +339,10 @@ class CompleteCompanyInfoViewTest(TestCase):
 
         self.assertEqual(result.status_code, 200)    
 
+class PlansAndPricingTest(TestCase):
+    def test_GET_should_render_plans_and_pricing_page(self):
+        request = HttpRequest()
+        request.method = 'GET'
+        result = plansAndPricingView(request)
+
+        self.assertEqual(result.status_code, 200)
