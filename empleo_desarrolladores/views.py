@@ -12,8 +12,8 @@ from datetime import datetime, timedelta
 def plansAndPricingView(request):
     return render_to_response('plans_and_pricing.html')
 
-def offerDetailsView(request, id_offer):
-    offer = Offer.objects.get(id=id_offer)
+def offerDetailsView(request, slug_offer):
+    offer = Offer.objects.get(slug=slug_offer)
     offerApplicant = OfferApplicant()
 
     if request.method == "POST":
@@ -96,10 +96,10 @@ def createPositionView(request):
 
 
 @login_required()
-def positionDetailsView(request, id_offer):
+def positionDetailsView(request, slug_offer):
     user = request.user.userprofile
     company = user.company
-    offer = Offer.objects.get(id=id_offer)
+    offer = Offer.objects.get(slug=slug_offer)
     applicants = OfferApplicant.objects.filter(offer=offer)
     if request.method == "POST":
         form = CreateOfferForm(request.POST)
@@ -143,9 +143,9 @@ def positionDetailsView(request, id_offer):
 
 
 @login_required()
-def terminatePositionView(request, id_offer):
+def terminatePositionView(request, slug_offer):
     user = request.user.userprofile
-    offer = Offer.objects.get(id=id_offer)
+    offer = Offer.objects.get(slug=slug_offer)
     if offer.company != user.company:
             return HttpResponseRedirect("/positions/list")
     offer.state = 1

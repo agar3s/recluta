@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from taggit.managers import TaggableManager
 from django.utils import timezone
+from django.template import defaultfilters
 
 class Company(models.Model):
 
@@ -66,6 +67,12 @@ class Offer(models.Model):
     skills = TaggableManager()
     job_description = models.TextField(null=False)
     company = models.ForeignKey(Company, null=True)
+    slug = models.SlugField(max_length=100, unique=True)
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.slug = defaultfilters.slugify(self.company.name+'-'+self.job_title)
+        super(Offer, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return self.job_title
