@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block content  %}
+<div class="bordered2">
+    <div class="row-fluid">
+        <div class="span11">
+            <h1>{{ offer.job_title }}</h1>
+        </div>
+    </div>
+    
+    <div class="row-fluid">
+        <div class="span6">
+             <h3>{{ offer.offer_company_that_publishes }}</h3>
+        </div>
+        <div class="span6">
+            <p class="pull-right">
+                <strong>Salary:</strong> 
+                {% if offer.salary == 0%}
+                    Negotiable
+                {% elif offer.salary == 10 %}
+                    550.000 - 1.000.000
+                {% elif offer.salary == 15 %}
+                    1.000.000 - 1.500.000
+                {% elif offer.salary == 20 %}
+                    1.500.000 - 2.000.000
+                {% elif offer.salary == 25 %}
+                    2.000.000 - 2.500.000
+                {% elif offer.salary == 30 %}
+                    2.500.000 - 3.000.000
+                {% elif offer.salary == 35 %}
+                    3.000.000 - 3.500.000
+                {% elif offer.salary == 40 %}
+                    3.500.000 - 4.000.000
+                {% elif offer.salary == 45 %}
+                    4.000.000 - 4.500.000
+                {% elif offer.salary == 50 %}
+                    4.500.000 - 5.000.000
+                {% elif offer.salary == 55 %}
+                    5.000.000 - More
+                {% endif %}
+            </p>
+        </div>
+    </div>
+   <div class="row-fluid">
+        <div class="span6">
+            <p>
+                <strong>Location:</strong> {{ offer.location }}
+            </p>
+        </div>
+        <div class="span6">
+            <p class="pull-right">
+                <strong>Time offer:</strong> {{ offer.offer_valid_time }}
+            </p>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <strong>Company: </strong>{{offer.company}}
+    </div>
+    <br>
+    <div class="row-fluid">
+        <div class="span12">
+            <p align="justify">
+                <strong>Description:</strong> {{ offer.job_description }} 
+            </p>
+            <p align="justify">
+                <strong>Skills: </strong> 
+                {% for tag in offer.skills.all %}
+                    <span class="label label-info">{{tag.name}}</span>
+                {% endfor %}
+                
+            </p>
+        </div>
+    </div>
+</br>  
+</div>
+
+<div class="borderedB" align = "center">
+	<form action="" method="POST">
+		{% csrf_token %}
+		<button type="submit" class="btn btn-success" name="_publish">Pay &amp; Publish</button>
+	</form>
+	<a class="btn pull-right btn-primary" href="/positions/details/{{offer.slug}}">Continue Editing</a>
+
+</div>
+{% endblock  %}

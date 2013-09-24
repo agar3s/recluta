@@ -4,7 +4,7 @@ from django.http import HttpRequest
 from django.test import TestCase
 from empleo_desarrolladores.models import Company, Applicant, Offer, UserProfile, OfferApplicant
 from django.contrib.auth.models import User
-from empleo_desarrolladores.views import offerDetailsView, userProfileEditView, createPositionView, terminatePositionView, positionsListView, oldPositionsListView, completeCompanyInfoView, companyDetailView, positionDashBoardView,successfulApplicationView
+from empleo_desarrolladores.views import offerDetailsView, userProfileEditView, createPositionView, terminatePositionView, positionsListView, oldPositionsListView, completeCompanyInfoView, companyDetailView, positionDashBoardView,successfulApplicationView, positionPreviewView
 from empleo_desarrolladores.views import plansAndPricingView
 from django.test.client import RequestFactory
 
@@ -127,6 +127,43 @@ class OfferDetailsViewTest(TestCase):
         offer = Offer(offer_valid_time = datetime.now(), state=0)
         offer.company = company
         offer.save()
+
+        request = HttpRequest()
+        request.method = 'POST'
+        request.POST['first_name'] = 'yo'
+        request.POST['last_name'] = 'bender'
+        request.POST['mail'] = 'bender@gmail.com'
+        request.POST['observation'] = 'well, none'
+
+        result = offerDetailsView(request, offer.slug)
+
+        self.assertEqual(result.status_code, 302)
+        self.assertEqual(result['location'], '/')
+        applicants = Applicant.objects.filter(mail='bender@gmail.com')
+        self.assertEqual(applicants.count(),1)
+        applicant = applicants[0]
+        applications = OfferApplicant.objects.filter(applicant=applicant, offer=offer, state=False, observation='well, none')
+        self.assertEqual(applications.count(), 1)
+
+    def test_POST_should_redirect_to_home_when_the_given_data_is_valid_and_should_not_duplicate_the_applicants_when_it_already_exists(self):
+        company = Company()
+        company.nit = 12343
+        company.name = "company1"
+        company.email = "company1@mail.com"
+        company.location = "Bogota"
+        company.website = "company1.com"
+        company.phone = 3454345
+        company.save()
+
+        offer = Offer(offer_valid_time = datetime.now(), state=0)
+        offer.company = company
+        offer.save()
+
+        applicant = Applicant()
+        applicant.first_name = 'yo'
+        applicant.last_name = 'bender'
+        applicant.mail = 'bender@gmail.com'
+        applicant.save()
 
         request = HttpRequest()
         request.method = 'POST'
@@ -524,5 +561,46 @@ class SuccessfulApplicationTest(TestCase):
         self.assertEqual(valid_applications.count(), 1)
 
 class PositionDetailViewTest(TestCase):
-    def test_GET_should_render_the_correct_position_information(self):
-        pass
+    def test_GET_should_render_position_preview_template(self):
+        company = Company()
+        company.nit = 12343
+        company.name = "company1"
+        company.email = "company1@mail.com"
+        company.location = "Bogota"
+        company.website = "company1.com"
+        company.phone = 3454345
+        company.save()     
+
+        user = User.objects.create_user(username='yo',password='pass')
+        user.userprofile.company = company
+
+        offer = Offer(offer_valid_time = datetime.now(), state=0)
+        offer.company = company
+        offer.save()
+
+        factory = RequestFactory()
+        request = factory.get('/positions/preview/%s' % offer.slug)
+        request.user = user
+        result = positionPreviewView(request, offer.slug)
+
+        self.assertEqual(result.status_code, 200)
+
+    def test_GET_should_redirect_http_404_when_user_company_different_offer_company(self):
+        
+        company1 = Company()
+        company2 = Company()        
+
+        user = User.objects.create_user(username='yo',password='pass')
+        user.userprofile.company = company2
+
+        offer = Offer(offer_valid_time = datetime.now(), state=0)
+        offer.company = company1
+        offer.save()
+
+        factory = RequestFactory()
+        request = factory.get('/positions/preview/%s' % offer.slug)
+        request.user = user
+        result = positionPreviewView(request, offer.slug)
+
+        self.assertEqual(result.status_code, 404)
+
