@@ -67,7 +67,7 @@ class Offer(models.Model):
     skills = TaggableManager()
     job_description = models.TextField(null=False)
     company = models.ForeignKey(Company, null=True)
-    slug = models.SlugField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=250, unique=True)
 
     def save(self, *args, **kwargs):
         if not self.id:

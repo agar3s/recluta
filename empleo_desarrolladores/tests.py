@@ -54,7 +54,7 @@ class OfferTest(TestCase):
         self.assertEqual(offer.valid_time(), False)
 
 class OfferDetailsViewTest(TestCase):
-    def test_GET_should_redirect_to_home_when_the_given_offer_has_state_1(self):
+    def test_GET_should_redirect_http_404_when_the_given_offer_has_state_1(self):
         company = Company()
         company.nit = 12343
         company.name = "company1"
@@ -72,10 +72,9 @@ class OfferDetailsViewTest(TestCase):
         request.method = 'GET'
         result = offerDetailsView(request, offer.slug)
 
-        self.assertEqual(result.status_code, 302)
-        self.assertEqual(result['location'], '/')
+        self.assertEqual(result.status_code, 404)
 
-    def test_GET_should_redirect_to_home_when_the_given_offer_has_state_0(self):
+    def test_GET_should_redirect_http_404_when_the_given_offer_has_state_0(self):
         company = Company()
         company.nit = 12343
         company.name = "company1"
@@ -93,8 +92,7 @@ class OfferDetailsViewTest(TestCase):
         request.method = 'GET'
         result = offerDetailsView(request, offer.slug)
 
-        self.assertEqual(result.status_code, 302)
-        self.assertEqual(result['location'], '/')
+        self.assertEqual(result.status_code, 404)
 
     def test_GET_should_render_the_offer_detail_template_when_the_offers_state_is_not_1_or_0(self):
         company = Company()
@@ -289,10 +287,18 @@ class TerminatePositionViewTest(TestCase):
 
     def test_GET_should_redirect_positions_list_when_user_company_equals_offer_company(self):
         
-        company = Company()        
+        company = Company()
+        company.nit = 12343
+        company.name = "company1"
+        company.email = "company1@mail.com"
+        company.location = "Bogota"
+        company.website = "company1.com"
+        company.phone = 3454345
+        company.save()      
 
         user = User.objects.create_user(username='yo',password='pass')
         user.userprofile.company = company
+        user.save()
 
         offer = Offer(offer_valid_time = datetime.now(), state=0)
         offer.company = company
@@ -306,7 +312,7 @@ class TerminatePositionViewTest(TestCase):
         self.assertEqual(result.status_code, 302)
         self.assertEqual(result['location'],'/positions/list')
 
-    def test_GET_should_redirect_positions_list_when_user_company_different_offer_company(self):
+    def test_GET_should_redirect_http_404_when_user_company_different_offer_company(self):
         
         company1 = Company()
         company2 = Company()        
@@ -323,8 +329,8 @@ class TerminatePositionViewTest(TestCase):
         request.user = user
         result = terminatePositionView(request, offer.slug)
 
-        self.assertEqual(result.status_code, 302)
-        self.assertEqual(result['location'],'/positions/list')
+        self.assertEqual(result.status_code, 404)
+
 
 class PositionsListViewTest(TestCase):
     def test_GET_should_render_the_positions_list_template(self):

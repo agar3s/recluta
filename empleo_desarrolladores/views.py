@@ -1,19 +1,25 @@
 from models import Offer, Company, Applicant, OfferApplicant
 from forms import CompanyForm, ApplicantForm, CreateOfferForm, UserEditForm
 from django.shortcuts import render_to_response
-from django.template import RequestContext
-from django.http import HttpResponseRedirect
+from django.template import RequestContext, Context, loader
+from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from datetime import datetime, timedelta
+from django.shortcuts import get_object_or_404
 
 
+def error404(request):
+    template = loader.get_template('404.html')
+    html = template.render(Context())
+
+    return HttpResponseNotFound(html)
 
 def plansAndPricingView(request):
     return render_to_response('plans_and_pricing.html')
 
 def offerDetailsView(request, slug_offer):
-    offer = Offer.objects.get(slug=slug_offer)
+    offer = get_object_or_404( Offer, slug=slug_offer)
     offerApplicant = OfferApplicant()
 
     if request.method == "POST":
@@ -34,7 +40,7 @@ def offerDetailsView(request, slug_offer):
             return HttpResponseRedirect("/")
     if request.method == "GET":
         if offer.state == 1 or offer.state == 0:
-            return HttpResponseRedirect("/")
+            return error404(request)
         form = ApplicantForm()
     ctx = {'form': form, 'offer': offer}
     return render_to_response('offer_detail.html', ctx, context_instance=RequestContext(request))
@@ -95,11 +101,12 @@ def createPositionView(request):
     return render_to_response('createPosition.html', ctx, context_instance=RequestContext(request))
 
 
+
 @login_required()
 def positionDetailsView(request, slug_offer):
     user = request.user.userprofile
     company = user.company
-    offer = Offer.objects.get(slug=slug_offer)
+    offer = get_object_or_404(Offer, slug=slug_offer)
     applicants = OfferApplicant.objects.filter(offer=offer)
     if request.method == "POST":
         form = CreateOfferForm(request.POST)
@@ -122,7 +129,7 @@ def positionDetailsView(request, slug_offer):
             return HttpResponseRedirect("/positions/list")
     if request.method == "GET":
         if offer.company != user.company:
-            return HttpResponseRedirect("/positions/list")
+            return error404(request)
 
         s = []
         for skill in offer.skills.all():
@@ -145,9 +152,9 @@ def positionDetailsView(request, slug_offer):
 @login_required()
 def terminatePositionView(request, slug_offer):
     user = request.user.userprofile
-    offer = Offer.objects.get(slug=slug_offer)
+    offer = get_object_or_404(Offer, slug=slug_offer)
     if offer.company != user.company:
-            return HttpResponseRedirect("/positions/list")
+        return error404(request)
     offer.state = 1
     offer.save()
     return HttpResponseRedirect('/positions/list')
