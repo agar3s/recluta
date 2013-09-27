@@ -8,7 +8,7 @@
             {% if result.object %}
             <div class="row-fluid bordered1">
                 <div class="span6">
-                    <a href="/offer/{{result.object.id}}/" ><h5>{{ result.object.job_title | upper}}</h5></a>
+                    <a href="/offer/{{result.object.slug}}/" ><h5>{{ result.object.job_title | upper}}</h5></a>
                 </div>
                 <div class="span3">
                     {{result.object.offer_valid_time}}
@@ -18,7 +18,7 @@
                 </div>
                 <div class="span1"><span class="pull-right"><i class="icon-user"></i>{{result.object.applicants.count}}</span></div>
                 <div class="span1">
-                    <a href="/offer/{{result.object.id}}/" >More</a>  
+                    <a href="/offer/{{result.object.slug}}/" >More</a>  
                 </div>   
             </div>
             {% endif %}
