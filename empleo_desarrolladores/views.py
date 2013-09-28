@@ -228,8 +228,13 @@ def companyDetailView(request):
     ctx={'form':form, 'company':company}
     return render_to_response('company_edit.html', ctx, context_instance=RequestContext(request))
 
-def positionDashBoardView(request, offer_slug):
-    offer = Offer.objects.get(slug=offer_slug)
+def positionDashBoardView(request, slug_offer):
+    user = request.user.userprofile
+    offer = get_object_or_404( Offer, slug=slug_offer)
+    
+    if user.company != offer.company:
+        return error404(request)
+    
     ctx = {'offer':offer}
     return render_to_response('position_dashboard.html', ctx, context_instance=RequestContext(request))
 

@@ -420,3 +420,22 @@ class DashBoardTest(TestCase):
         result = positionDashBoardView(request, offer.slug)
 
         self.assertEqual(result.status_code, 200)
+
+    def test_GET_should_redirect_http_404_when_user_company_different_offer_company(self):
+        
+        company1 = Company()
+        company2 = Company()        
+
+        user = User.objects.create_user(username='yo',password='pass')
+        user.userprofile.company = company2
+
+        offer = Offer(offer_valid_time = datetime.now(), state=0)
+        offer.company = company1
+        offer.save()
+
+        factory = RequestFactory()
+        request = factory.get('/positions/dashboard/%s' % offer.slug)
+        request.user = user
+        result = positionDashBoardView(request, offer.slug)
+
+        self.assertEqual(result.status_code, 404)
