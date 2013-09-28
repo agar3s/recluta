@@ -13,7 +13,7 @@
 			<div class="row-fluid bordered1">
 				
 					<div class="span7">
-						<a href="/positions/details/{{offer.id}}"><h5>{{offer.job_title| upper}}</h5></a>
+						<a href="/positions/details/{{offer.slug}}"><h5>{{offer.job_title| upper}}</h5></a>
 					</div>	
 
 					<div class="span2">
@@ -32,7 +32,7 @@
 					{% endifequal %}	
 					</div>					
 					<div class="span1">
-						<span style="margin-top:10px;" ><a href="/positions/terminate/{{offer.id}}">Terminate</a> </span>
+						<span style="margin-top:10px;" ><a href="/positions/terminate/{{offer.slug}}">Terminate</a> </span>
 					</div>
 				
 			</div>
