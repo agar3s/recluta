@@ -4,7 +4,7 @@ from django.http import HttpRequest
 from django.test import TestCase
 from empleo_desarrolladores.models import Company, Applicant, Offer, UserProfile
 from django.contrib.auth.models import User
-from empleo_desarrolladores.views import offerDetailsView, userProfileEditView, createPositionView, terminatePositionView, positionsListView, oldPositionsListView, completeCompanyInfoView, companyDetailView
+from empleo_desarrolladores.views import offerDetailsView, userProfileEditView, createPositionView, terminatePositionView, positionsListView, oldPositionsListView, completeCompanyInfoView, companyDetailView, positionDashBoardView
 from empleo_desarrolladores.views import plansAndPricingView
 from django.test.client import RequestFactory
 
@@ -393,5 +393,30 @@ class PlansAndPricingTest(TestCase):
         request = HttpRequest()
         request.method = 'GET'
         result = plansAndPricingView(request)
+
+        self.assertEqual(result.status_code, 200)
+
+class DashBoardTest(TestCase):
+    def test_GET_should_render_position_dash_board(self):
+        company = Company()
+        company.nit = 12343
+        company.name = "company1"
+        company.email = "company1@mail.com"
+        company.location = "Bogota"
+        company.website = "company1.com"
+        company.phone = 3454345
+        company.save()     
+
+        user = User.objects.create_user(username='yo',password='pass')
+        user.userprofile.company = company
+
+        offer = Offer(offer_valid_time = datetime.now(), state=0)
+        offer.company = company
+        offer.save()
+
+        factory = RequestFactory()
+        request = factory.get('/positions/dashboard/%s' % offer.slug)
+        request.user = user
+        result = positionDashBoardView(request, offer.slug)
 
         self.assertEqual(result.status_code, 200)
