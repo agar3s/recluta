@@ -483,32 +483,6 @@ class DashBoardTest(TestCase):
 
         self.assertEqual(result.status_code, 404)
 
-class ApplicantOfferSuccessfully(TestCase):
-    def test_applicant_apply_to_offer_successfully(self):
-        company = Company()
-        company.nit = 12343
-        company.name = "company1"
-        company.email = "company1@mail.com"
-        company.location = "Bogota"
-        company.website = "company1.com"
-        company.phone = 3454345
-        company.save()
-
-        offer = Offer(offer_valid_time = datetime.now(), state=0)
-        offer.company = company
-        offer.save()
-
-        applicant = Applicant()
-        applicant.first_name = "Dave"
-        applicant.last_name = "Murray"
-        applicant.mail = "email@gh.com"
-        applicant.save()
-
-        offerApplicant = OfferApplicant()
-        offerApplicant.offer = offer
-        offerApplicant.applicant = applicant
-        offerApplicant.token = 'mytoken123456'
-        offerApplicant.state = False
 
 
 
