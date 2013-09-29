@@ -94,6 +94,7 @@ class OfferApplicant(models.Model):
     applicant = models.ForeignKey(Applicant)
     observation = models.TextField()
     state = models.BooleanField()
+    token = models.TextField(unique=True)
 
     def __unicode__(self):
         return "Offer: " + self.offer.job_title + " Applicant: " + self.applicant.mail

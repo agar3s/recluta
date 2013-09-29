@@ -4,7 +4,7 @@ from django.http import HttpRequest
 from django.test import TestCase
 from empleo_desarrolladores.models import Company, Applicant, Offer, UserProfile, OfferApplicant
 from django.contrib.auth.models import User
-from empleo_desarrolladores.views import offerDetailsView, userProfileEditView, createPositionView, terminatePositionView, positionsListView, oldPositionsListView, completeCompanyInfoView, companyDetailView, positionDashBoardView
+from empleo_desarrolladores.views import offerDetailsView, userProfileEditView, createPositionView, terminatePositionView, positionsListView, oldPositionsListView, completeCompanyInfoView, companyDetailView, positionDashBoardView,successfulApplicationView
 from empleo_desarrolladores.views import plansAndPricingView
 from django.test.client import RequestFactory
 
@@ -210,6 +210,7 @@ class UserProfileEditViewTest(TestCase):
 
         self.assertEqual(result.status_code, 200)
 
+
 class CreatePositionViewTest(TestCase):
     def test_POST_save_should_redirect_to_positions_list_when_the_given_data_is_valid(self):
         
@@ -387,6 +388,7 @@ class PositionsListViewTest(TestCase):
 
         self.assertEqual(result.status_code, 200)
 
+
 class OldPositionListViewTest(TestCase):
     def test_GET_should_redirect_old_positions_list_template(self):
         
@@ -399,7 +401,6 @@ class OldPositionListViewTest(TestCase):
 
         self.assertEqual(result.status_code, 200)
 
-    
 
 class CompleteCompanyInfoViewTest(TestCase):
     def test_POST__should_redirect_to_positions_list_when_the_given_data_is_valid(self):
@@ -431,6 +432,7 @@ class CompleteCompanyInfoViewTest(TestCase):
 
         self.assertEqual(result.status_code, 200)    
 
+
 class PlansAndPricingTest(TestCase):
     def test_GET_should_render_plans_and_pricing_page(self):
         request = HttpRequest()
@@ -438,6 +440,7 @@ class PlansAndPricingTest(TestCase):
         result = plansAndPricingView(request)
 
         self.assertEqual(result.status_code, 200)
+
 
 class DashBoardTest(TestCase):
     def test_GET_should_render_position_dash_board(self):
@@ -483,8 +486,40 @@ class DashBoardTest(TestCase):
 
         self.assertEqual(result.status_code, 404)
 
+class SuccessfulApplicationTest(TestCase):
+    def test_GET_should_render_activation_success_when_applicant_access_to_the_correct_link_and_applicant_apply_successfully_to_an_offer(self):
+        company = Company()
+        company.nit = 12343
+        company.name = "company1"
+        company.email = "company1@mail.com"
+        company.location = "Bogota"
+        company.website = "company1.com"
+        company.phone = 3454345
+        company.save()
 
+        offer = Offer(offer_valid_time = datetime.now(), state=0)
+        offer.company = company
+        offer.save()
 
+        applicant = Applicant()
+        applicant.first_name = 'yo'
+        applicant.last_name = 'bender'
+        applicant.mail = 'bender@gmail.com'
+        applicant.save()
 
+        offerApplicant = OfferApplicant()
+        offerApplicant.offer = offer
+        offerApplicant.applicant = applicant
+        offerApplicant.state = False
+        offerApplicant.token = 'Mytoken1234567'
+        offerApplicant.save()
 
+        request = HttpRequest()
+        request.method = 'GET'
+        result = successfulApplicationView(request, offerApplicant.token)
+
+        validApplications = OfferApplicant.objects.filter(state=True, token='Mytoken1234567')
+
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(validApplications.count(), 1)
 
