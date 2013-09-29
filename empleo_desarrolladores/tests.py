@@ -2,7 +2,7 @@ from datetime import datetime
 from django.utils import timezone
 from django.http import HttpRequest
 from django.test import TestCase
-from empleo_desarrolladores.models import Company, Applicant, Offer, UserProfile
+from empleo_desarrolladores.models import Company, Applicant, Offer, UserProfile, OfferApplicant
 from django.contrib.auth.models import User
 from empleo_desarrolladores.views import offerDetailsView, userProfileEditView, createPositionView, terminatePositionView, positionsListView, oldPositionsListView, completeCompanyInfoView, companyDetailView, positionDashBoardView
 from empleo_desarrolladores.views import plansAndPricingView
@@ -139,6 +139,49 @@ class OfferDetailsViewTest(TestCase):
 
         self.assertEqual(result.status_code, 302)
         self.assertEqual(result['location'], '/')
+        applicants = Applicant.objects.filter(mail='bender@gmail.com')
+        self.assertEqual(applicants.count(),1)
+        applicant = applicants[0]
+        applications = OfferApplicant.objects.filter(applicant=applicant, offer=offer, state=False, observation='well, none')
+        self.assertEqual(applications.count(), 1)
+
+    def test_POST_should_redirect_to_home_when_the_given_data_is_valid_and_should_not_duplicate_the_applicants_when_it_already_exists(self):
+        company = Company()
+        company.nit = 12343
+        company.name = "company1"
+        company.email = "company1@mail.com"
+        company.location = "Bogota"
+        company.website = "company1.com"
+        company.phone = 3454345
+        company.save()
+
+        offer = Offer(offer_valid_time = datetime.now(), state=0)
+        offer.company = company
+        offer.save()
+
+        applicant = Applicant()
+        applicant.first_name = 'yo'
+        applicant.last_name = 'bender'
+        applicant.mail = 'bender@gmail.com'
+        applicant.save()
+
+        request = HttpRequest()
+        request.method = 'POST'
+        request.POST['first_name'] = 'yo'
+        request.POST['last_name'] = 'bender'
+        request.POST['mail'] = 'bender@gmail.com'
+        request.POST['observation'] = 'well, none'
+
+        result = offerDetailsView(request, offer.slug)
+
+        self.assertEqual(result.status_code, 302)
+        self.assertEqual(result['location'], '/')
+        applicants = Applicant.objects.filter(mail='bender@gmail.com')
+        self.assertEqual(applicants.count(),1)
+        applicant = applicants[0]
+        applications = OfferApplicant.objects.filter(applicant=applicant, offer=offer, state=False, observation='well, none')
+        self.assertEqual(applications.count(), 1)
+
 
 class UserProfileEditViewTest(TestCase):
     def test_POST_should_redirect_to_home_when_the_given_data_is_valid(self):
@@ -439,3 +482,35 @@ class DashBoardTest(TestCase):
         result = positionDashBoardView(request, offer.slug)
 
         self.assertEqual(result.status_code, 404)
+
+class ApplicantOfferSuccessfully(TestCase):
+    def test_applicant_apply_to_offer_successfully(self):
+        company = Company()
+        company.nit = 12343
+        company.name = "company1"
+        company.email = "company1@mail.com"
+        company.location = "Bogota"
+        company.website = "company1.com"
+        company.phone = 3454345
+        company.save()
+
+        offer = Offer(offer_valid_time = datetime.now(), state=0)
+        offer.company = company
+        offer.save()
+
+        applicant = Applicant()
+        applicant.first_name = "Dave"
+        applicant.last_name = "Murray"
+        applicant.mail = "email@gh.com"
+        applicant.save()
+
+        offerApplicant = OfferApplicant()
+        offerApplicant.offer = offer
+        offerApplicant.applicant = applicant
+        offerApplicant.token = 'mytoken123456'
+        offerApplicant.state = False
+
+
+
+
+

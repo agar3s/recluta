@@ -36,6 +36,7 @@ def offerDetailsView(request, slug_offer):
             offerApplicant.applicant = Applicant.objects.get(mail=mail)
             offerApplicant.offer = offer
             offerApplicant.observation = form.cleaned_data['observation']
+            offerApplicant.state = False
             offerApplicant.save()
             return HttpResponseRedirect("/")
     if request.method == "GET":
