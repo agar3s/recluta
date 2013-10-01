@@ -8,6 +8,7 @@ from django.conf import settings
 from datetime import datetime, timedelta
 from django.shortcuts import get_object_or_404
 from hashids import Hashids
+from django.core.mail import EmailMultiAlternatives
 
 
 def error404(request):
@@ -46,6 +47,13 @@ def offerDetailsView(request, slug_offer):
                 offerApplicant.token = hashid.encrypt(offer.id, applicant.id)
                 offerApplicant.save()
             
+            to_applicant = applicant.mail
+            template = loader.get_template('applicant_mail.html')
+            html = template.render(Context({'offer':offer, 'applicant':applicant, 'offerApplicant':offerApplicant}))
+            msg = EmailMultiAlternatives('You applied to %s' %(offer.job_title), html,'from@server.com', [to_applicant])
+            msg.attach_alternative(html, 'text/html')
+            msg.send()
+
             return HttpResponseRedirect("/")
     if request.method == "GET":
         if offer.state == 1 or offer.state == 0:
@@ -237,6 +245,7 @@ def companyDetailView(request):
     ctx={'form':form, 'company':company}
     return render_to_response('company_edit.html', ctx, context_instance=RequestContext(request))
 
+@login_required()
 def positionDashBoardView(request, slug_offer):
     user = request.user.userprofile
     offer = get_object_or_404( Offer, slug=slug_offer)

@@ -12,7 +12,7 @@
 		{% ifnotequal offer.state 1 %}
 			<div class="row-fluid bordered1">
 				
-					<div class="span7">
+					<div class="span6">
 						<a href="/positions/details/{{offer.slug}}"><h5>{{offer.job_title| upper}}</h5></a>
 					</div>	
 
@@ -26,11 +26,16 @@
 
 					<div class="span1">
 					{% ifequal offer.state 0 %}
-						<span class="label label-warning pull-right" style="margin-top:10px;">Draft</span>
+						<span class="label label-warning" style="margin-top:10px;">Draft</span>
 					{% else %}
-						<span class="label label-success pull-right" style="margin-top:10px;">Live</span>
+						<span class="label label-success" style="margin-top:10px;">Live</span>
 					{% endifequal %}	
-					</div>					
+					</div>			
+
+					<div class="span1">
+						<span class="pull-right"><a href="/positions/dashboard/{{offer.slug}}">Dashboard</a></span>	
+					</div>		
+
 					<div class="span1">
 						<span style="margin-top:10px;" ><a href="/positions/terminate/{{offer.slug}}">Terminate</a> </span>
 					</div>

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.utils import timezone
 from django.http import HttpRequest
 from django.test import TestCase
@@ -31,7 +31,7 @@ class ApplicantTest(TestCase):
 class OfferTest(TestCase):
     def test_valid_time_should_return_true_when_the_offer_valid_time_is_greater_than_current_date(self):
         now = datetime.now()
-        tomorrow = datetime(now.year, now.month, now.day+1, 0, 0, 0)
+        tomorrow = now + timedelta(days=1)
         offer = Offer()
         offer.offer_valid_time = timezone.make_aware(tomorrow, timezone.get_default_timezone())
 
