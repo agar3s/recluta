@@ -13,7 +13,7 @@
 </div>
 {% ifequal offer.state 1%}
     <div class="row-fluid">
-        <div class="span6">
+        <div class="span8 offset2">
             <div class="bordered">
                 <div class="row-fluid">
                     <div class="span11">
@@ -48,62 +48,19 @@
                     <strong>Description:</strong> {{ offer.job_description }} 
                 </p>
                 <p>
-                    <strong>Skills: </strong>{{ offer.skills }}
+                    <strong>Skills: </strong>
+                    {% for tag in offer.skills.all %}
+                        <span class="label label-info">{{tag.name}}</span>
+                    {% endfor %}
                 </p>
              </br>  
             </div>
-        </div>
-        <div class="span6">
-            <h3>Applicants</h3>
-            {% if applicants %}
-                <a class="pull-right" href="#window" role="button" data-toggle="modal">More Info </a>
-                <i class="icon-user"></i>{{applicants.count}}
-                <div id="window" class="modal hide fade">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" area-hidden="true">X</button>
-                        <h3>Applicants Details</h3>
-                    </div>
-                    <div class="modal-body">
-                       {% for applicant in applicants %}
-                            <div class="well">
-                                <p><strong>Applicant Full Name :</strong> {{applicant.applicant.full_name}}</p>
-                                <p><strong>Applicant Email:</strong> {{applicant.applicant.mail}}</p>
-                                <p><strong>Applicant Observation: </strong><br> <p> {{applicant.observation}}</p> </p>
-                            </div> 
-                       {% endfor %}
-                    </div>
-                    <div class="modal-footer">
-                        <a href="#" class="btn" data-dismiss="modal">Return</a>
-                    </div>
-                </div>
-            {% else %}
-                <h4>This offer didn't have applicants</h4> 
-            {% endif %}
-            <table class="table table-bordered">
-                <thead>
-                    <tr >
-                        <th>Full Name </th>
-                        <th>Email</th>
-                    </tr>
-                </thead>
-                {% for applicant in applicants %}
-                <tbody>
-                    <tr class="info">
-                        <td>{{applicant.applicant.full_name}}</td>
-                        <td>{{applicant.applicant.mail}}</td>
-                    </tr>
-                </tbody>
-            
-            {% empty %}
-               
-            {% endfor %}
-            </table>
         </div>
     </div>
 {% else %}
 <div class="container-fluid">
     <div class="row-fluid">
-        <div class="span6">
+        <div class="span8 offset2">
             <form action="." method="POST" class="span12">
                 <legend> Edit the Position</legend>
                 {% for field in form %}
@@ -127,52 +84,6 @@
                     </div>
                 </div>
             </form>
-        </div>
-        <div class="span6">
-            <h3>Applicants</h3>
-            {% if applicants %}
-                <a class="pull-right" href="#window" role="button" data-toggle="modal">More Info </a>
-                <i class="icon-user"></i>{{applicants.count}}
-                <div id="window" class="modal hide fade">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" area-hidden="true">X</button>
-                        <h3>Applicants Details</h3>
-                    </div>
-                    <div class="modal-body">
-                       {% for applicant in applicants %}
-                            <div class="well">
-                                <p><strong>Applicant Full Name :</strong> {{applicant.applicant.full_name}}</p>
-                                <p><strong>Applicant Email:</strong> {{applicant.applicant.mail}}</p>
-                                <p><strong>Applicant Observation: </strong><br> <p> {{applicant.observation}}</p> </p>
-                            </div> 
-                       {% endfor %}
-                    </div>
-                    <div class="modal-footer">
-                        <a href="#" class="btn" data-dismiss="modal">Return</a>
-                    </div>
-                </div>
-            {% else %}
-                <h4>This offer don't have applicants yet</h4> 
-            {% endif %}
-            <table class="table table-bordered">
-                <thead>
-                    <tr >
-                        <th>Full Name </th>
-                        <th>Email</th>
-                    </tr>
-                </thead>
-                {% for applicant in applicants %}
-                <tbody>
-                    <tr class="info">
-                        <td>{{applicant.applicant.full_name}}</td>
-                        <td>{{applicant.applicant.mail}}</td>
-                    </tr>
-                </tbody>
-            
-            {% empty %}
-               
-            {% endfor %}
-            </table>
         </div>
     </div>
 </div>

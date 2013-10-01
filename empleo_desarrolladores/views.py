@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from datetime import datetime, timedelta
 from django.shortcuts import get_object_or_404
+from hashids import Hashids
+from django.core.mail import EmailMultiAlternatives
 
 
 def error404(request):
@@ -21,22 +23,37 @@ def plansAndPricingView(request):
 def offerDetailsView(request, slug_offer):
     offer = get_object_or_404( Offer, slug=slug_offer)
     offerApplicant = OfferApplicant()
+    hashid = Hashids(salt='codetag Job Post')
 
     if request.method == "POST":
         form = ApplicantForm(request.POST)
         if form.is_valid():
             mail = form.cleaned_data['mail']
-            a = Applicant()
-            a.first_name = form.cleaned_data['first_name']
-            a.last_name = form.cleaned_data['last_name']
-            a.mail = mail
+            applicant = Applicant()
+            applicant.first_name = form.cleaned_data['first_name']
+            applicant.last_name = form.cleaned_data['last_name']
+            applicant.mail = mail
 
-            if not Applicant.objects.filter(mail=a.mail).exists():
-                a.save()
-            offerApplicant.applicant = Applicant.objects.get(mail=mail)
-            offerApplicant.offer = offer
-            offerApplicant.observation = form.cleaned_data['observation']
-            offerApplicant.save()
+            if not Applicant.objects.filter(mail=applicant.mail).exists():
+                applicant.save()
+            else:
+                applicant = Applicant.objects.get(mail=mail)
+
+            if not OfferApplicant.objects.filter(applicant=applicant, offer=offer).exists():
+                offerApplicant.applicant = applicant
+                offerApplicant.offer = offer
+                offerApplicant.observation = form.cleaned_data['observation']
+                offerApplicant.state = False
+                offerApplicant.token = hashid.encrypt(offer.id, applicant.id)
+                offerApplicant.save()
+            
+            to_applicant = applicant.mail
+            template = loader.get_template('applicant_mail.html')
+            html = template.render(Context({'offer':offer, 'applicant':applicant, 'offerApplicant':offerApplicant}))
+            msg = EmailMultiAlternatives('You applied to %s' %(offer.job_title), html,'from@server.com', [to_applicant])
+            msg.attach_alternative(html, 'text/html')
+            msg.send()
+
             return HttpResponseRedirect("/")
     if request.method == "GET":
         if offer.state == 1 or offer.state == 0:
@@ -228,6 +245,7 @@ def companyDetailView(request):
     ctx={'form':form, 'company':company}
     return render_to_response('company_edit.html', ctx, context_instance=RequestContext(request))
 
+@login_required()
 def positionDashBoardView(request, slug_offer):
     user = request.user.userprofile
     offer = get_object_or_404( Offer, slug=slug_offer)
@@ -237,6 +255,13 @@ def positionDashBoardView(request, slug_offer):
     
     ctx = {'offer':offer}
     return render_to_response('position_dashboard.html', ctx, context_instance=RequestContext(request))
+
+def successfulApplicationView(request, offer_applicant_token):
+    offerApplicant = get_object_or_404(OfferApplicant, token=offer_applicant_token)
+    offerApplicant.state = True
+    offerApplicant.save()
+    ctx ={'offerapplicant':offerApplicant}
+    return render_to_response('offer_successful_application.html', ctx, context_instance=RequestContext(request))
 
 def processorUrlSite(request):
     ctx = {
