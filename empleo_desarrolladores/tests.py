@@ -47,7 +47,7 @@ class OfferTest(TestCase):
 
     def test_valid_time_should_retun_false_when_the_offer_valid_time_is_lower_than_curret_date(self):
         now = datetime.now()
-        yesterday = datetime(now.year, now.month, now.day-1, 0, 0, 0)
+        yesterday = now - timedelta(days=1)
         offer = Offer()
         offer.offer_valid_time = timezone.make_aware(yesterday, timezone.get_default_timezone())
 
@@ -518,8 +518,11 @@ class SuccessfulApplicationTest(TestCase):
         request.method = 'GET'
         result = successfulApplicationView(request, offerApplicant.token)
 
-        validApplications = OfferApplicant.objects.filter(state=True, token='Mytoken1234567')
+        valid_applications = OfferApplicant.objects.filter(state=True, token='Mytoken1234567')
 
         self.assertEqual(result.status_code, 200)
-        self.assertEqual(validApplications.count(), 1)
+        self.assertEqual(valid_applications.count(), 1)
 
+class PositionDetailViewTest(TestCase):
+    def test_GET_should_render_the_correct_position_information(self):
+        pass
