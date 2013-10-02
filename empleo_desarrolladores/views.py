@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 from django.shortcuts import get_object_or_404
 from hashids import Hashids
 from django.core.mail import EmailMultiAlternatives
+from django.template import defaultfilters
 
 
 def error404(request):
@@ -93,30 +94,49 @@ def createPositionView(request):
     if request.method == 'POST':
         form = CreateOfferForm(request.POST)
         if form.is_valid():
-            offer = Offer()
-            offer.job_title = form.cleaned_data['job_title']
-            offer.location = form.cleaned_data['location']
-            offer.type_contract = form.cleaned_data['type_contract']
-            offer.salary = form.cleaned_data['salary']
-            if '_save' in request.POST:
-                offer.state = 0
-            elif '_publish' in request.POST:
-                offer.state = 2
-            offer.offer_valid_time = datetime.now() + timedelta(days=30)
-            skills = form.cleaned_data['skills']
-            offer.job_description = form.cleaned_data['job_description']
-            offer.company = company
-            offer.save()
+            
+            try:
+                offer_slug = defaultfilters.slugify(company.name+'-'+form.cleaned_data['job_title'])
+                offer = Offer.objects.get(slug=offer_slug)
 
-            for skill in skills:
-                offer.skills.add(skill)
-            return HttpResponseRedirect("/positions/list")
+            except Offer.DoesNotExist:
+                offer = Offer()
+                offer.job_title = form.cleaned_data['job_title']
+                offer.location = form.cleaned_data['location']
+                offer.type_contract = form.cleaned_data['type_contract']
+                offer.salary = form.cleaned_data['salary']
+                offer.state = 0
+                offer.offer_valid_time = datetime.now() + timedelta(days=30)
+                skills = form.cleaned_data['skills']
+                offer.job_description = form.cleaned_data['job_description']
+                offer.company = company
+                offer.save()
+                for skill in skills:
+                    offer.skills.add(skill)
+
+            return HttpResponseRedirect("/positions/preview/%s" % (offer.slug))
     else:
         form = CreateOfferForm()
     offers = len(Offer.objects.filter(company=company,state=2))
     ctx = {'form': form, 'offers':offers}
     return render_to_response('createPosition.html', ctx, context_instance=RequestContext(request))
 
+@login_required()
+def positionPreviewView(request, slug_offer):
+    offer = get_object_or_404( Offer, slug=slug_offer)
+    user = request.user.userprofile
+    if request.method == 'POST':
+        if '_save' in request.POST:
+            offer.state = 0
+        if '_publish' in request.POST:
+            offer.state = 2
+        offer.save()
+        return HttpResponseRedirect('/positions/list')
+    if request.method == "GET":
+        if offer.company != user.company:
+            return error404(request)
+    ctx = {'offer': offer}
+    return render_to_response('position_preview.html', ctx, context_instance=RequestContext(request))
 
 
 @login_required()
@@ -132,18 +152,15 @@ def positionDetailsView(request, slug_offer):
             offer.location = form.cleaned_data['location']
             offer.type_contract = form.cleaned_data['type_contract']
             offer.salary = form.cleaned_data['salary']
-            if '_save' in request.POST:
-                offer.state = 0
-            elif '_publish' in request.POST:
-                offer.state = 2
             offer.offer_valid_time = datetime.now() + timedelta(days=30)
             skills = form.cleaned_data['skills']
             offer.job_description = form.cleaned_data['job_description']
             offer.company = company
-            offer.save()
+
             for skill in skills:
                 offer.skills.add(skill)
-            return HttpResponseRedirect("/positions/list")
+
+            return HttpResponseRedirect("/positions/preview/%s" % (offer.slug))
     if request.method == "GET":
         if offer.company != user.company:
             return error404(request)
@@ -163,7 +180,7 @@ def positionDetailsView(request, slug_offer):
         })
     offers = len(Offer.objects.filter(company=company,state=2))
     ctx = {'form': form, 'offer': offer, 'applicants': applicants, 'offers':offers}
-    return render_to_response('position_detail.html', ctx, context_instance=RequestContext(request))
+    return render_to_response('createPosition.html', ctx, context_instance=RequestContext(request))
 
 
 @login_required()
@@ -249,11 +266,12 @@ def companyDetailView(request):
 def positionDashBoardView(request, slug_offer):
     user = request.user.userprofile
     offer = get_object_or_404( Offer, slug=slug_offer)
-    
+    applications = OfferApplicant.objects.filter(offer=offer)
+
     if user.company != offer.company:
         return error404(request)
     
-    ctx = {'offer':offer}
+    ctx = {'offer':offer, 'applications':applications}
     return render_to_response('position_dashboard.html', ctx, context_instance=RequestContext(request))
 
 def successfulApplicationView(request, offer_applicant_token):

@@ -4,7 +4,7 @@ from django.http import HttpRequest
 from django.test import TestCase
 from empleo_desarrolladores.models import Company, Applicant, Offer, UserProfile, OfferApplicant
 from django.contrib.auth.models import User
-from empleo_desarrolladores.views import offerDetailsView, userProfileEditView, createPositionView, terminatePositionView, positionsListView, oldPositionsListView, completeCompanyInfoView, companyDetailView, positionDashBoardView,successfulApplicationView
+from empleo_desarrolladores.views import offerDetailsView, userProfileEditView, createPositionView, terminatePositionView, positionsListView, oldPositionsListView, completeCompanyInfoView, companyDetailView, positionDashBoardView,successfulApplicationView, positionPreviewView
 from empleo_desarrolladores.views import plansAndPricingView
 from django.test.client import RequestFactory
 
@@ -524,5 +524,46 @@ class SuccessfulApplicationTest(TestCase):
         self.assertEqual(valid_applications.count(), 1)
 
 class PositionDetailViewTest(TestCase):
-    def test_GET_should_render_the_correct_position_information(self):
-        pass
+    def test_GET_should_render_position_preview_template(self):
+        company = Company()
+        company.nit = 12343
+        company.name = "company1"
+        company.email = "company1@mail.com"
+        company.location = "Bogota"
+        company.website = "company1.com"
+        company.phone = 3454345
+        company.save()     
+
+        user = User.objects.create_user(username='yo',password='pass')
+        user.userprofile.company = company
+
+        offer = Offer(offer_valid_time = datetime.now(), state=0)
+        offer.company = company
+        offer.save()
+
+        factory = RequestFactory()
+        request = factory.get('/positions/preview/%s' % offer.slug)
+        request.user = user
+        result = positionPreviewView(request, offer.slug)
+
+        self.assertEqual(result.status_code, 200)
+
+    def test_GET_should_redirect_http_404_when_user_company_different_offer_company(self):
+        
+        company1 = Company()
+        company2 = Company()        
+
+        user = User.objects.create_user(username='yo',password='pass')
+        user.userprofile.company = company2
+
+        offer = Offer(offer_valid_time = datetime.now(), state=0)
+        offer.company = company1
+        offer.save()
+
+        factory = RequestFactory()
+        request = factory.get('/positions/preview/%s' % offer.slug)
+        request.user = user
+        result = positionPreviewView(request, offer.slug)
+
+        self.assertEqual(result.status_code, 404)
+
