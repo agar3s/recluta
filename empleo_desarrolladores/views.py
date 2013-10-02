@@ -1,5 +1,5 @@
-from models import Offer, Company, Applicant, OfferApplicant
-from forms import CompanyForm, ApplicantForm, CreateOfferForm, UserEditForm
+from models import Offer, Company, Applicant, OfferApplicant, Card
+from forms import CompanyForm, ApplicantForm, CreateOfferForm, UserEditForm, CreditCardForm
 from django.shortcuts import render_to_response
 from django.template import RequestContext, Context, loader
 from django.http import HttpResponseRedirect, HttpResponseNotFound
@@ -30,18 +30,21 @@ def offerDetailsView(request, slug_offer):
         if form.is_valid():
             mail = form.cleaned_data['mail']
 
-            try:
+
+            if Applicant.objects.filter(mail=mail).exists():
                 applicant = Applicant.objects.get(mail=mail)
-            except Applicant.DoesNotExist:
+            else:
+
                 applicant = Applicant()
                 applicant.first_name = form.cleaned_data['first_name']
                 applicant.last_name = form.cleaned_data['last_name']
                 applicant.mail = mail
                 applicant.save()                
 
-            try:
+            if OfferApplicant.objects.filter(applicant=applicant, offer=offer).exists():
                 offer_applicant = OfferApplicant.objects.get(applicant=applicant, offer=offer)
-            except OfferApplicant.DoesNotExist:
+            else:
+
                 offer_applicant = OfferApplicant()
                 offer_applicant.applicant = applicant
                 offer_applicant.offer = offer
@@ -97,12 +100,11 @@ def createPositionView(request):
     if request.method == 'POST':
         form = CreateOfferForm(request.POST)
         if form.is_valid():
-            
-            try:
-                offer_slug = defaultfilters.slugify(company.name+'-'+form.cleaned_data['job_title'])
-                offer = Offer.objects.get(slug=offer_slug)
+            offer_slug = defaultfilters.slugify(company.name+'-'+form.cleaned_data['job_title'])            
 
-            except Offer.DoesNotExist:
+            if Offer.objects.filter(slug=offer_slug).exists():       
+                offer = Offer.objects.get(slug=offer_slug)
+            else:
                 offer = Offer()
                 offer.job_title = form.cleaned_data['job_title']
                 offer.location = form.cleaned_data['location']
@@ -129,10 +131,14 @@ def positionPreviewView(request, slug_offer):
     offer = get_object_or_404( Offer, slug=slug_offer)
     user = request.user.userprofile
     if request.method == 'POST':
+        request.session['offer_id'] = offer.id
         if '_save' in request.POST:
             offer.state = 0
         if '_publish' in request.POST:
-            offer.state = 2
+            if user.card:
+                return purchaseResultView(request)
+            else:
+                return HttpResponseRedirect('/user/card')
         offer.save()
         return HttpResponseRedirect('/positions/list')
     if request.method == "GET":
@@ -285,6 +291,36 @@ def successfulApplicationView(request, offer_applicant_token):
     offerApplicant.save()
     ctx ={'offerapplicant':offerApplicant}
     return render_to_response('offer_successful_application.html', ctx, context_instance=RequestContext(request))
+
+@login_required()
+def cardDataView(request):
+
+    user = request.user.userprofile
+    if request.method=='POST':
+        form = CreditCardForm(request.POST)
+        if form.is_valid():
+            card = Card()
+            card.card_type = form.cleaned_data['card_type']
+            card.number = form.cleaned_data['number']
+            card.expiration = form.cleaned_data['expiration']
+            card.owner = form.cleaned_data['owner']
+            card.ccv2 = form.cleaned_data['ccv2']
+            card.address = form.cleaned_data['address']
+            card.city = form.cleaned_data['city']
+            card.province = form.cleaned_data['province']
+            card.postal_code = form.cleaned_data['postal_code']
+            card.save()
+            user.card = card
+            return HttpResponseRedirect('/purchase')
+    else:
+        form = CreditCardForm()
+    ctx = {'form': form}
+    return render_to_response('card_data.html', ctx, context_instance=RequestContext(request))
+
+
+@login_required()
+def purchaseResultView(request):
+    return render_to_response('purchase_result.html', context_instance=RequestContext(request))
 
 def processorUrlSite(request):
     ctx = {

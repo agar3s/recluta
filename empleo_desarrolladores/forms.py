@@ -1,12 +1,6 @@
 from django import forms
-from models import Offer, UserProfile
+from models import Offer, Card
 from taggit.forms import *
-
-class UserProfileForm(forms.ModelForm):
-    class Meta:
-        model = UserProfile
-        exclude = ("user",)
-
 
 class ApplicantForm(forms.Form):
     mail = forms.EmailField(widget=forms.TextInput())
@@ -30,9 +24,20 @@ class CompanyForm(forms.Form):
     website = forms.CharField(widget=forms.TextInput())
     email = forms.EmailField(widget=forms.TextInput())
     phone = forms.IntegerField(widget=forms.TextInput())
-    # image = forms.ImageField(required=False)
-
+    # image = forms.ImageField(require(d=False)
+    
 class UserEditForm(forms.Form):
     first_name = forms.CharField(widget=forms.TextInput())
     last_name = forms.CharField(widget=forms.TextInput())
     email = forms.EmailField(widget=forms.TextInput())
+
+class CreditCardForm(forms.Form):
+    card_type = forms.ChoiceField(choices=Card.CARD_TYPE)
+    number = forms.IntegerField(widget=forms.TextInput())
+    expiration = forms.DateTimeField(widget=forms.TextInput())
+    owner = forms.CharField(widget=forms.TextInput())
+    ccv2 = forms.IntegerField(widget=forms.TextInput())
+    address = forms.CharField(widget=forms.TextInput())
+    city = forms.CharField(widget=forms.TextInput())
+    province = forms.CharField(widget=forms.TextInput())
+    postal_code = forms.IntegerField(widget=forms.TextInput(), required=False)
