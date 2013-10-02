@@ -1,13 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-{% if offers > 4 and offer.state == 0 %}
-    <div class="row_fluid">
-        <div class="alert alert-warning">
-            <button type="button" class="close" data-dismiss="alert">x</button>
-            <strong>Info :</strong> You can't publish this offer because you can publish maximum 5 offers
-        </div>
-    </div>
-{% endif %}
+
 <div class="row-fluid">
     <h4 class="pull-right">You have {{offers}} offers published</h4>
 </div>
