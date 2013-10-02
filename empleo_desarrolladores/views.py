@@ -23,35 +23,37 @@ def plansAndPricingView(request):
 
 def offerDetailsView(request, slug_offer):
     offer = get_object_or_404( Offer, slug=slug_offer)
-    offerApplicant = OfferApplicant()
     hashid = Hashids(salt='codetag Job Post')
 
     if request.method == "POST":
         form = ApplicantForm(request.POST)
         if form.is_valid():
             mail = form.cleaned_data['mail']
-            applicant = Applicant()
-            applicant.first_name = form.cleaned_data['first_name']
-            applicant.last_name = form.cleaned_data['last_name']
-            applicant.mail = mail
 
-            if not Applicant.objects.filter(mail=applicant.mail).exists():
-                applicant.save()
-            else:
+            try:
                 applicant = Applicant.objects.get(mail=mail)
+            except Applicant.DoesNotExist:
+                applicant = Applicant()
+                applicant.first_name = form.cleaned_data['first_name']
+                applicant.last_name = form.cleaned_data['last_name']
+                applicant.mail = mail
+                applicant.save()                
 
-            if not OfferApplicant.objects.filter(applicant=applicant, offer=offer).exists():
-                offerApplicant.applicant = applicant
-                offerApplicant.offer = offer
-                offerApplicant.observation = form.cleaned_data['observation']
-                offerApplicant.state = False
-                offerApplicant.token = hashid.encrypt(offer.id, applicant.id)
-                offerApplicant.save()
+            try:
+                offer_applicant = OfferApplicant.objects.get(applicant=applicant, offer=offer)
+            except OfferApplicant.DoesNotExist:
+                offer_applicant = OfferApplicant()
+                offer_applicant.applicant = applicant
+                offer_applicant.offer = offer
+                offer_applicant.observation = form.cleaned_data['observation']
+                offer_applicant.state = False
+                offer_applicant.token = hashid.encrypt(offer.id, applicant.id)
+                offer_applicant.save()
             
             to_applicant = applicant.mail
             template = loader.get_template('applicant_mail.html')
-            html = template.render(Context({'offer':offer, 'applicant':applicant, 'offerApplicant':offerApplicant}))
-            msg = EmailMultiAlternatives('You applied to %s' %(offer.job_title), html,'from@server.com', [to_applicant])
+            html = template.render(Context({'offer':offer, 'applicant':applicant, 'offer_applicant':offer_applicant}))
+            msg = EmailMultiAlternatives('You applied to %s' %(offer.job_title), html,'notification@codetag.me', [to_applicant])
             msg.attach_alternative(html, 'text/html')
             msg.send()
 
@@ -60,7 +62,8 @@ def offerDetailsView(request, slug_offer):
         if offer.state == 1 or offer.state == 0:
             return error404(request)
         form = ApplicantForm()
-    ctx = {'form': form, 'offer': offer}
+    applicants_number = OfferApplicant.objects.filter(offer=offer, state=True).count()
+    ctx = {'form': form, 'offer': offer, 'applicants_number':applicants_number}
     return render_to_response('offer_detail.html', ctx, context_instance=RequestContext(request))
 
 @login_required()

@@ -9,9 +9,9 @@ class UserProfileForm(forms.ModelForm):
 
 
 class ApplicantForm(forms.Form):
+    mail = forms.EmailField(widget=forms.TextInput())
     first_name = forms.CharField(widget=forms.TextInput())
     last_name = forms.CharField(widget=forms.TextInput())
-    mail = forms.EmailField(widget=forms.TextInput())
     observation = forms.CharField(widget=forms.Textarea())
 
 

@@ -82,7 +82,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    #'static',
+    # 'static',
 )
 
 # List of finder classes that know how to find static files in
@@ -214,6 +214,7 @@ EMAIL_HOST = "smtp.postmarkapp.com"
 EMAIL_HOST_USER = "b8d676a1-5b44-44d1-9ca4-ee943fc7fc04"
 EMAIL_HOST_PASSWORD = "b8d676a1-5b44-44d1-9ca4-ee943fc7fc04"
 SERVER_EMAIL = "Codetag <notification@codetag.me>"
+EMAIL_PORT = 2525
 
 # Celery
 BROKER_URL = "amqp://guest:guest@localhost:5672//"

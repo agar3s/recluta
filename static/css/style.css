@@ -53,6 +53,11 @@ body {
     width: 90%;
 }
 
+#id_observation{
+    width: 95%;
+    height: 50px;
+}
+
 
 #id_location {
     width: 90%;
