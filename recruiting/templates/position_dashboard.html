@@ -1,4 +1,19 @@
 {% extends 'base.html' %}
 {% block content %}
-	<h3>{{offer.job_title}} Applicants</h3>
+	<h3>{{offer.job_title}} - Applicants</h3>
+	{% for application in applications %}
+	<div class="accordion" id="accordion{{application.applicant.full_name}}">
+	  	<div class="accordion-group">
+		    <div class="accordion-heading">
+			    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+			        {{application.applicant.full_name}} - {{application.applicant.mail}}
+			    </a>
+		    </div>
+		    <div id="collapseOne" class="accordion-body collapse">
+			    <div class="accordion-inner">
+				    <strong>Observation:</strong> {{application.observation}}
+			    </div>
+		    </div>
+	</div>
+	{% endfor %}
 {% endblock %}
