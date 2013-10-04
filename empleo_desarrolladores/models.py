@@ -80,9 +80,28 @@ class Offer(models.Model):
     def valid_time(self):
         return self.offer_valid_time >= timezone.now() 
 
+class Card(models.Model):
+    CARD_TYPE = (
+        ('VS', 'Visa'),
+        ('MC', 'Master Card'),
+        ('VE', 'Visa Electron'),
+        ('AE', 'American Express'),
+    )
+    card_type = models.CharField(max_length=2, choices=CARD_TYPE, default='VS')
+    number = models.IntegerField(unique=True)
+    expiration = models.DateTimeField()
+    owner = models.CharField(max_length=50)
+    ccv2 = models.IntegerField(max_length=15)
+    address = models.CharField(max_length=50)
+    city = models.CharField(max_length=50)
+    province = models.CharField(max_length=50)
+    postal_code = models.IntegerField(max_length=15, null=True)
+
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, unique=True)
     company = models.ForeignKey(Company, null=True, blank=True)
+    card = models.OneToOneField(Card, unique=True, null=True, blank=True)
 
     def __unicode__(self):
         return "%s's profile" % self.user

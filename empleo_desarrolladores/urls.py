@@ -14,5 +14,7 @@ urlpatterns = patterns('empleo_desarrolladores.views',
     url(r'plans_and_pricing/$', 'plansAndPricingView',name="plans_and_pricing"),
     url(r'^company/complete$', 'completeCompanyInfoView',name="complete_company"),
     url(r'^company/details$', 'companyDetailView',name="company_detail"),
+    url(r'^user/card$', 'cardDataView',name="card_data_view"),
+    url(r'^purchase$', 'purchaseResultView',name="purchase_result_view"),
 
 )
