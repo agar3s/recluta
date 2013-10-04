@@ -4,7 +4,7 @@ from django.http import HttpRequest
 from django.test import TestCase
 from empleo_desarrolladores.models import Company, Applicant, Offer, UserProfile, OfferApplicant
 from django.contrib.auth.models import User
-from empleo_desarrolladores.views import offerDetailsView, userProfileEditView, createPositionView, terminatePositionView, positionsListView, oldPositionsListView, completeCompanyInfoView, companyDetailView, positionDashBoardView,successfulApplicationView, positionPreviewView
+from empleo_desarrolladores.views import offerDetailsView, userProfileEditView, createPositionView, terminatePositionView, positionsListView, oldPositionsListView, completeCompanyInfoView, companyDetailView, positionDashBoardView,successfulApplicationView, positionPreviewView, cardDataView
 from empleo_desarrolladores.views import plansAndPricingView
 from django.test.client import RequestFactory
 
@@ -604,3 +604,26 @@ class PositionDetailViewTest(TestCase):
 
         self.assertEqual(result.status_code, 404)
 
+class CardDataViewTest(TestCase):
+    def test_POST_should_redirect_to_purchase_details_when_the_given_data_is_valid(self):
+         
+        user = User.objects.create_user(username='yo',password='pass')
+
+        factory = RequestFactory()
+        request = factory.post('/user/card/')
+        request.user = user
+        request.POST['card_type'] = 'VS'
+        request.POST['number'] = 2343345
+        request.POST['expiration'] = '2015-10-23'
+        request.POST['owner']='Juan Martinez'
+        request.POST['ccv2']=34454545
+        request.POST['address']='KR 153B 138B 45'
+        request.POST['city']='Bogota'
+        request.POST['province']='Cundinamarca'
+        result = cardDataView(request)
+
+        self.assertEqual(result.status_code, 302)
+        self.assertEqual(result['location'],'/purchase')
+
+class PurchaseResultViewTest(TestCase):
+    pass
