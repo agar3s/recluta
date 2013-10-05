@@ -33,7 +33,10 @@
 					</div>			
 
 					<div class="span1">
-						<span class="pull-right"><a href="/positions/dashboard/{{offer.slug}}">Dashboard</a></span>	
+						{% ifequal offer.state 2%}
+							<span class="pull-right"><a href="/positions/dashboard/{{offer.slug}}">Dashboard</a></span>
+
+						{% endifequal %}
 					</div>		
 
 					<div class="span1">

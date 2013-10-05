@@ -609,8 +609,21 @@ class CardDataViewTest(TestCase):
          
         user = User.objects.create_user(username='yo',password='pass')
 
+        company = Company()
+        company.nit = 12343
+        company.name = "company1"
+        company.email = "company1@mail.com"
+        company.location = "Bogota"
+        company.website = "company1.com"
+        company.phone = 3454345
+        company.save()  
+
+        offer = Offer(offer_valid_time = datetime.now(), state=0)
+        offer.company = company
+        offer.save()
+
         factory = RequestFactory()
-        request = factory.post('/user/card/')
+        request = factory.post('/user/card/?offer=%s' %(offer.id))
         request.user = user
         request.POST['card_type'] = 'VS'
         request.POST['number'] = 2343345
@@ -623,7 +636,7 @@ class CardDataViewTest(TestCase):
         result = cardDataView(request)
 
         self.assertEqual(result.status_code, 302)
-        self.assertEqual(result['location'],'/purchase')
+        self.assertEqual(result['location'],'/purchase/?offer=%s' %(offer.id))
 
 class PurchaseResultViewTest(TestCase):
     pass

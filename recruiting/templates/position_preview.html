@@ -66,7 +66,6 @@
                 {% for tag in offer.skills.all %}
                     <span class="label label-info">{{tag.name}}</span>
                 {% endfor %}
-                
             </p>
         </div>
     </div>
@@ -74,10 +73,15 @@
 </div>
 
 <div class="borderedB" align = "center">
-	<form action="" method="POST">
-		{% csrf_token %}
-		<button type="submit" class="btn btn-success" name="_publish">Pay &amp; Publish</button>
-	</form>
+    {% if published_offers %}
+       {% if card %}
+            <a href="/purchase/?offer={{offer.id}}" class="btn btn-success">Pay &amp; Publish</a> 
+       {% else %}
+            <a href="/user/card/?offer={{offer.id}}" class="btn btn-success">Pay &amp; Publish</a>  
+       {% endif %}
+    {% else %}
+        <a href="/purchase/?offer={{offer.id}}" class="btn btn-success">Pay &amp; Publish</a> 
+    {% endif %} 
 	<a class="btn pull-right btn-primary" href="/positions/details/{{offer.slug}}">Continue Editing</a>
 
 </div>
