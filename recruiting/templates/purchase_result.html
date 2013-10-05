@@ -1,3 +1,27 @@
 {% extends 'base.html' %}
 {% block content %}
+<div class="bordered2">
+	<table class="table">
+		<theader>
+			<tr>
+				<th>Oferta</th>
+				<th>Precio</th>
+				<th>Cantidad</th>
+			</tr>
+		</theader>
+		<tbody>
+			<tr>
+				<td>{{offer.job_title}}</td>
+				<td>${{price}} USD</td>
+				<td>1</td>
+			</tr>
+		</tbody>	
+	</table>
+</div>
+<div class="borderedB" align="center">
+	<form action="/purchase/?offer={{offer.id}}" method="POST">
+		{% csrf_token %}
+		<button type="submit" class="btn btn-primary">Pay</button>
+	</form>
+</div>
 {% endblock %}

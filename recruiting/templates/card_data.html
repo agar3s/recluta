@@ -1,25 +1,26 @@
 {% extends 'base.html' %}
 {% block content %}
+    <div class="bordered2">
+    	<form action="" method="POST">
+            <legend>Credit Card </legend>
 
-	<form action="" method="POST">
-        <legend>Credit Card </legend>
-
-        {% for field in form %}
-        <div class="control-group {% if field.errors %}error{% endif %}" >
-            <label class="control-label">
-            {{ field.label }}</label>
-            <div class="controls form-group">
-                {{ field }}
-                <span class="help-inline">{{ field.errors }}</span>
+            {% for field in form %}
+            <div class="control-group {% if field.errors %}error{% endif %}" >
+                <label class="control-label">
+                {{ field.label }}</label>
+                <div class="controls form-group">
+                    {{ field }}
+                    <span class="help-inline">{{ field.errors }}</span>
+                </div>
             </div>
-        </div>
-        {% endfor %}
-        {% csrf_token %}
-        <div class="control-group">
-            <div class="controls" align="center">
-                <a href="#" class="btn">Cancel</a>
-                <button type="submit" class="btn btn-primary">Save</button>
+            {% endfor %}
+            {% csrf_token %}
+            <div class="control-group">
+                <div class="controls" align="center">
+                    <a href="#" class="btn">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
             </div>
-        </div>
-    </form>
+        </form>
+    </div>
 {% endblock %}

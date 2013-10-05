@@ -130,21 +130,15 @@ def createPositionView(request):
 def positionPreviewView(request, slug_offer):
     offer = get_object_or_404( Offer, slug=slug_offer)
     user = request.user.userprofile
-    if request.method == 'POST':
-        request.session['offer_id'] = offer.id
-        if '_save' in request.POST:
-            offer.state = 0
-        if '_publish' in request.POST:
-            if user.card:
-                return purchaseResultView(request)
-            else:
-                return HttpResponseRedirect('/user/card')
-        offer.save()
-        return HttpResponseRedirect('/positions/list')
     if request.method == "GET":
         if offer.company != user.company:
             return error404(request)
-    ctx = {'offer': offer}
+    published_offers = Offer.objects.filter(state=2, company=user.company).count()
+    if user.card:
+        card = True
+    else:
+        card = False
+    ctx = {'offer': offer, 'published_offers': published_offers, 'card': card}
     return render_to_response('position_preview.html', ctx, context_instance=RequestContext(request))
 
 
@@ -296,6 +290,7 @@ def successfulApplicationView(request, offer_applicant_token):
 def cardDataView(request):
 
     user = request.user.userprofile
+
     if request.method=='POST':
         form = CreditCardForm(request.POST)
         if form.is_valid():
@@ -311,7 +306,12 @@ def cardDataView(request):
             card.postal_code = form.cleaned_data['postal_code']
             card.save()
             user.card = card
-            return HttpResponseRedirect('/purchase')
+            user.save()
+
+            if request.GET['offer']:
+                return HttpResponseRedirect('/purchase/?offer=%s' % (request.GET['offer']))
+            else:
+                return HttpResponseRedirect('positions/list')
     else:
         form = CreditCardForm()
     ctx = {'form': form}
@@ -320,7 +320,25 @@ def cardDataView(request):
 
 @login_required()
 def purchaseResultView(request):
-    return render_to_response('purchase_result.html', context_instance=RequestContext(request))
+
+    offer = Offer.objects.get(id=request.GET['offer'])
+    user = request.user.userprofile
+    published_offers = Offer.objects.filter(company=user.company, state=2).count()
+    #falta implementar lo de la oferta resaltada
+    # TO-DO
+    if published_offers:
+        price = 20
+    else:
+        price = 0
+
+    if request.method=='POST':
+        
+        #faltan hacer verificaciones como saldo en la cuenta y demas
+        offer.state=2
+        offer.save()
+        return HttpResponseRedirect('/positions/list')
+    ctx = {'price': price, 'published_offers':published_offers, 'offer': offer}
+    return render_to_response('purchase_result.html', ctx, context_instance=RequestContext(request))
 
 def processorUrlSite(request):
     ctx = {
