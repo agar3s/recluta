@@ -2,7 +2,7 @@
 {% block content %}
 <div class="span12 bordered2" align="center">
 	<form action="" method="POST">
-        <legend>Company Details </legend>
+        <legend>Detalles de la Empresa </legend>
 
         {% for field in form %}
         <div class="control-group {% if field.errors %}error{% endif %}" >
@@ -17,8 +17,8 @@
         {% csrf_token %}
         <div class="control-group">
             <div class="controls" align="center">
-                <a href="{% url 'position_list_view' %}" class="btn">Cancel</a>
-                <button type="submit" class="btn btn-primary">Save</button>
+                <a href="{% url 'position_list_view' %}" class="btn">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Guardar</button>
             </div>
         </div>
     </form>

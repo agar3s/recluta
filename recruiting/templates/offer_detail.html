@@ -13,7 +13,7 @@
             </div>
             <div class="span6">
                 <p class="pull-right">
-                    <strong>Salary:</strong> 
+                    <strong>Salario:</strong> 
                     {% if offer.salary == 0%}
                         Negotiable
                     {% elif offer.salary == 10 %}
@@ -43,26 +43,26 @@
        <div class="row-fluid">
             <div class="span6">
                 <p>
-                    <strong>Location:</strong> {{ offer.location }}
+                    <strong>Localización:</strong> {{ offer.location }}
                 </p>
             </div>
             <div class="span6">
                 <p class="pull-right">
-                    <strong>Time offer:</strong> {{ offer.offer_valid_time }}
+                    <strong>Tiempo de oferta:</strong> {{ offer.offer_valid_time }}
                 </p>
             </div>
         </div>
         <div class="row-fluid">
-            <strong>Company: </strong>{{offer.company}}
+            <strong>Empresa: </strong>{{offer.company}}
         </div>
         <br>
         <div class="row-fluid">
             <div class="span12">
                 <p align="justify">
-                    <strong>Description:</strong> {{ offer.job_description }} 
+                    <strong>Descripción:</strong> {{ offer.job_description }} 
                 </p>
                 <p align="justify">
-                    <strong>Skills: </strong> 
+                    <strong>Habilidades: </strong> 
                     {% for tag in offer.skills.all %}
                         <span class="label label-info">{{tag.name}}</span>
                     {% endfor %}
@@ -71,11 +71,11 @@
             </div>
         </div>
      </br>  
-     <a class="btn btn-primary pull-right" href="#window" role="button" data-toggle="modal">Apply</a>
+     <a class="btn btn-primary pull-right" href="#window" role="button" data-toggle="modal">Aplicar</a>
      <div id="window" class="modal hide fade">
          <div class="modal-header">
-             <button type="button" class="close" data-dismiss="modal" area-hidden="true">X</button>
-             <h3>Apply to {{offer.job_title}}</h3>
+             <button type="button" class="close" data-dismiss="modal" area-hidden="true">x</button>
+             <h3>Aplicar a {{offer.job_title}}</h3>
          </div>
          <div class="modal-body">
             <form action= "" method= "POST" enctype="multipart/form-data">
@@ -86,7 +86,7 @@
             </form>
          </div>
          <div class="modal-footer">
-             <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+             <a href="#" class="btn" data-dismiss="modal">Cancelar</a>
          </div>
      </div>
     </div>

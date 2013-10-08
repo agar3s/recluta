@@ -2,7 +2,7 @@
 {% block content %}
     <div class="bordered2">
     	<form action="" method="POST">
-            <legend>Credit Card </legend>
+            <legend>Tarjeta de Crédito </legend>
 
             {% for field in form %}
             <div class="control-group {% if field.errors %}error{% endif %}" >
@@ -17,8 +17,8 @@
             {% csrf_token %}
             <div class="control-group">
                 <div class="controls" align="center">
-                    <a href="#" class="btn">Cancel</a>
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a href="#" class="btn">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
                 </div>
             </div>
         </form>

@@ -360,7 +360,7 @@ class CreatePositionViewTest(TestCase):
         request.user = user1
         result = createPositionView(request)
 
-        self.assertIn('You have 1 offers published', result.content)
+        self.assertIn('Tu tienes 1 oferta publicada', result.content)
         self.assertEqual(result.status_code, 200)
 
 

@@ -22,6 +22,10 @@ body {
     background-color: #e9eaee;
 }
 
+.indicator {
+    margin-top: 10px;
+}
+
 .borderedB {
     border-color: #000;
     border-radius: 10px;

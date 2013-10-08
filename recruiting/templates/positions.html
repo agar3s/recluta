@@ -2,8 +2,8 @@
 {% block content %}
 	<div class="row-fluid">
 		{% if user.userprofile.company %}
-			<a href="{% url 'create_position_view' %}" class="btn btn-primary pull-right">Create</a>
-			<a href="{% url 'old_positions_list_view' %}" class="btn pull-right">Old</a>
+			<a href="{% url 'create_position_view' %}" class="btn btn-primary pull-right">Crear</a>
+			<a href="{% url 'old_positions_list_view' %}" class="btn pull-right">Antiguas</a>
 		{% endif%}
 	</div>
 	<br>
@@ -26,9 +26,9 @@
 
 					<div class="span1">
 					{% ifequal offer.state 0 %}
-						<span class="label label-warning" style="margin-top:10px;">Draft</span>
+						<span class="label label-warning indicator">Borrador</span>
 					{% else %}
-						<span class="label label-success" style="margin-top:10px;">Live</span>
+						<span class="label label-success indicator">Pública</span>
 					{% endifequal %}	
 					</div>			
 
@@ -40,7 +40,7 @@
 					</div>		
 
 					<div class="span1">
-						<span style="margin-top:10px;" ><a href="/positions/terminate/{{offer.slug}}">Terminate</a> </span>
+						<span style="margin-top:10px;" ><a href="/positions/terminate/{{offer.slug}}">Terminar</a> </span>
 					</div>
 				
 			</div>
@@ -49,10 +49,10 @@
 		<div class="bordered2" align="center">
 			<p>
 				{% if user.userprofile.company %}
-				<h1>Create an Offer!</h1>
+				<h1>Crear una oferta!</h1>
 				{% else %}
-				<h1>Complete the company information to create an Offer</h1> 
-				<a href="{% url 'complete_company' %}" class="pull-right btn btn-primary" >Here</a>
+				<h1>Completa la información de la empresa para crear una oferta</h1> 
+				<a href="{% url 'complete_company' %}" class="pull-right btn btn-primary" >Aquí</a>
 				{% endif %}
 			</p>
 		</div>
