@@ -1,6 +1,7 @@
 {% load humanize %}
-Someone, hopefully you, signed up for a new account at developerjobs.com using this email address. If it was you, and you'd like to activate and use your account, click the link below or copy and paste it into your web browser's address bar:
+Alguien creo una nueva cuenta en jobs.codetag.me usando este E-mail. Si fuiste tu, y quieres activar y usar esta cuenta, dale click en el link a continuación o copia y pegalo en la barra de tu navegador:
 
 http://jobs.codetag.me/accounts/activate/{{ activation_key }}/
 
-If you didn't request this, you don't need to do anything; you won't receive any more email from us, and the account will expire automatically in {{ expiration_days|apnumber }} days.
+Si no solicitaste esto, no hagas nada; no recibirás más mensajes de nosotros, y la cuenta se desactivará automaticamente en 7 días.
+

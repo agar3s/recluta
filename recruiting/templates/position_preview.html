@@ -13,7 +13,7 @@
         </div>
         <div class="span6">
             <p class="pull-right">
-                <strong>Salary:</strong> 
+                <strong>Salario:</strong> 
                 {% if offer.salary == 0%}
                     Negotiable
                 {% elif offer.salary == 10 %}
@@ -43,26 +43,26 @@
    <div class="row-fluid">
         <div class="span6">
             <p>
-                <strong>Location:</strong> {{ offer.location }}
+                <strong>Localización:</strong> {{ offer.location }}
             </p>
         </div>
         <div class="span6">
             <p class="pull-right">
-                <strong>Time offer:</strong> {{ offer.offer_valid_time }}
+                <strong>Tiempo de la Oferta:</strong> {{ offer.offer_valid_time }}
             </p>
         </div>
     </div>
     <div class="row-fluid">
-        <strong>Company: </strong>{{offer.company}}
+        <strong>Empresa: </strong>{{offer.company}}
     </div>
     <br>
     <div class="row-fluid">
         <div class="span12">
             <p align="justify">
-                <strong>Description:</strong> {{ offer.job_description }} 
+                <strong>Descripción:</strong> {{ offer.job_description }} 
             </p>
             <p align="justify">
-                <strong>Skills: </strong> 
+                <strong>Habilidades: </strong> 
                 {% for tag in offer.skills.all %}
                     <span class="label label-info">{{tag.name}}</span>
                 {% endfor %}
@@ -75,14 +75,14 @@
 <div class="borderedB" align = "center">
     {% if published_offers %}
        {% if card %}
-            <a href="/purchase/?offer={{offer.id}}" class="btn btn-success">Pay &amp; Publish</a> 
+            <a href="/purchase/?offer={{offer.id}}" class="btn btn-success">Pagar y Publicar</a> 
        {% else %}
-            <a href="/user/card/?offer={{offer.id}}" class="btn btn-success">Pay &amp; Publish</a>  
+            <a href="/user/card/?offer={{offer.id}}" class="btn btn-success">Pagar y Publicar</a>  
        {% endif %}
     {% else %}
-        <a href="/purchase/?offer={{offer.id}}" class="btn btn-success">Pay &amp; Publish</a> 
+        <a href="/purchase/?offer={{offer.id}}" class="btn btn-success">Publicar</a> 
     {% endif %} 
-	<a class="btn pull-right btn-primary" href="/positions/details/{{offer.slug}}">Continue Editing</a>
+	<a class="btn pull-right btn-primary" href="/positions/details/{{offer.slug}}">Continuar Editando</a>
 
 </div>
 {% endblock  %}

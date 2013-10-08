@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+    <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="/static/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/css/style.css">
     <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
@@ -17,7 +18,7 @@
                     </form> -->
                     <form action="/?q=" class="navbar-search">
                         <div class="input-append">
-                            <input type="text" name="q" id="id_q" class="span7" placeholder="Search Offers...">
+                            <input type="text" name="q" id="id_q" class="span7" placeholder="Buscar Ofertas...">
                             <button type="submit" class="btn" style="width:100px"><i class="icon-search"></i></button>
                         </div>
                     </form>
@@ -27,14 +28,14 @@
                     <ul class="nav pull-right">
                         <!-- <li><a href="#">How it works?</a></li> -->
                         {% if user.is_authenticated %}
-                            <li><a href="{% url 'position_list_view' %}">Positions</a></li>
-                            <li><a href="{% url 'edit_profile' %}">Edit Profile</a></li>
-                            <li><a href="{% url 'logout' %}">Logout</a></li>
+                            <li><a href="{% url 'position_list_view' %}">Posiciones</a></li>
+                            <li><a href="{% url 'edit_profile' %}">Editar Perfil</a></li>
+                            <li><a href="{% url 'logout' %}">Salir</a></li>
 
                             
                         {% else %}
-                            <li><a href="/plans_and_pricing/">Plans and Pricing</a></li>
-                            <li><a href="{% url 'login' %}">Login</a></li>
+                            <li><a href="/plans_and_pricing/">Planes y Precios</a></li>
+                            <li><a href="{% url 'login' %}">Ingresar</a></li>
                         {% endif %}
                     </ul>
 

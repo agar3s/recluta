@@ -1,46 +1,46 @@
-{% extends "registration/base.html" %}
+{% extends "base.html" %}
 
-{% block title %}Sign up{% endblock %}
+{% block title %}Registro{% endblock %}
 
 {% block content %}
   <div class="bordered2">
   {% if form.errors %}
-  <p class="errors">Please correct the errors below: {{ form.non_field_errors }}</p>
+  <p class="errors">Corrige los errores a continuación: {{ form.non_field_errors }}</p>
   {% endif %}
   
-  <h1>Create an account</h1>
+  <h1>Crear una cuenta</h1>
   
   <form method="post" action="" class="wide">
 	{% csrf_token %}
     <p>
-      <label for="id_username">Username:</label>
+      <label for="id_username">Usuario:</label>
       {% if form.username.errors %}
         <p class="errors">{{ form.username.errors.as_text }}</p>
       {% endif %}
       {{ form.username }}
     </p>
     <p>
-      <label for="id_email">Email address:</label>
+      <label for="id_email">E-mail:</label>
       {% if form.email.errors %}
         <p class="errors">{{ form.email.errors.as_text }}</p>
       {% endif %}
       {{ form.email }}
     </p>
     <p>
-      <label for="id_password1">Password:</label>
+      <label for="id_password1">Clave:</label>
       {% if form.password1.errors %}
         <p class="errors">{{ form.password1.errors.as_text }}</p>
       {% endif %}
       {{ form.password1 }}
     </p>
     <p>
-      <label for="id_password2">Password (type again to catch typos):</label>
+      <label for="id_password2">Confirmación de Clave:</label>
       {% if form.password2.errors %}
         <p class="errors">{{ form.password2.errors.as_text }}</p>
       {% endif %}
       {{ form.password2 }}
     </p>
-    <p class="submit"><input class="btn btn-primary" type="submit" value="Register"></p>
+    <p class="submit"><input class="btn btn-primary" type="submit" value="Crear Cuenta"></p>
   </form>
 </div>
 {% endblock %}

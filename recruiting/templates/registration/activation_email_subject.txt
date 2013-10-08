@@ -1,1 +1,1 @@
-Activate your jobs.codetag.me account - you have {{ expiration_days }} days!
+Activa tu cuenta en jobs.codetag.me - tienes {{ expiration_days }} días
