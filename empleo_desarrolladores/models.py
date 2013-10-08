@@ -39,8 +39,8 @@ class Offer(models.Model):
     job_title = models.CharField(max_length=100)
     location = models.CharField(max_length=100, null=True, default='Bogota')
     TYPE_OF_CONTRACT = (
-        ('FT', 'Full Time'),
-        ('PT', 'Part Time'),
+        ('FT', 'Tiempo Completo'),
+        ('PT', 'Medio Tiempo'),
         ('TL', 'Telecommute'),
         ('CT', 'Contractor'),
     )

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-	<h3>{{offer.job_title}} - Applicants</h3>
+	<h3>{{offer.job_title}} - Aplicantes</h3>
 	{% for application in applications %}
 
 	<div class="accordion" id="accordion{{application.applicant.full_name}}">
@@ -13,7 +13,7 @@
 		    </div>
 		    <div id="collapseOne" class="accordion-body collapse">
 			    <div class="accordion-inner">
-				    <strong>Observation:</strong> {{application.observation}}
+				    <strong>Observación:</strong> {{application.observation}}
 			    </div>
 		    </div>
 		</div>

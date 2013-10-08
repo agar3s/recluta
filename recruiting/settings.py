@@ -10,8 +10,8 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 PROJECT_DIR = os.path.dirname(__file__)
 
-SITE_URL='localhost:8000'
-SITE_NAME='Developer Jobs'
+SITE_URL='jobs.codetag.me'
+SITE_NAME='jobs.codetag.me'
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -43,7 +43,7 @@ TIME_ZONE = 'America/Bogota'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-es'
 
 SITE_ID = 1
 

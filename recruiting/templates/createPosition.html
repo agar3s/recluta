@@ -1,11 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
     <div class="borderedB">
-        <h4 class="pull-right">You have {{offers}} offers published</h4>
+        {% ifequal offers 1 %}
+            <h4 class="pull-right">Tu tienes {{offers}} oferta publicada</h4>
+        {% else %}
+            <h4 class="pull-right">Tu tienes {{offers}} ofertas publicadas</h4>
+        {% endifequal %}
     </div>
     <div class='bordered2'>
         <form action="." method="POST">
-            <legend>Create a Position </legend>
+            <legend>Crear una Posición </legend>
 
             {% for field in form %}
             <div class="control-group {% if field.errors %}error{% endif %}" >
@@ -20,8 +24,8 @@
             {% csrf_token %}
               <div class="control-group">
                 <div class="controls" align="center">
-                    <a href="{% url 'position_list_view' %}" class="btn">Cancel</a>
-                    <button type="submit" class="btn btn-primary">Continue</button>
+                    <a href="{% url 'position_list_view' %}" class="btn">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Continuar</button>
                 </div>
             </div>
         </form>
