@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from django.utils import timezone
 from django.http import HttpRequest
 from django.test import TestCase
-from empleo_desarrolladores.models import Company, Applicant, Offer, UserProfile, OfferApplicant
+from empleo_desarrolladores.models import Company, Applicant, Offer, UserProfile, OfferApplicant, Card
 from django.contrib.auth.models import User
 from empleo_desarrolladores.views import offerDetailsView, userProfileEditView, createPositionView, terminatePositionView, positionsListView, oldPositionsListView, completeCompanyInfoView, companyDetailView, positionDashBoardView,successfulApplicationView, positionPreviewView, cardDataView
 from empleo_desarrolladores.views import plansAndPricingView
@@ -582,7 +582,6 @@ class PositionDetailViewTest(TestCase):
         request = factory.get('/positions/preview/%s' % offer.slug)
         request.user = user
         result = positionPreviewView(request, offer.slug)
-
         self.assertEqual(result.status_code, 200)
 
     def test_GET_should_redirect_http_404_when_user_company_different_offer_company(self):
@@ -640,3 +639,85 @@ class CardDataViewTest(TestCase):
 
 class PurchaseResultViewTest(TestCase):
     pass
+
+class PositionPreviewViewTest(TestCase):
+    def test_GET_should_render_position_preview_template_with_correct_button_when_user_have_published_offers(self):
+        company = Company()
+        company.nit = 12343
+        company.name = "company1"
+        company.email = "company1@mail.com"
+        company.location = "Bogota"
+        company.website = "company1.com"
+        company.phone = 3454345
+        company.save()     
+
+        user = User.objects.create_user(username='yo',password='pass')
+        user.userprofile.company = company
+
+        card = Card()
+        card.card_type = 'VS'
+        card.number = 2343345
+        card.expiration = '2015-10-23'
+        card.owner = 'Juan Martinez'
+        card.ccv2 = 34454545
+        card.address = 'KR 153B 138B 45'
+        card.city = 'Bogota'
+        card.province = 'Cundinamarca'
+        card.save()
+
+        user.card = card
+
+        offer = Offer(offer_valid_time = datetime.now(), state=0, job_title='oferta1')
+        offer.company = company
+        offer.state = 2
+        offer.save()
+
+        offer2 = Offer(offer_valid_time = datetime.now(), state=0, job_title= 'oferta2')
+        offer2.company = company
+        offer2.state = 0
+        offer2.save()
+
+        factory = RequestFactory()
+        request = factory.get('/positions/preview/%s' % offer2.slug)
+        request.user = user
+        result = positionPreviewView(request, offer2.slug)
+        self.assertIn('Pagar y Publicar', result.content)
+        self.assertEqual(result.status_code, 200)
+
+    def test_GET_should_render_position_preview_template_with_correct_button_when_user_dont_have_published_offers(self):
+        company = Company()
+        company.nit = 12343
+        company.name = "company1"
+        company.email = "company1@mail.com"
+        company.location = "Bogota"
+        company.website = "company1.com"
+        company.phone = 3454345
+        company.save()     
+
+        user = User.objects.create_user(username='yo',password='pass')
+        user.userprofile.company = company
+
+        card = Card()
+        card.card_type = 'VS'
+        card.number = 2343345
+        card.expiration = '2015-10-23'
+        card.owner = 'Juan Martinez'
+        card.ccv2 = 34454545
+        card.address = 'KR 153B 138B 45'
+        card.city = 'Bogota'
+        card.province = 'Cundinamarca'
+        card.save()
+
+        user.card = card
+
+        offer2 = Offer(offer_valid_time = datetime.now(), state=0, job_title= 'oferta2')
+        offer2.company = company
+        offer2.state = 0
+        offer2.save()
+
+        factory = RequestFactory()
+        request = factory.get('/positions/preview/%s' % offer2.slug)
+        request.user = user
+        result = positionPreviewView(request, offer2.slug)
+        self.assertIn('Publicar', result.content)
+        self.assertEqual(result.status_code, 200)

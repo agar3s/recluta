@@ -6,8 +6,15 @@
 	<div class="accordion" id="accordion{{application.applicant.full_name}}">
 
 	  	<div class="accordion-group">
-		    <div class="accordion-heading">
-			    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+		    {% if application.state %}
+		    <div class="accordion-heading confirmed-applicant">
+		    {% else %}
+		    <div class="accordion-heading not-confirmed-applicant">
+		    {% endif %}	
+			    <a class="accordion-toggle normal" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+			    
+		
+			   
 			        {{application.applicant.full_name}} - {{application.applicant.mail}}
 			    </a>
 		    </div>
