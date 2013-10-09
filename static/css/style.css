@@ -22,6 +22,18 @@ body {
     background-color: #e9eaee;
 }
 
+.confirmed-applicant {
+    background-color: #3cb521;
+}
+
+.not-confirmed-applicant {
+    background-color: #d47500;
+}
+
+.normal {
+    color: black;
+}
+
 .indicator {
     margin-top: 10px;
 }

@@ -43,6 +43,10 @@ def offerDetailsView(request, slug_offer):
 
             if OfferApplicant.objects.filter(applicant=applicant, offer=offer).exists():
                 offer_applicant = OfferApplicant.objects.get(applicant=applicant, offer=offer)
+                offer_applicant.observation = form.cleaned_data['observation']
+                offer_applicant.state = False
+                offer_applicant.token = hashid.encrypt(offer.id, applicant.id)
+                offer_applicant.save()
             else:
 
                 offer_applicant = OfferApplicant()
@@ -56,7 +60,7 @@ def offerDetailsView(request, slug_offer):
             to_applicant = applicant.mail
             template = loader.get_template('applicant_mail.html')
             html = template.render(Context({'offer':offer, 'applicant':applicant, 'offer_applicant':offer_applicant}))
-            msg = EmailMultiAlternatives('You applied to %s' %(offer.job_title), html,'notification@codetag.me', [to_applicant])
+            msg = EmailMultiAlternatives('Has aplicado a la oferta %s' %(offer.job_title), html,'notification@codetag.me', [to_applicant])
             msg.attach_alternative(html, 'text/html')
             msg.send()
 
@@ -128,6 +132,7 @@ def createPositionView(request):
 
 @login_required()
 def positionPreviewView(request, slug_offer):
+    import pdb; pdb.set_trace()
     offer = get_object_or_404( Offer, slug=slug_offer)
     user = request.user.userprofile
     if request.method == "GET":
