@@ -81,8 +81,8 @@
             <form action= "" method= "POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{form.as_p}}
-                <input type= "submit" value= "Apply" class="btn btn-primary">
-                <input type= "reset" value= "Clean" class="btn">
+                <input type= "submit" value= "Aplicar a la oferta" class="btn btn-primary" id='btn-apply' data-toggle="tooltip">
+                <input type= "reset" value= "Limpiar" class="btn">
             </form>
          </div>
          <div class="modal-footer">
