@@ -132,7 +132,7 @@ def createPositionView(request):
 
 @login_required()
 def positionPreviewView(request, slug_offer):
-    import pdb; pdb.set_trace()
+
     offer = get_object_or_404( Offer, slug=slug_offer)
     user = request.user.userprofile
     if request.method == "GET":
@@ -194,8 +194,10 @@ def positionDetailsView(request, slug_offer):
 
 @login_required()
 def terminatePositionView(request, slug_offer):
+
     user = request.user.userprofile
     offer = get_object_or_404(Offer, slug=slug_offer)
+
     if offer.company != user.company:
         return error404(request)
     offer.state = 1
