@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from django.utils import timezone
+from empleo_desarrolladores.factories.company_factory import CompanyFactory
 from django.http import HttpRequest
 from django.test import TestCase
 from empleo_desarrolladores.models import Company, Applicant, Offer, UserProfile, OfferApplicant, Card
@@ -10,8 +11,7 @@ from django.test.client import RequestFactory
 
 class CompanyTest(TestCase):
     def test_url_should_return_the_path_to_the_company_logo(self):
-        company = Company()
-        company.name = 'codetag'
+        company = CompanyFactory(name='codetag')
         
         self.assertEqual(company.url('my_file.jpg'), 'media_data/company_image/codetag/my_file.jpg')
 
@@ -55,14 +55,7 @@ class OfferTest(TestCase):
 
 class OfferDetailsViewTest(TestCase):
     def test_GET_should_redirect_http_404_when_the_given_offer_has_state_1(self):
-        company = Company()
-        company.nit = 12343
-        company.name = "company1"
-        company.email = "company1@mail.com"
-        company.location = "Bogota"
-        company.website = "company1.com"
-        company.phone = 3454345
-        company.save()
+        company = CompanyFactory()
 
         offer = Offer(offer_valid_time = datetime.now(), state=1)
         offer.company = company
@@ -75,14 +68,7 @@ class OfferDetailsViewTest(TestCase):
         self.assertEqual(result.status_code, 404)
 
     def test_GET_should_redirect_http_404_when_the_given_offer_has_state_0(self):
-        company = Company()
-        company.nit = 12343
-        company.name = "company1"
-        company.email = "company1@mail.com"
-        company.location = "Bogota"
-        company.website = "company1.com"
-        company.phone = 3454345
-        company.save()
+        company = CompanyFactory()
 
         offer = Offer(offer_valid_time = datetime.now(), state=0)
         offer.company = company
@@ -95,14 +81,7 @@ class OfferDetailsViewTest(TestCase):
         self.assertEqual(result.status_code, 404)
 
     def test_GET_should_render_the_offer_detail_template_when_the_offers_state_is_not_1_or_0(self):
-        company = Company()
-        company.nit = 12343
-        company.name = "company1"
-        company.email = "company1@mail.com"
-        company.location = "Bogota"
-        company.website = "company1.com"
-        company.phone = 3454345
-        company.save()
+        company = CompanyFactory()
 
         offer = Offer(offer_valid_time = datetime.now(), state=2)
         offer.company = company
@@ -115,14 +94,7 @@ class OfferDetailsViewTest(TestCase):
         self.assertEqual(result.status_code, 200)
 
     def test_POST_should_redirect_to_home_when_the_given_data_is_valid(self):
-        company = Company()
-        company.nit = 12343
-        company.name = "company1"
-        company.email = "company1@mail.com"
-        company.location = "Bogota"
-        company.website = "company1.com"
-        company.phone = 3454345
-        company.save()
+        company = CompanyFactory()
 
         offer = Offer(offer_valid_time = datetime.now(), state=0)
         offer.company = company
@@ -146,14 +118,7 @@ class OfferDetailsViewTest(TestCase):
         self.assertEqual(applications.count(), 1)
 
     def test_POST_should_redirect_to_home_when_the_given_data_is_valid_and_should_not_duplicate_the_applicants_when_it_already_exists(self):
-        company = Company()
-        company.nit = 12343
-        company.name = "company1"
-        company.email = "company1@mail.com"
-        company.location = "Bogota"
-        company.website = "company1.com"
-        company.phone = 3454345
-        company.save()
+        company = CompanyFactory()
 
         offer = Offer(offer_valid_time = datetime.now(), state=0)
         offer.company = company
@@ -181,44 +146,6 @@ class OfferDetailsViewTest(TestCase):
         applicant = applicants[0]
         applications = OfferApplicant.objects.filter(applicant=applicant, offer=offer, state=False, observation='well, none')
         self.assertEqual(applications.count(), 1)
-
-    def test_POST_should_redirect_to_home_when_the_given_data_is_valid_and_should_not_duplicate_the_applicants_when_it_already_exists(self):
-        company = Company()
-        company.nit = 12343
-        company.name = "company1"
-        company.email = "company1@mail.com"
-        company.location = "Bogota"
-        company.website = "company1.com"
-        company.phone = 3454345
-        company.save()
-
-        offer = Offer(offer_valid_time = datetime.now(), state=0)
-        offer.company = company
-        offer.save()
-
-        applicant = Applicant()
-        applicant.first_name = 'yo'
-        applicant.last_name = 'bender'
-        applicant.mail = 'bender@gmail.com'
-        applicant.save()
-
-        request = HttpRequest()
-        request.method = 'POST'
-        request.POST['first_name'] = 'yo'
-        request.POST['last_name'] = 'bender'
-        request.POST['mail'] = 'bender@gmail.com'
-        request.POST['observation'] = 'well, none'
-
-        result = offerDetailsView(request, offer.slug)
-
-        self.assertEqual(result.status_code, 302)
-        self.assertEqual(result['location'], '/')
-        applicants = Applicant.objects.filter(mail='bender@gmail.com')
-        self.assertEqual(applicants.count(),1)
-        applicant = applicants[0]
-        applications = OfferApplicant.objects.filter(applicant=applicant, offer=offer, state=False, observation='well, none')
-        self.assertEqual(applications.count(), 1)
-
 
 class UserProfileEditViewTest(TestCase):
     def test_POST_should_redirect_to_home_when_the_given_data_is_valid(self):
@@ -292,15 +219,7 @@ class CreatePositionViewTest(TestCase):
         
         user = User.objects.create_user(username='yo',password='pass')
 
-        company = Company()
-        company.nit = 12343
-        company.name = "company1"
-        company.email = "company1@mail.com"
-        company.location = "Bogota"
-        company.website = "company1.com"
-        company.phone = 3454345
-        company.save()
-
+        company = CompanyFactory()
         user.userprofile.company = company
 
         factory = RequestFactory()
@@ -321,23 +240,9 @@ class CreatePositionViewTest(TestCase):
         user2 = User.objects.create_user(username='tu',password='pass')
         user2.save()
 
-        company1= Company()
-        company1.nit = 12343
-        company1.name = "company1"
-        company1.email = "company1@mail.com"
-        company1.location = "Bogota"
-        company1.website = "company1.com"
-        company1.phone = 3454345
-        company1.save()
+        company1= CompanyFactory()
 
-        company2= Company()
-        company2.nit = 12345
-        company2.name = "company2"
-        company2.email = "company2@mail.com"
-        company2.location = "Bogota"
-        company2.website = "company2.com"
-        company2.phone = 3454344
-        company2.save()
+        company2= CompanyFactory(name='apple', nit=1234)
 
         user1.userprofile.company = company1
         user1.userprofile.save()
@@ -368,25 +273,17 @@ class TerminatePositionViewTest(TestCase):
 
     def test_GET_should_redirect_positions_list_when_user_company_equals_offer_company(self):
         
-        company = Company()
-        company.nit = 12343
-        company.name = "company1"
-        company.email = "company1@mail.com"
-        company.location = "Bogota"
-        company.website = "company1.com"
-        company.phone = 3454345
-        company.save()      
+        company = CompanyFactory()    
 
         user = User.objects.create_user(username='yo',password='pass')
         user.userprofile.company = company
         user.save()
 
-        offer = Offer(offer_valid_time = datetime.now(), state=0)
+        offer = Offer(offer_valid_time = datetime.now(), state=0, job_title='trabajo1')
         offer.company = company
         offer.save()
-
         factory = RequestFactory()
-        request = factory.get('/positions/terminate/%s' % offer.slug)
+        request = factory.get('/positions/terminate/%s' % (offer.slug))
         request.user = user
         result = terminatePositionView(request, offer.slug)
 
@@ -395,8 +292,8 @@ class TerminatePositionViewTest(TestCase):
 
     def test_GET_should_redirect_http_404_when_user_company_different_offer_company(self):
         
-        company1 = Company()
-        company2 = Company()        
+        company1 = CompanyFactory()
+        company2 = CompanyFactory(name='apple', nit=444)        
 
         user = User.objects.create_user(username='yo',password='pass')
         user.userprofile.company = company2
@@ -481,14 +378,7 @@ class PlansAndPricingTest(TestCase):
 
 class DashBoardTest(TestCase):
     def test_GET_should_render_position_dash_board(self):
-        company = Company()
-        company.nit = 12343
-        company.name = "company1"
-        company.email = "company1@mail.com"
-        company.location = "Bogota"
-        company.website = "company1.com"
-        company.phone = 3454345
-        company.save()     
+        company = CompanyFactory()     
 
         user = User.objects.create_user(username='yo',password='pass')
         user.userprofile.company = company
@@ -506,8 +396,8 @@ class DashBoardTest(TestCase):
 
     def test_GET_should_redirect_http_404_when_user_company_different_offer_company(self):
         
-        company1 = Company()
-        company2 = Company()        
+        company1 = CompanyFactory()
+        company2 = CompanyFactory(name='Apple', nit=444)        
 
         user = User.objects.create_user(username='yo',password='pass')
         user.userprofile.company = company2
@@ -525,14 +415,7 @@ class DashBoardTest(TestCase):
 
 class SuccessfulApplicationTest(TestCase):
     def test_GET_should_render_activation_success_when_applicant_access_to_the_correct_link_and_applicant_apply_successfully_to_an_offer(self):
-        company = Company()
-        company.nit = 12343
-        company.name = "company1"
-        company.email = "company1@mail.com"
-        company.location = "Bogota"
-        company.website = "company1.com"
-        company.phone = 3454345
-        company.save()
+        company = CompanyFactory()
 
         offer = Offer(offer_valid_time = datetime.now(), state=0)
         offer.company = company
@@ -562,15 +445,7 @@ class SuccessfulApplicationTest(TestCase):
 
 class PositionDetailViewTest(TestCase):
     def test_GET_should_render_position_preview_template(self):
-        company = Company()
-        company.nit = 12343
-        company.name = "company1"
-        company.email = "company1@mail.com"
-        company.location = "Bogota"
-        company.website = "company1.com"
-        company.phone = 3454345
-        company.save()     
-
+        company = CompanyFactory()
         user = User.objects.create_user(username='yo',password='pass')
         user.userprofile.company = company
 
@@ -586,8 +461,8 @@ class PositionDetailViewTest(TestCase):
 
     def test_GET_should_redirect_http_404_when_user_company_different_offer_company(self):
         
-        company1 = Company()
-        company2 = Company()        
+        company1 = CompanyFactory()
+        company2 = CompanyFactory(name='Apple', nit=444)        
 
         user = User.objects.create_user(username='yo',password='pass')
         user.userprofile.company = company2
@@ -608,14 +483,7 @@ class CardDataViewTest(TestCase):
          
         user = User.objects.create_user(username='yo',password='pass')
 
-        company = Company()
-        company.nit = 12343
-        company.name = "company1"
-        company.email = "company1@mail.com"
-        company.location = "Bogota"
-        company.website = "company1.com"
-        company.phone = 3454345
-        company.save()  
+        company = CompanyFactory() 
 
         offer = Offer(offer_valid_time = datetime.now(), state=0)
         offer.company = company
@@ -642,15 +510,7 @@ class PurchaseResultViewTest(TestCase):
 
 class PositionPreviewViewTest(TestCase):
     def test_GET_should_render_position_preview_template_with_correct_button_when_user_have_published_offers(self):
-        company = Company()
-        company.nit = 12343
-        company.name = "company1"
-        company.email = "company1@mail.com"
-        company.location = "Bogota"
-        company.website = "company1.com"
-        company.phone = 3454345
-        company.save()     
-
+        company = CompanyFactory()
         user = User.objects.create_user(username='yo',password='pass')
         user.userprofile.company = company
 
@@ -685,14 +545,7 @@ class PositionPreviewViewTest(TestCase):
         self.assertEqual(result.status_code, 200)
 
     def test_GET_should_render_position_preview_template_with_correct_button_when_user_dont_have_published_offers(self):
-        company = Company()
-        company.nit = 12343
-        company.name = "company1"
-        company.email = "company1@mail.com"
-        company.location = "Bogota"
-        company.website = "company1.com"
-        company.phone = 3454345
-        company.save()     
+        company = CompanyFactory()
 
         user = User.objects.create_user(username='yo',password='pass')
         user.userprofile.company = company
