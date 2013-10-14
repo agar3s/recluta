@@ -5,3 +5,4 @@ class UserFactory(factory.DjangoModelFactory):
 	FACTORY_FOR = User
 
 	username = 'Dave Murray'
+	password = 'pass'
