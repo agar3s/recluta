@@ -4,6 +4,7 @@ from empleo_desarrolladores.factories.company_factory import CompanyFactory
 from empleo_desarrolladores.factories.offer_factory import OfferFactory
 from empleo_desarrolladores.factories.card_factory import CardFactory
 from empleo_desarrolladores.factories.user_profile_factory import UserProfileFactory
+from empleo_desarrolladores.factories.user_factory import UserFactory
 from django.http import HttpRequest
 from django.test import TestCase
 from empleo_desarrolladores.models import Company, Applicant, Offer, UserProfile, OfferApplicant, Card
@@ -138,7 +139,7 @@ class UserProfileEditViewTest(TestCase):
     def test_POST_should_redirect_to_home_when_the_given_data_is_valid(self):
         
         factory = RequestFactory()
-        user = User.objects.create_user(username='yo',password='pass')
+        user = UserFactory()
 
         request = factory.post('/edit_profile/')
         request.user = user
@@ -153,7 +154,7 @@ class UserProfileEditViewTest(TestCase):
     def test_GET_should_render_the_user_profile_edit_template(self):
         
         factory = RequestFactory()
-        user = User.objects.create_user(username='yo',password='pass')
+        user = UserFactory()
 
         request = factory.get('/edit_profile/')
         request.user = user
@@ -166,7 +167,7 @@ class CreatePositionViewTest(TestCase):
     def test_POST_save_should_redirect_to_positions_list_when_the_given_data_is_valid(self):
         
         factory = RequestFactory()
-        user = User.objects.create_user(username='yo',password='pass')
+        user = UserFactory()
 
         request = factory.post('/positions/create/')
         request.user = user
@@ -184,7 +185,7 @@ class CreatePositionViewTest(TestCase):
 
     def test_POST_publish_should_redirect_to_positions_list_when_the_given_data_is_valid(self):
         
-        user = User.objects.create_user(username='yo',password='pass')
+        user = UserFactory()
 
         factory = RequestFactory()
         request = factory.post('/positions/create/')
@@ -204,7 +205,7 @@ class CreatePositionViewTest(TestCase):
 
     def test_GET_should_render_the_create_position_template(self):
         
-        user = User.objects.create_user(username='yo',password='pass')
+        user = UserFactory()
 
         company = CompanyFactory()
         user.userprofile.company = company
@@ -221,11 +222,9 @@ class CreatePositionViewTest(TestCase):
         from django.db import connection
         connection.cursor().execute("INSERT INTO auth_user(username,password,last_login,is_superuser, first_name, last_name, email, is_staff, is_active, date_joined) VALUES ('admin', 'pass', '2013-6-14', '1', 'name1', 'lastname1', 'email@m.com', '0', '1', '2013-5-14');")
 
-        user1 = User.objects.create_user(username='yo',password='pass')
-        user1.save()
+        user1 = UserFactory()
 
-        user2 = User.objects.create_user(username='tu',password='pass')
-        user2.save()
+        user2 = UserFactory(username='tu', password=34343)
 
         company1= CompanyFactory()
 
@@ -262,9 +261,9 @@ class TerminatePositionViewTest(TestCase):
         
         company = CompanyFactory()    
 
-        user = User.objects.create_user(username='yo',password='pass')
+        user = UserFactory()
         user.userprofile.company = company
-        user.save()
+
 
         offer = Offer(offer_valid_time = datetime.now(), state=0, job_title='trabajo1')
         offer.company = company
@@ -282,7 +281,7 @@ class TerminatePositionViewTest(TestCase):
         
         company2 = CompanyFactory(name='apple', nit=444)        
 
-        user = User.objects.create_user(username='yo',password='pass')
+        user = UserFactory()
         user.userprofile.company = company2
 
         offer = OfferFactory()
@@ -298,7 +297,7 @@ class TerminatePositionViewTest(TestCase):
 class PositionsListViewTest(TestCase):
     def test_GET_should_render_the_positions_list_template(self):
         
-        user = User.objects.create_user(username='yo',password='pass')
+        user = UserFactory()
 
         factory = RequestFactory()
         request = factory.get('/positions/list/')
@@ -311,7 +310,7 @@ class PositionsListViewTest(TestCase):
 class OldPositionListViewTest(TestCase):
     def test_GET_should_redirect_old_positions_list_template(self):
         
-        user = User.objects.create_user(username='yo',password='pass')
+        user = UserFactory()
 
         factory = RequestFactory()
         request = factory.get('/positions/old/')
@@ -324,7 +323,7 @@ class OldPositionListViewTest(TestCase):
 class CompleteCompanyInfoViewTest(TestCase):
     def test_POST__should_redirect_to_positions_list_when_the_given_data_is_valid(self):
         
-        user = User.objects.create_user(username='yo',password='pass')
+        user = UserFactory()
 
         factory = RequestFactory()
         request = factory.post('/company/complete/')
@@ -342,7 +341,7 @@ class CompleteCompanyInfoViewTest(TestCase):
 
     def test_GET_should_render_the_complete_company_info_template(self):
         
-        user = User.objects.create_user(username='yo',password='pass')
+        user = UserFactory()
 
         factory = RequestFactory()
         request = factory.get('/company/complete/')
@@ -365,7 +364,7 @@ class DashBoardTest(TestCase):
     def test_GET_should_render_position_dash_board(self):
         company = CompanyFactory()     
 
-        user = User.objects.create_user(username='yo',password='pass')
+        user = UserFactory()
         user.userprofile.company = company
 
         offer = Offer(offer_valid_time = datetime.now(), state=0)
@@ -383,7 +382,7 @@ class DashBoardTest(TestCase):
         
         company2 = CompanyFactory(name='Apple', nit=444)        
 
-        user = User.objects.create_user(username='yo',password='pass')
+        user = UserFactory()
         user.userprofile.company = company2
 
         offer = OfferFactory()
@@ -425,7 +424,7 @@ class SuccessfulApplicationTest(TestCase):
 class PositionDetailViewTest(TestCase):
     def test_GET_should_render_position_preview_template(self):
         company = CompanyFactory()
-        user = User.objects.create_user(username='yo',password='pass')
+        user = UserFactory()
         user.userprofile.company = company
 
         offer = Offer(offer_valid_time = datetime.now(), state=0)
@@ -442,7 +441,7 @@ class PositionDetailViewTest(TestCase):
         
         company2 = CompanyFactory(name='Apple', nit=444)        
 
-        user = User.objects.create_user(username='yo',password='pass')
+        user = UserFactory()
         user.userprofile.company = company2
 
         offer = OfferFactory()
@@ -457,7 +456,7 @@ class PositionDetailViewTest(TestCase):
 class CardDataViewTest(TestCase):
     def test_POST_should_redirect_to_purchase_details_when_the_given_data_is_valid(self):
          
-        user = User.objects.create_user(username='yo',password='pass')
+        user = UserFactory()
 
         offer = OfferFactory()
 
@@ -483,30 +482,18 @@ class PurchaseResultViewTest(TestCase):
 class PositionPreviewViewTest(TestCase):
     def test_GET_should_render_position_preview_template_with_correct_button_when_user_have_published_offers(self):
         company = CompanyFactory()
-        user = User.objects.create_user(username='yo',password='pass')
+        user = UserFactory()
         user.userprofile.company = company
 
-        card = Card()
-        card.card_type = 'VS'
-        card.number = 2343345
-        card.expiration = '2015-10-23'
-        card.owner = 'Juan Martinez'
-        card.ccv2 = 34454545
-        card.address = 'KR 153B 138B 45'
-        card.city = 'Bogota'
-        card.province = 'Cundinamarca'
-        card.save()
-
+        card = CardFactory()
         user.card = card
 
-        offer = Offer(offer_valid_time = datetime.now(), state=0, job_title='oferta1')
+        offer = Offer(offer_valid_time = datetime.now(), state=2, job_title='oferta1')
         offer.company = company
-        offer.state = 2
         offer.save()
 
         offer2 = Offer(offer_valid_time = datetime.now(), state=0, job_title= 'oferta2')
         offer2.company = company
-        offer2.state = 0
         offer2.save()
 
         factory = RequestFactory()
@@ -519,19 +506,10 @@ class PositionPreviewViewTest(TestCase):
     def test_GET_should_render_position_preview_template_with_correct_button_when_user_dont_have_published_offers(self):
         company = CompanyFactory()
 
-        user = User.objects.create_user(username='yo',password='pass')
+        user = UserFactory()
         user.userprofile.company = company
 
-        card = Card()
-        card.card_type = 'VS'
-        card.number = 2343345
-        card.expiration = '2015-10-23'
-        card.owner = 'Juan Martinez'
-        card.ccv2 = 34454545
-        card.address = 'KR 153B 138B 45'
-        card.city = 'Bogota'
-        card.province = 'Cundinamarca'
-        card.save()
+        card = CardFactory()
 
         user.card = card
 
