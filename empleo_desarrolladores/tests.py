@@ -3,12 +3,12 @@ from django.utils import timezone
 from empleo_desarrolladores.factories.company_factory import CompanyFactory
 from empleo_desarrolladores.factories.offer_factory import OfferFactory
 from empleo_desarrolladores.factories.card_factory import CardFactory
-from empleo_desarrolladores.factories.user_profile_factory import UserProfileFactory
 from empleo_desarrolladores.factories.user_factory import UserFactory
+from empleo_desarrolladores.factories.offer_applicant_factory import OfferApplicantFactory
+from empleo_desarrolladores.factories.applicant_factory import ApplicantFactory
 from django.http import HttpRequest
 from django.test import TestCase
-from empleo_desarrolladores.models import Company, Applicant, Offer, UserProfile, OfferApplicant, Card
-from django.contrib.auth.models import User
+from empleo_desarrolladores.models import Applicant, OfferApplicant 
 from empleo_desarrolladores.views import offerDetailsView, userProfileEditView, createPositionView, terminatePositionView, positionsListView, oldPositionsListView, completeCompanyInfoView, companyDetailView, positionDashBoardView,successfulApplicationView, positionPreviewView, cardDataView
 from empleo_desarrolladores.views import plansAndPricingView
 from django.test.client import RequestFactory
@@ -21,39 +21,34 @@ class CompanyTest(TestCase):
 
 class ApplicantTest(TestCase):
     def test_full_name_should_return_a_string_containing_first_and_last_names_separated_by_a_space(self):
-        applicant = Applicant()
-        applicant.first_name = "yo"
-        applicant.last_name = "robot"
+        applicant = ApplicantFactory()
 
-        self.assertEqual(applicant.full_name(), "yo robot")
+        self.assertEqual(applicant.full_name(), 'yo bender')
 
     def test_full_name_should_return_an_empty_string_when_first_and_last_name_are_empty(self):
-        applicant = Applicant()
-        
-        self.assertEqual(applicant.full_name(), "")
+        applicant = ApplicantFactory(first_name='', last_name='')
+
+        self.assertEqual(applicant.full_name(), '')
 
 class OfferTest(TestCase):
     def test_valid_time_should_return_true_when_the_offer_valid_time_is_greater_than_current_date(self):
         now = datetime.now()
         tomorrow = now + timedelta(days=1)
-        offer = Offer()
-        offer.offer_valid_time = timezone.make_aware(tomorrow, timezone.get_default_timezone())
-
+        offer = OfferFactory(offer_valid_time = timezone.make_aware(tomorrow, timezone.get_default_timezone()))
+        
         self.assertEqual(offer.valid_time(), True)
 
     def test_valid_time_should_return_true_when_the_offer_valid_time_is_equal_to_current_date(self):
         now = datetime.now()
         today = datetime(now.year,now.month, now.day, 23,59,59)
-        offer = Offer()
-        offer.offer_valid_time = timezone.make_aware(today, timezone.get_default_timezone())
-
+        offer = OfferFactory(offer_valid_time = timezone.make_aware(today, timezone.get_default_timezone()))
+        
         self.assertEqual(offer.valid_time(), True)
 
     def test_valid_time_should_retun_false_when_the_offer_valid_time_is_lower_than_curret_date(self):
         now = datetime.now()
         yesterday = now - timedelta(days=1)
-        offer = Offer()
-        offer.offer_valid_time = timezone.make_aware(yesterday, timezone.get_default_timezone())
+        offer = OfferFactory(offer_valid_time = timezone.make_aware(yesterday, timezone.get_default_timezone()))
 
         self.assertEqual(offer.valid_time(), False)
 
@@ -112,11 +107,7 @@ class OfferDetailsViewTest(TestCase):
 
         offer = OfferFactory()
 
-        applicant = Applicant()
-        applicant.first_name = 'yo'
-        applicant.last_name = 'bender'
-        applicant.mail = 'bender@gmail.com'
-        applicant.save()
+        applicant = ApplicantFactory()
 
         request = HttpRequest()
         request.method = 'POST'
@@ -236,15 +227,7 @@ class CreatePositionViewTest(TestCase):
         user2.userprofile.company = company2
         user2.userprofile.save()
 
-        offer = Offer()
-        offer.company = company1
-        offer.state = 2
-        offer.location = 'Bogota'
-        offer.type_contract = 0
-        offer.offer_valid_time = '2013-10-10'
-        offer.skills = 'Java,Python'
-        offer.job_description = 'description'
-        offer.save()
+        offer = OfferFactory(company=company1, state=2)
 
         factory = RequestFactory()
         request = factory.get('/positions/create/')
@@ -258,16 +241,11 @@ class CreatePositionViewTest(TestCase):
 class TerminatePositionViewTest(TestCase):
 
     def test_GET_should_redirect_positions_list_when_user_company_equals_offer_company(self):
-        
-        company = CompanyFactory()    
+        offer = OfferFactory()
 
         user = UserFactory()
-        user.userprofile.company = company
-
-
-        offer = Offer(offer_valid_time = datetime.now(), state=0, job_title='trabajo1')
-        offer.company = company
-        offer.save()
+        user.userprofile.company = offer.company
+        user.userprofile.save()
 
         factory = RequestFactory()
         request = factory.get('/positions/terminate/%s' % (offer.slug))
@@ -362,14 +340,10 @@ class PlansAndPricingTest(TestCase):
 
 class DashBoardTest(TestCase):
     def test_GET_should_render_position_dash_board(self):
-        company = CompanyFactory()     
+        offer = OfferFactory()
 
         user = UserFactory()
-        user.userprofile.company = company
-
-        offer = Offer(offer_valid_time = datetime.now(), state=0)
-        offer.company = company
-        offer.save()
+        user.userprofile.company = offer.company
 
         factory = RequestFactory()
         request = factory.get('/positions/dashboard/%s' % offer.slug)
@@ -397,20 +371,7 @@ class DashBoardTest(TestCase):
 class SuccessfulApplicationTest(TestCase):
     def test_GET_should_render_activation_success_when_applicant_access_to_the_correct_link_and_applicant_apply_successfully_to_an_offer(self):
 
-        offer = OfferFactory()
-
-        applicant = Applicant()
-        applicant.first_name = 'yo'
-        applicant.last_name = 'bender'
-        applicant.mail = 'bender@gmail.com'
-        applicant.save()
-
-        offerApplicant = OfferApplicant()
-        offerApplicant.offer = offer
-        offerApplicant.applicant = applicant
-        offerApplicant.state = False
-        offerApplicant.token = 'Mytoken1234567'
-        offerApplicant.save()
+        offerApplicant = OfferApplicantFactory()
 
         request = HttpRequest()
         request.method = 'GET'
@@ -423,13 +384,10 @@ class SuccessfulApplicationTest(TestCase):
 
 class PositionDetailViewTest(TestCase):
     def test_GET_should_render_position_preview_template(self):
-        company = CompanyFactory()
-        user = UserFactory()
-        user.userprofile.company = company
+        offer = OfferFactory()
 
-        offer = Offer(offer_valid_time = datetime.now(), state=0)
-        offer.company = company
-        offer.save()
+        user = UserFactory()
+        user.userprofile.company = offer.company
 
         factory = RequestFactory()
         request = factory.get('/positions/preview/%s' % offer.slug)
@@ -481,20 +439,18 @@ class PurchaseResultViewTest(TestCase):
 
 class PositionPreviewViewTest(TestCase):
     def test_GET_should_render_position_preview_template_with_correct_button_when_user_have_published_offers(self):
+
         company = CompanyFactory()
+
+        offer = OfferFactory(offer_valid_time = datetime.now(), state=2, job_title='oferta1',company=company)
+
+        offer2 = OfferFactory(offer_valid_time = datetime.now(), state=0, job_title= 'oferta2', company=company)
+
         user = UserFactory()
         user.userprofile.company = company
 
         card = CardFactory()
-        user.card = card
-
-        offer = Offer(offer_valid_time = datetime.now(), state=2, job_title='oferta1')
-        offer.company = company
-        offer.save()
-
-        offer2 = Offer(offer_valid_time = datetime.now(), state=0, job_title= 'oferta2')
-        offer2.company = company
-        offer2.save()
+        user.userprofile.card = card
 
         factory = RequestFactory()
         request = factory.get('/positions/preview/%s' % offer2.slug)
@@ -504,19 +460,14 @@ class PositionPreviewViewTest(TestCase):
         self.assertEqual(result.status_code, 200)
 
     def test_GET_should_render_position_preview_template_with_correct_button_when_user_dont_have_published_offers(self):
-        company = CompanyFactory()
 
-        user = UserFactory()
-        user.userprofile.company = company
+        offer2 = OfferFactory()
 
         card = CardFactory()
 
-        user.card = card
-
-        offer2 = Offer(offer_valid_time = datetime.now(), state=0, job_title= 'oferta2')
-        offer2.company = company
-        offer2.state = 0
-        offer2.save()
+        user = UserFactory()
+        user.userprofile.company = offer2.company
+        user.userprofile.card = card
 
         factory = RequestFactory()
         request = factory.get('/positions/preview/%s' % offer2.slug)
