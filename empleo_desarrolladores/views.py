@@ -7,9 +7,9 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from datetime import datetime, timedelta
 from django.shortcuts import get_object_or_404
-from hashids import Hashids
 from django.core.mail import EmailMultiAlternatives
 from django.template import defaultfilters
+from models_factory import ApplicantFactory, OfferApplicantFactory, CardFactory, UserProfileFactory, OfferFactory, CompanyFactory
 
 
 def error404(request):
@@ -23,40 +23,17 @@ def plansAndPricingView(request):
 
 def offerDetailsView(request, slug_offer):
     offer = get_object_or_404( Offer, slug=slug_offer)
-    hashid = Hashids(salt='codetag Job Post')
 
     if request.method == "POST":
         form = ApplicantForm(request.POST)
         if form.is_valid():
-            mail = form.cleaned_data['mail']
 
+            applicant_factory = ApplicantFactory()
+            applicant = applicant_factory.get_instance_form(form=form)            
 
-            if Applicant.objects.filter(mail=mail).exists():
-                applicant = Applicant.objects.get(mail=mail)
-            else:
+            offer_applicant_factory = OfferApplicantFactory()
+            offer_applicant = offer_applicant_factory.get_instance_form(applicant=applicant, offer=offer, form=form)
 
-                applicant = Applicant()
-                applicant.first_name = form.cleaned_data['first_name']
-                applicant.last_name = form.cleaned_data['last_name']
-                applicant.mail = mail
-                applicant.save()                
-
-            if OfferApplicant.objects.filter(applicant=applicant, offer=offer).exists():
-                offer_applicant = OfferApplicant.objects.get(applicant=applicant, offer=offer)
-                offer_applicant.observation = form.cleaned_data['observation']
-                offer_applicant.state = False
-                offer_applicant.token = hashid.encrypt(offer.id, applicant.id)
-                offer_applicant.save()
-            else:
-
-                offer_applicant = OfferApplicant()
-                offer_applicant.applicant = applicant
-                offer_applicant.offer = offer
-                offer_applicant.observation = form.cleaned_data['observation']
-                offer_applicant.state = False
-                offer_applicant.token = hashid.encrypt(offer.id, applicant.id)
-                offer_applicant.save()
-            
             to_applicant = applicant.mail
             template = loader.get_template('applicant_mail.html')
             html = template.render(Context({'offer':offer, 'applicant':applicant, 'offer_applicant':offer_applicant}))
@@ -79,10 +56,8 @@ def userProfileEditView(request):
     if request.method== 'POST':
         form = UserEditForm(request.POST)
         if form.is_valid():
-            user.first_name = form.cleaned_data['first_name']
-            user.last_name = form.cleaned_data['last_name']
-            user.email = form.cleaned_data['email']
-            user.save()
+            user_profile_factory = UserProfileFactory()
+            user_profile_factory.save_instance_form(form=form, user=user)
             return HttpResponseRedirect("/")
     else:
         form = UserEditForm(initial={
@@ -106,22 +81,8 @@ def createPositionView(request):
         if form.is_valid():
             offer_slug = defaultfilters.slugify(company.name+'-'+form.cleaned_data['job_title'])            
 
-            if Offer.objects.filter(slug=offer_slug).exists():       
-                offer = Offer.objects.get(slug=offer_slug)
-            else:
-                offer = Offer()
-                offer.job_title = form.cleaned_data['job_title']
-                offer.location = form.cleaned_data['location']
-                offer.type_contract = form.cleaned_data['type_contract']
-                offer.salary = form.cleaned_data['salary']
-                offer.state = 0
-                offer.offer_valid_time = datetime.now() + timedelta(days=30)
-                skills = form.cleaned_data['skills']
-                offer.job_description = form.cleaned_data['job_description']
-                offer.company = company
-                offer.save()
-                for skill in skills:
-                    offer.skills.add(skill)
+            offer_factory = OfferFactory()
+            offer = offer_factory.get_instance_form(company=company, offer_slug=offer_slug, form=form)
 
             return HttpResponseRedirect("/positions/preview/%s" % (offer.slug))
     else:
@@ -157,17 +118,8 @@ def positionDetailsView(request, slug_offer):
     if request.method == "POST":
         form = CreateOfferForm(request.POST)
         if form.is_valid():
-            offer.job_title = form.cleaned_data['job_title']
-            offer.location = form.cleaned_data['location']
-            offer.type_contract = form.cleaned_data['type_contract']
-            offer.salary = form.cleaned_data['salary']
-            offer.offer_valid_time = datetime.now() + timedelta(days=30)
-            skills = form.cleaned_data['skills']
-            offer.job_description = form.cleaned_data['job_description']
-            offer.company = company
-
-            for skill in skills:
-                offer.skills.add(skill)
+            offer_factory = OfferFactory()
+            offer_factory.update_instance_form(offer=offer, form=form, company=company)
 
             return HttpResponseRedirect("/positions/preview/%s" % (offer.slug))
     if request.method == "GET":
@@ -227,19 +179,13 @@ def oldPositionsListView(request):
 @login_required()
 def completeCompanyInfoView(request):
     user = request.user.userprofile
-    company = Company()
+  
     if request.method=='POST':
         form = CompanyForm(request.POST)
         if form.is_valid():
-            company.nit = form.cleaned_data['nit']
-            company.name = form.cleaned_data['name']
-            company.location = form.cleaned_data['locationCompany']
-            company.website = form.cleaned_data['website']
-            company.email = form.cleaned_data['email']
-            company.phone = form.cleaned_data['phone']
-            company.save()
-            user.company = company
-            user.save()
+            company_factory = CompanyFactory()
+            company_factory.save_instance_form(form=form, user=user)
+            
             return HttpResponseRedirect('/positions/list')
     else:
         form = CompanyForm()
@@ -253,13 +199,9 @@ def companyDetailView(request):
     if request.method=='POST':
         form = CompanyForm(request.POST)
         if form.is_valid():
-            company.nit = form.cleaned_data['nit']
-            company.name = form.cleaned_data['name']
-            company.location = form.cleaned_data['locationCompany']
-            company.website = form.cleaned_data['website']
-            company.email = form.cleaned_data['email']
-            company.phone = form.cleaned_data['phone']
-            company.save()
+            company_factory = CompanyFactory()
+            company_factory.update_instance_form(form=form, company=company)
+            
             return HttpResponseRedirect('/positions/list')
     else:
         form = CompanyForm(initial={
@@ -301,19 +243,8 @@ def cardDataView(request):
     if request.method=='POST':
         form = CreditCardForm(request.POST)
         if form.is_valid():
-            card = Card()
-            card.card_type = form.cleaned_data['card_type']
-            card.number = form.cleaned_data['number']
-            card.expiration = form.cleaned_data['expiration']
-            card.owner = form.cleaned_data['owner']
-            card.ccv2 = form.cleaned_data['ccv2']
-            card.address = form.cleaned_data['address']
-            card.city = form.cleaned_data['city']
-            card.province = form.cleaned_data['province']
-            card.postal_code = form.cleaned_data['postal_code']
-            card.save()
-            user.card = card
-            user.save()
+            card_factory = CardFactory()
+            card_factory.save_instance_form(form=form, user=user)
 
             if request.GET['offer']:
                 return HttpResponseRedirect('/purchase/?offer=%s' % (request.GET['offer']))
