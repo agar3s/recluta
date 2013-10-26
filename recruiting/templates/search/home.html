@@ -2,35 +2,41 @@
 {% block content %}
 
 <div>
-    <ul class="unstyled">
+    <div class="accordion" id="accordion2">
     {% for result in page.object_list %}
-        <li >
             {% if result.object %}
-            <div class="row-fluid bordered1">
-                <div class="span6">
-                    <a href="/offer/{{result.object.slug}}/" ><h5>{{ result.object.job_title | upper}}</h5></a>
+                <div class="accordion-group">
+                    <div class="accordion-heading">
+                        <a class="accordion-toggle normal" data-toggle="collapse" data-parent="#accordion2" href="#collapse{{result.object.id}}">
+                            <div class="row-fluid">
+                                <div class="span6">
+                                    {{ result.object.job_title | upper}}
+                                </div>
+                                <div class="span3">
+                                    {{result.object.days_remaining}}
+                                </div>
+                                <div class="span1">
+                                    <strong>{{result.object.location}}</strong>
+                                </div>
+                                <div class="span2"><span class="pull-right"><i class="icon-user"></i>{{result.object.applicants.count}}</span></div> 
+                            </div>
+                        </a>
+                    </div>
+                    <div id="collapse{{result.object.id}}" class="accordion-body collapse">
+                        <div class="accordion-inner">
+                            <strong>Descripción:</strong> {{result.object.job_description}}
+                        </div>
+                    </div>
                 </div>
-                <div class="span3">
-                    {{result.object.offer_valid_time}}
-                </div>
-                <div class="span1">
-                    <strong>{{result.object.location}}</strong>
-                </div>
-                <div class="span1"><span class="pull-right"><i class="icon-user"></i>{{result.object.applicants.count}}</span></div>
-                <div class="span1">
-                    <a href="/offer/{{result.object.slug}}/" >Ver más</a>  
-                </div>   
-            </div>
+            
             {% endif %}
-        </li>
     {% empty %}
         <p>No se encontraron resultados</p>
-    {% endfor %}
-    </ul>
-    
-    
-    
+    {% endfor %}  
+    </div>
 </div>
+
+<!-- Paginacion -->
 {% if page.has_previous or page.has_next %}
         <div class="pagination pagination-centered" align="center">
             <ul>

@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from taggit.managers import TaggableManager
 from django.utils import timezone
 from django.template import defaultfilters
+from datetime import datetime, timedelta
 
 class Company(models.Model):
 
@@ -73,6 +74,11 @@ class Offer(models.Model):
         if not self.id:
             self.slug = defaultfilters.slugify(self.company.name+'-'+self.job_title)
         super(Offer, self).save(*args, **kwargs)
+
+    def days_remaining(self):
+        now = timezone.make_aware(datetime.now(), timezone.get_default_timezone())
+        days_remaining = self.offer_valid_time - now
+        return days_remaining.days
 
     def __unicode__(self):
         return self.job_title
