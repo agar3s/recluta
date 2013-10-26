@@ -52,6 +52,13 @@ class OfferTest(TestCase):
 
         self.assertEqual(offer.valid_time(), False)
 
+    def test_days_remaining_function_return_the_correct_number_days(self):
+        now = datetime.now()
+        next_week = now + timedelta(days=7)
+        offer = OfferFactory(offer_valid_time = timezone.make_aware(next_week, timezone.get_default_timezone()))
+
+        self.assertEqual(offer.days_remaining(), 6)
+
 class OfferDetailsViewTest(TestCase):
     def test_GET_should_redirect_http_404_when_the_given_offer_has_state_1(self):
         offer = OfferFactory()
