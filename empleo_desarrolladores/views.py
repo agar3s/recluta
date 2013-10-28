@@ -1,13 +1,12 @@
-from models import Offer, Company, Applicant, OfferApplicant, Card
-from forms import CompanyForm, ApplicantForm, CreateOfferForm, UserEditForm, CreditCardForm
+from models import Offer, Company, OfferApplicant
+from forms import CompanyForm, ApplicantForm, CreateOfferForm, UserEditForm, CreditCardForm, CreateOfferFormLoader, CompanyFormLoader, UserEditFormLoader
 from django.shortcuts import render_to_response
 from django.template import RequestContext, Context, loader
 from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
-from datetime import datetime, timedelta
 from django.shortcuts import get_object_or_404
-from django.core.mail import EmailMultiAlternatives
+from messaging_handler import OfferApplicantMessage
 from django.template import defaultfilters
 from models_factory import ApplicantFactory, OfferApplicantFactory, CardFactory, UserProfileFactory, OfferFactory, CompanyFactory
 
@@ -34,12 +33,8 @@ def offerDetailsView(request, slug_offer):
             offer_applicant_factory = OfferApplicantFactory()
             offer_applicant = offer_applicant_factory.get_instance_form(applicant=applicant, offer=offer, form=form)
 
-            to_applicant = applicant.mail
-            template = loader.get_template('applicant_mail.html')
-            html = template.render(Context({'offer':offer, 'applicant':applicant, 'offer_applicant':offer_applicant}))
-            msg = EmailMultiAlternatives('Has aplicado a la oferta %s' %(offer.job_title), html,'notification@codetag.me', [to_applicant])
-            msg.attach_alternative(html, 'text/html')
-            msg.send()
+            offer_applicant_message = OfferApplicantMessage()
+            offer_applicant_message.send(offer_applicant)
 
             return HttpResponseRedirect("/")
     if request.method == "GET":
@@ -60,11 +55,8 @@ def userProfileEditView(request):
             user_profile_factory.save_instance_form(form=form, user=user)
             return HttpResponseRedirect("/")
     else:
-        form = UserEditForm(initial={
-            'first_name':user.first_name,
-            'last_name':user.last_name,
-            'email':user.email,
-            })
+        form_loader = UserEditFormLoader()
+        form = form_loader.load_initial_data(user)
     ctx = {'form':form}
     return render_to_response('edit_profile.html',ctx,context_instance=RequestContext(request))
 
@@ -126,19 +118,9 @@ def positionDetailsView(request, slug_offer):
         if offer.company != user.company:
             return error404(request)
 
-        s = []
-        for skill in offer.skills.all():
-            s.append(skill.name)
+        form_loader = CreateOfferFormLoader()
+        form = form_loader.load_initial_data(offer)
 
-        form = CreateOfferForm(initial={
-            'job_title': offer.job_title,
-            'location': offer.location,
-            'type_contract': offer.type_contract,
-            'salary': offer.salary,
-            'offer_valid_time': offer.offer_valid_time,
-            'skills': ','.join(s),
-            'job_description': offer.job_description,
-        })
     offers = len(Offer.objects.filter(company=company,state=2))
     ctx = {'form': form, 'offer': offer, 'applicants': applicants, 'offers':offers}
     return render_to_response('createPosition.html', ctx, context_instance=RequestContext(request))
@@ -204,14 +186,9 @@ def companyDetailView(request):
             
             return HttpResponseRedirect('/positions/list')
     else:
-        form = CompanyForm(initial={
-                'nit':company.nit,
-                'name':company.name,
-                'locationCompany':company.location,
-                'website':company.website,
-                'email':company.email,
-                'phone':company.phone,
-            })
+        form_loader = CompanyFormLoader()
+        form = form_loader.load_initial_data(company)
+
     ctx={'form':form, 'company':company}
     return render_to_response('company_edit.html', ctx, context_instance=RequestContext(request))
 

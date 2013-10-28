@@ -74,19 +74,19 @@
 
 <div class="borderedB" align = "center">
     {% if published_offers %}
-       {% if card %}
+        {% if card %}
             {% ifequal offer.state 0%}
-            <a href="/purchase/?offer={{offer.id}}" class="btn btn-success">Pagar y Publicar</a> 
-            {% endifequal %}
-       {% else %}
-            {% ifequal offer.state 0%}
-            <a href="/user/card/?offer={{offer.id}}" class="btn btn-success">Pagar y Publicar</a>  
-            {% endifequal %}
-       {% endif %}
+                <a href="/purchase/?offer={{offer.id}}" class="btn btn-success">Pagar y Publicar</a> 
+                {% endifequal %}
+           {% else %}
+                {% ifequal offer.state 0%}
+                <a href="/user/card/?offer={{offer.id}}" class="btn btn-success">Pagar y Publicar</a>  
+                {% endifequal %}
+           {% endif %}
     {% else %}
         <a href="/purchase/?offer={{offer.id}}" class="btn btn-success">Publicar</a> 
     {% endif %} 
-	<a class="btn pull-right btn-primary" href="/positions/details/{{offer.slug}}">Continuar Editando</a>
+    <a class="btn pull-right btn-primary" href="/positions/details/{{offer.slug}}">Continuar Editando</a>
 
 </div>
 {% endblock  %}

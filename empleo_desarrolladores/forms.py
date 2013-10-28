@@ -19,6 +19,20 @@ class CreateOfferForm(forms.Form):
     type_contract = forms.ChoiceField(label='Tipo de contrato', choices=Offer.TYPE_OF_CONTRACT)
     salary = forms.ChoiceField(label='Salario', choices=Offer.SALARY_CHOICES)
 
+class CreateOfferFormLoader():
+    def load_initial_data(self, offer):
+        s = [skill.name for skill in offer.skills.all()]
+
+        return CreateOfferForm(initial={
+            'job_title': offer.job_title,
+            'location': offer.location,
+            'type_contract': offer.type_contract,
+            'salary': offer.salary,
+            'offer_valid_time': offer.offer_valid_time,
+            'skills': ','.join(s),
+            'job_description': offer.job_description,
+        })
+
 class CompanyForm(forms.Form):
     nit = forms.CharField(label='NIT', widget=forms.TextInput())
     name = forms.CharField(label='Nombre', widget=forms.TextInput())
@@ -27,11 +41,30 @@ class CompanyForm(forms.Form):
     email = forms.EmailField(label='Email', widget=forms.TextInput())
     phone = forms.IntegerField(label='Teléfono',widget=forms.TextInput())
     # image = forms.ImageField(require(d=False)
+
+class CompanyFormLoader():
+    def load_initial_data(self, company):
+        return CompanyForm(initial={
+            'nit':company.nit,
+            'name':company.name,
+            'locationCompany':company.location,
+            'website':company.website,
+            'email':company.email,
+            'phone':company.phone,
+        })
     
 class UserEditForm(forms.Form):
     first_name = forms.CharField(label='Nombre',widget=forms.TextInput())
     last_name = forms.CharField(label='Apellidos', widget=forms.TextInput())
     email = forms.EmailField(label='Email', widget=forms.TextInput())
+
+class UserEditFormLoader():
+    def load_initial_data(self, user):
+        return UserEditForm(initial={
+            'first_name':user.first_name,
+            'last_name':user.last_name,
+            'email':user.email,
+        })
 
 class CreditCardForm(forms.Form):
     card_type = forms.ChoiceField(label='Tipo de Tarjeta',choices=Card.CARD_TYPE)
