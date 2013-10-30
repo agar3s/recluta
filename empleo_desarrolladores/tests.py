@@ -482,3 +482,36 @@ class PositionPreviewViewTest(TestCase):
         result = positionPreviewView(request, offer2.slug)
         self.assertIn('Publicar', result.content)
         self.assertEqual(result.status_code, 200)
+
+    def test_GET_should_render_the_correct_template_data_when_user_have_card(self):
+        offer2 = OfferFactory()
+
+        card = CardFactory()
+
+        user = UserFactory()
+        user.userprofile.company = offer2.company
+        user.userprofile.card = card
+
+        factory = RequestFactory()
+        request = factory.get('/positions/preview/%s' % offer2.slug)
+        request.user = user
+        result = positionPreviewView(request, offer2.slug)
+        self.assertIn('href="/purchase/?offer=%s"' % (offer2.id), result.content)
+        self.assertEqual(result.status_code, 200)        
+
+    def test_GET_should_render_the_correct_template_data_when_user_dont_have_card(self):
+        company = CompanyFactory()
+
+        offer = OfferFactory(offer_valid_time = datetime.now(), state=2, job_title='oferta1',company=company)
+
+        offer2 = OfferFactory(offer_valid_time = datetime.now(), state=0, job_title= 'oferta2', company=company)
+
+        user = UserFactory()
+        user.userprofile.company = company
+
+        factory = RequestFactory()
+        request = factory.get('/positions/preview/%s' % offer2.slug)
+        request.user = user
+        result = positionPreviewView(request, offer2.slug)
+        self.assertIn('href="/user/card/?offer=%s"' % (offer2.id), result.content)
+        self.assertEqual(result.status_code, 200) 
