@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# encoding: utf-8
 from django.db import models
 from django.contrib.auth.models import User
 from taggit.managers import TaggableManager
@@ -47,7 +49,7 @@ class Offer(models.Model):
     )
     type_contract = models.CharField(max_length=2, choices=TYPE_OF_CONTRACT, default='FT')
     SALARY_CHOICES = (
-        (0, 'Negotiable'),
+        (0, 'Negociable'),
         (10, '550.000 - 1.000.000'),
         (15, '1.000.000 - 1.500.000'),
         (20, '1.500.000 - 2.000.000'),
@@ -57,7 +59,7 @@ class Offer(models.Model):
         (40, '3.500.000 - 4.000.000'),
         (45, '4.000.000 - 4.500.000'),
         (50, '4.500.000 - 5.000.000'),
-        (55, '5.000.000 - More'),
+        (55, '5.000.000 - Más'),
     )
 
     STATE_CHOICES = ((0, 'Draft'), (1, 'Terminate'), (2, 'Live'))
@@ -79,6 +81,11 @@ class Offer(models.Model):
         now = timezone.make_aware(datetime.now(), timezone.get_default_timezone())
         days_remaining = self.offer_valid_time - now
         return days_remaining.days
+
+    def get_salary(self):
+        for i in self.SALARY_CHOICES:
+            if self.salary == i[0]:
+                return i[1]
 
     def __unicode__(self):
         return self.job_title

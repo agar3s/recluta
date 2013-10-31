@@ -1,26 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
-    <div class="borderedB">
-        {% ifequal offers 1 %}
-            <h4 class="pull-right">Tu tienes {{offers}} oferta publicada</h4>
-        {% else %}
-            <h4 class="pull-right">Tu tienes {{offers}} ofertas publicadas</h4>
-        {% endifequal %}
-    </div>
+    {% include '_published_offers.html' %}
     <div class='bordered2'>
         <form action="." method="POST">
             <legend>Crear una Posición </legend>
-
-            {% for field in form %}
-            <div class="control-group {% if field.errors %}error{% endif %}" >
-                <label class="control-label">
-                {{ field.label }}</label>
-                <div class="controls form-group">
-                    {{ field }}
-                    <span class="help-inline">{{ field.errors }}</span>
-                </div>
-            </div>
-            {% endfor %}
+			{% include '_form_fields.html' %}
             {% csrf_token %}
               <div class="control-group">
                 <div class="controls" align="center">
@@ -29,5 +13,6 @@
                 </div>
             </div>
         </form>
-    </div> 
+    </div>
 {% endblock %}
+

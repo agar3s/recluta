@@ -10,7 +10,7 @@ from django.http import HttpRequest
 from django.test import TestCase
 from empleo_desarrolladores.models import Applicant, OfferApplicant 
 from empleo_desarrolladores.views import offerDetailsView, userProfileEditView, createPositionView, terminatePositionView, positionsListView, oldPositionsListView, completeCompanyInfoView, companyDetailView, positionDashBoardView,successfulApplicationView, positionPreviewView, cardDataView
-from empleo_desarrolladores.views import plansAndPricingView
+from empleo_desarrolladores.views import plansAndPricingView, indexView
 from django.test.client import RequestFactory
 
 class CompanyTest(TestCase):
@@ -37,6 +37,11 @@ class OfferTest(TestCase):
         offer = OfferFactory(offer_valid_time = timezone.make_aware(tomorrow, timezone.get_default_timezone()))
         
         self.assertEqual(offer.valid_time(), True)
+
+    def test_get_salary_return_the_correct_info(self):
+        offer = OfferFactory(salary=10)
+
+        self.assertEqual(offer.get_salary(), '550.000 - 1.000.000')
 
     def test_valid_time_should_return_true_when_the_offer_valid_time_is_equal_to_current_date(self):
         now = datetime.now()
@@ -515,3 +520,11 @@ class PositionPreviewViewTest(TestCase):
         result = positionPreviewView(request, offer2.slug)
         self.assertIn('href="/user/card/?offer=%s"' % (offer2.id), result.content)
         self.assertEqual(result.status_code, 200) 
+
+class IndexViewTest(TestCase):
+    def test_GET_should_render_index_view_template(self):
+        request = HttpRequest()
+        request.method = 'GET'
+        result = indexView(request)
+
+        self.assertEqual(result.status_code, 200)

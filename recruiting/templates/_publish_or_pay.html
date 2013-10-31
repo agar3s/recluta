@@ -1,0 +1,10 @@
+<div class="borderedB" align="center">
+	<form action="/purchase/?offer={{offer.id}}" method="POST">
+		{% csrf_token %}
+		{% if published_offers %}
+			<button class="btn btn-primary">Pagar</button>
+		{% else %}
+			<button type="submit" class="btn btn-primary">Publicar Gratis</button>
+		{% endif %}
+	</form>
+</div>

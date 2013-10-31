@@ -1,0 +1,29 @@
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span8 offset2">
+                <form action="." method="POST" class="span12">
+                    <legend> Editar la Posición</legend>
+                    {% for field in form %}
+                    <div class="control-group {% if field.errors %}error{% endif %}" >
+                       <label class="control-label">
+                       {{ field.label }}</label>
+                       <div class="controls col-lg-10">
+                           {{ field }}
+                           <span class="help-inline">{{ field.errors }}</span>
+                       </div>
+                    </div>
+                    {% endfor %}
+                    {% csrf_token %}
+                    <div class="control-group">
+                        <div class="controls" align="center">
+                            <a href="{% url 'position_list_view' %}" class="btn">Cancelar</a>
+                            <button type="submit" class="btn btn-primary" name="_save">Guardar</button>
+                            {% if offers < 5 %}
+                               <button type="submit" class="btn btn-success" name="_publish">Publicar </button>
+                            {% endif %}
+                        </div>
+                   </div>
+                </form>
+        </div>
+    </div>
+</div>

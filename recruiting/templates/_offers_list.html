@@ -1,0 +1,29 @@
+<div>
+    <ul class="unstyled">
+        {% for result in page.object_list %}
+            <li >
+                {% if result.object %}
+                <div class="row-fluid bordered1">
+                    <div class="span6">
+                        <a href="/offer/{{result.object.slug}}/" ><h5>{{ result.object.job_title | upper}}</h5></a>
+                    </div>
+                    <div class="span3">
+                        {{result.object.days_remaining}} días
+                    </div>
+                    <div class="span1">
+                        <strong>{{result.object.location}}</strong>
+                    </div>
+                    <div class="span1" align="center"><span><i class="icon-user"></i>{{result.object.applicants.count}}</span></div>
+                    <div class="span1">
+                        <a href="/offer/{{result.object.slug}}/" >Más</a>  
+                    </div>   
+                </div>
+                {% endif %}
+            </li>
+        {% empty %}
+            <p>No results found.</p>
+        {% endfor %}
+    </ul>
+</div>
+
+

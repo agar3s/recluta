@@ -16,5 +16,5 @@ urlpatterns = patterns('empleo_desarrolladores.views',
     url(r'^company/details$', 'companyDetailView',name="company_detail"),
     url(r'^user/card/$', 'cardDataView',name="card_data_view"),
     url(r'^purchase/$', 'purchaseResultView',name="purchase_result_view"),
-
+    url(r'^index$', 'indexView',name="index_view"),
 )

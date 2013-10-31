@@ -2,29 +2,18 @@
 
 {% block content %}
 <div class="bordered2">
-<h2 align="center">Editar Perfil</h2>
 	<span class="pull-right"><strong>Usuario :</strong> {{ user.username }}</span>
 	<form action="" method="POST">
-            <legend>Tarjeta de Crédito </legend>
-
-            {% for field in form %}
-            <div class="control-group {% if field.errors %}error{% endif %}" >
-                <label class="control-label">
-                {{ field.label }}</label>
-                <div class="controls form-group">
-                    {{ field }}
-                    <span class="help-inline">{{ field.errors }}</span>
-                </div>
-            </div>
-            {% endfor %}
-            {% csrf_token %}
-            <div class="control-group">
-                <div class="controls" align="center">
-                    <a href="{% url 'auth_password_change' %}" class="btn">Cambiar Clave</a>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                </div>
-            </div>
-        </form>
+	    <legend>Editar Perfil</legend>
+	    {% include '_form_fields.html' %}
+	    {% csrf_token %}
+	    <div class="control-group">
+	        <div class="controls" align="center">
+	            <a href="{% url 'auth_password_change' %}" class="btn">Cambiar Clave</a>
+	            <button type="submit" class="btn btn-primary">Guardar</button>
+	        </div>
+	    </div>
+	</form>
 	{% if user.userprofile.company %}
 	<span class="pull-right"><a href="{% url 'company_detail' %}">Ver la información de la Empresa</a></span>
 	{% endif %}
