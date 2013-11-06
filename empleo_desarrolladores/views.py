@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from messaging_handler import OfferApplicantMessage
 from django.template import defaultfilters
 from models_factory import ApplicantFactory, OfferApplicantFactory, CardFactory, UserProfileFactory, OfferFactory, CompanyFactory
-
+from datetime import datetime
 
 def error404(request):
     template = loader.get_template('404.html')
@@ -135,6 +135,7 @@ def terminatePositionView(request, slug_offer):
     if offer.company != user.company:
         return error404(request)
     offer.state = 1
+    offer.offer_valid_time = datetime.now()
     offer.save()
     return HttpResponseRedirect('/positions/list')
 
@@ -254,6 +255,9 @@ def purchaseResultView(request):
         return HttpResponseRedirect('/positions/list')
     ctx = {'price': price, 'published_offers':published_offers, 'offer': offer}
     return render_to_response('purchase_result.html', ctx, context_instance=RequestContext(request))
+
+def indexView(request):
+    return render_to_response('index.html')
 
 def processorUrlSite(request):
     ctx = {

@@ -1,0 +1,19 @@
+{% for offer in offers %}
+	<div class="row-fluid bordered1">
+		<div class="span9">
+			<a href="/positions/details/{{offer.slug}}"><h5>{{offer.job_title| upper}}</h5></a>
+		</div>	
+		
+		<div class="span1" align="center">
+			<span><i class="icon-user"></i>{{offer.applicants.count}}</span>
+		</div>
+
+		<div class="span2">
+			<p>
+			    {{offer.offer_valid_time}}
+			</p>
+		</div>		    
+	</div>
+{% empty %}
+	<h3>¡No hay ofertas antiguas!</h3>
+{% endfor %}

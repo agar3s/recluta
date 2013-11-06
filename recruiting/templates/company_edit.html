@@ -1,26 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="span12 bordered2" align="center">
-	<form action="" method="POST">
-        <legend>Detalles de la Empresa </legend>
+    <div class="span12 bordered2" align="center">
+    	<form action="" method="POST">
+            <legend>Detalles de la Empresa </legend>
 
-        {% for field in form %}
-        <div class="control-group {% if field.errors %}error{% endif %}" >
-            <label class="control-label">
-            {{ field.label }}</label>
-            <div class="controls form-group">
-                {{ field }}
-                <span class="help-inline">{{ field.errors }}</span>
+            {% include '_form_fields.html' %}
+            {% csrf_token %}
+            <div class="control-group">
+                <div class="controls" align="center">
+                    <a href="{% url 'position_list_view' %}" class="btn">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
             </div>
-        </div>
-        {% endfor %}
-        {% csrf_token %}
-        <div class="control-group">
-            <div class="controls" align="center">
-                <a href="{% url 'position_list_view' %}" class="btn">Cancelar</a>
-                <button type="submit" class="btn btn-primary">Guardar</button>
-            </div>
-        </div>
-    </form>
-</div>
+        </form>
+    </div>
 {% endblock %}

@@ -13,28 +13,15 @@
                                    
                     <a class="brand span4" href="/">CODETAG JOBS</a>
 
-                    <!-- <form action="" class="navbar-search">
-                        <input type="text" class="search-query span6" placeholder="Search Offers">
-                    </form> -->
                     <form action="/?q=" class="navbar-search">
                         <div class="input-append">
                             <input type="text" name="q" id="id_q" class="span7" placeholder="Buscar Ofertas...">
                             <button type="submit" class="btn" style="width:100px"><i class="icon-search"></i></button>
                         </div>
                     </form>
-
-                        
                 
                     <ul class="nav pull-right">
-                        <!-- <li><a href="#">How it works?</a></li> -->
-                        {% if user.is_authenticated %}
-                            <li><a href="{% url 'position_list_view' %}">Posiciones</a></li>
-                            <li><a href="{% url 'edit_profile' %}">Editar Perfil</a></li>
-                            <li><a href="{% url 'logout' %}">Salir</a></li>
-                        {% else %}
-                            <li><a href="/accounts/register/">Regístrate</a></li>
-                            <li><a href="{% url 'login' %}">Ingresar</a></li>
-                        {% endif %}
+                        {% include '_navbar.html'%}
                     </ul>
 
                 </div>

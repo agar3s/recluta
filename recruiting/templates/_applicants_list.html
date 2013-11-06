@@ -1,0 +1,20 @@
+<div class="accordion" id="accordion-one">
+	{% for application in applications %}
+	  	<div class="accordion-group">
+		    {% if application.state %}
+		    <div class="accordion-heading confirmed-applicant">
+		    {% else %}
+		    <div class="accordion-heading not-confirmed-applicant">
+		    {% endif %}	
+			    <a class="accordion-toggle normal" data-toggle="collapse" data-parent="#accordionOne" href="#collapse{{application.id}}">
+			        {{application.applicant.full_name}} - {{application.applicant.mail}}
+			    </a>
+		    </div>
+		    <div id="collapse{{application.id}}" class="accordion-body collapse">
+			    <div class="accordion-inner">
+				    <strong>Observación:</strong> {{application.observation}}
+			    </div>
+		    </div>
+		</div>
+	{% endfor %}
+</div>

@@ -1,82 +1,21 @@
 {% extends 'base.html' %}
 {% block content %}
+	<div class="row-fluid">
+	    <div class="span6">
+	        <strong>Oferta</strong>
+	    </div>
+	    <div class="span3">
+	        <strong>Finaliza en</strong>
+	    </div>
+	    <div class="span1">
+	        <strong>Locación</strong>
+	    </div>
+	    <div class="span1" align="center"><strong>Aplicantes</strong></div>
+	</div>
+	{% include '_offers_list.html' %}
 
-<div>
-    <div class="accordion" id="accordion2">
-    {% for result in page.object_list %}
-            {% if result.object %}
-                <div class="accordion-group">
-                    <div class="accordion-heading">
-                        <a class="accordion-toggle normal" data-toggle="collapse" data-parent="#accordion2" href="#collapse{{result.object.id}}">
-                            <div class="row-fluid">
-                                <div class="span6">
-                                    {{ result.object.job_title | upper}}
-                                </div>
-                                <div class="span3">
-                                    {{result.object.days_remaining}}
-                                </div>
-                                <div class="span1">
-                                    <strong>{{result.object.location}}</strong>
-                                </div>
-                                <div class="span2"><span class="pull-right"><i class="icon-user"></i>{{result.object.applicants.count}}</span></div> 
-                            </div>
-                        </a>
-                    </div>
-                    <div id="collapse{{result.object.id}}" class="accordion-body collapse">
-                        <div class="accordion-inner">
-                            <strong>Descripción:</strong> {{result.object.job_description}}
-                        </div>
-                    </div>
-                </div>
-            
-            {% endif %}
-    {% empty %}
-        <p>No se encontraron resultados</p>
-    {% endfor %}  
-    </div>
-</div>
-
-<!-- Paginacion -->
-{% if page.has_previous or page.has_next %}
-        <div class="pagination pagination-centered" align="center">
-            <ul>
-            {% if page.has_previous %}
-                <li><a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">
-                &laquo; 
-                </a></li>
-            {% else %}
-                <li class="disabled">
-                    <a href="">
-                        &laquo; 
-                    </a>
-                </li>
-            {% endif %}
-            {% for page1 in paginator.page_range %}
-                {% ifequal page1 page.number %}
-                <li class="active"><a href="?q={{ query }}&amp;page={{ page1 }}">{{page1}}</a></li>
-                {% else %}
-                <li><a href="?q={{ query }}&amp;page={{ page1 }}">{{page1}}</a></li>
-                {% endifequal %}
-            {% endfor %}
-            {% if page.has_next %}
-                <li>
-                <a href="?q={{ query }}&amp;page={{ page.next_page_number }}">
-                &raquo;
-                </a>
-                </li>
-            {% else %}
-                <li class="disabled">
-                    <a href="">
-                        &raquo;
-                    </a>
-                </li>
-            {% endif %}
-            </ul>
-        </div>
-    {% endif %}
-
-</div>
-    
-    
+	{% if page.has_previous or page.has_next %}
+	    {% include '_offers_pagination.html' %}        
+	{% endif %}   
     
 {% endblock %}

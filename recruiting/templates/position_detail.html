@@ -1,88 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
-
-<div class="row-fluid">
-    {% ifequal offers 1 %}
-        <h4 class="pull-right">Tu tienes {{offers}} oferta publicada</h4>
-    {% else %}
-        <h4 class="pull-right">Tu tienes {{offers}} ofertas publicadas</h4>
-    {% endifequal %}
-</div>
-{% ifequal offer.state 1%}
-    <div class="row-fluid">
-        <div class="span8 offset2">
-            <div class="bordered">
-                <div class="row-fluid">
-                    <div class="span11">
-                        <h1>{{ offer.job_title }}</h1>
-                    </div>
-                </div>
-                
-                <div class="row-fluid">
-                    <div class="span6">
-                         <h3>{{ offer.company }}</h3>
-                    </div>
-                    <div class="span6">
-                        <p class="pull-right">
-                            <strong>Salario:</strong> {{offer.salary}}
-                        </p>
-                    </div>
-                </div>
-               <div class="row-fluid">
-                    <div class="span6">
-                        <p>
-                            <strong>Localización:</strong> {{ offer.location }}
-                        </p>
-                    </div>
-                    <div class="span6">
-                        <p class="pull-right">
-                            <strong>Tiempo de la Oferta:</strong> {{ offer.offer_valid_time }}
-                        </p>
-                    </div>
-                </div>
-                
-                <p align="justify">
-                    <strong>Descripción:</strong> {{ offer.job_description }} 
-                </p>
-                <p>
-                    <strong>Habilidades: </strong>
-                    {% for tag in offer.skills.all %}
-                        <span class="label label-info">{{tag.name}}</span>
-                    {% endfor %}
-                </p>
-             </br>  
-            </div>
-        </div>
-    </div>
-{% else %}
-<div class="container-fluid">
-    <div class="row-fluid">
-        <div class="span8 offset2">
-            <form action="." method="POST" class="span12">
-                <legend> Editar la Posición</legend>
-                {% for field in form %}
-                <div class="control-group {% if field.errors %}error{% endif %}" >
-                    <label class="control-label">
-                    {{ field.label }}</label>
-                    <div class="controls col-lg-10">
-                        {{ field }}
-                        <span class="help-inline">{{ field.errors }}</span>
-                    </div>
-                </div>
-                {% endfor %}
-                {% csrf_token %}
-                <div class="control-group">
-                    <div class="controls" align="center">
-                        <a href="{% url 'position_list_view' %}" class="btn">Cancelar</a>
-                        <button type="submit" class="btn btn-primary" name="_save">Guardar</button>
-                        {% if offers < 5 %}
-                            <button type="submit" class="btn btn-success" name="_publish">Publicar </button>
-                        {% endif %}
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-{% endifequal %}
+{% include '_published_offers.html' %}
+	{% ifequal offer.state 1%}
+	    {% include '_position_details_state_1.html' %}
+	{% else %}
+	    {% include '_position_details_state_different_1.html'%}
+	{% endifequal %}
 {% endblock %}

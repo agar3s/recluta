@@ -1,0 +1,35 @@
+<div class="pagination pagination-centered" align="center">
+    <ul>
+    {% if page.has_previous %}
+        <li><a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">
+        &laquo; 
+        </a></li>
+    {% else %}
+        <li class="disabled">
+            <a href="">
+                &laquo; 
+            </a>
+        </li>
+    {% endif %}
+    {% for page1 in paginator.page_range %}
+        {% ifequal page1 page.number %}
+        <li class="active"><a href="?q={{ query }}&amp;page={{ page1 }}">{{page1}}</a></li>
+        {% else %}
+        <li><a href="?q={{ query }}&amp;page={{ page1 }}">{{page1}}</a></li>
+        {% endifequal %}
+    {% endfor %}
+    {% if page.has_next %}
+        <li>
+        <a href="?q={{ query }}&amp;page={{ page.next_page_number }}">
+        &raquo;
+        </a>
+        </li>
+    {% else %}
+        <li class="disabled">
+            <a href="">
+                &raquo;
+            </a>
+        </li>
+    {% endif %}
+    </ul>
+</div>
