@@ -1,10 +1,6 @@
 # Django settings for recruiting project.
 import os.path
-import djcelery
 from datetime import timedelta
-from celery.schedules import crontab
-
-djcelery.setup_loader()
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -141,7 +137,6 @@ INSTALLED_APPS = (
     'south',
     'haystack',
     'taggit',
-    "djcelery",
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
@@ -216,16 +211,3 @@ EMAIL_HOST_USER = "b8d676a1-5b44-44d1-9ca4-ee943fc7fc04"
 EMAIL_HOST_PASSWORD = "b8d676a1-5b44-44d1-9ca4-ee943fc7fc04"
 SERVER_EMAIL = "Codetag <notification@codetag.me>"
 EMAIL_PORT = 2525
-
-# Celery
-BROKER_URL = "amqp://guest:guest@localhost:5672//"
-
-CELERYBEAT_SCHEDULE = {
-    'verify-time-offer': {
-        'task': 'empleo_desarrolladores.tasks.terminate_offers',
-        'schedule': crontab(),
-        'args': ()
-    },
-}
-
-CELERY_TIMEZONE = 'UTC'
