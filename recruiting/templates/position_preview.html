@@ -1,5 +1,21 @@
 {% extends 'base.html' %}
 {% block content  %}
+{% ifequal offer.state 2%}
+{% else %}
+<div class="borderedB2">
+    <div class="row-fluid">
+        <div class="span5">
+            <h4 class="center-vertical">Paso 2/3 - Vista previa de la oferta</h4>
+        </div>
+        <div class="span7">
+            <div class="progress progress-striped">
+                <div class="bar" style="width:66%;"></div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+{% endifequal %}
 <div class="bordered2">
     <div class="row-fluid">
         <div class="span11">

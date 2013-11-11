@@ -18,7 +18,7 @@ class Company(models.Model):
     location = models.CharField(max_length=100)
     website = models.CharField(max_length=100, blank=True, null=True)
     email = models.EmailField(max_length=100)
-    phone = models.IntegerField(max_length=100)
+    phone = models.CharField(max_length=40)
     image = models.ImageField(upload_to=url, blank=True, null=True)
 
     def __unicode__(self):

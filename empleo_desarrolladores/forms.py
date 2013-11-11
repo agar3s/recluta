@@ -15,11 +15,12 @@ class CreateOfferForm(forms.Form):
     job_title = forms.CharField(label='Título',widget=forms.TextInput())
     job_description = forms.CharField(label='Descripción',widget=forms.Textarea())
     skills = TagField(label='Conocimientos')
-    location = forms.CharField(label='Localización', widget=forms.TextInput())
+    location = forms.CharField(label='Ciudad', widget=forms.TextInput())
     type_contract = forms.ChoiceField(label='Tipo de contrato', choices=Offer.TYPE_OF_CONTRACT)
     salary = forms.ChoiceField(label='Salario', choices=Offer.SALARY_CHOICES)
 
 class CreateOfferFormLoader():
+
     def load_initial_data(self, offer):
         s = [skill.name for skill in offer.skills.all()]
 
@@ -34,12 +35,12 @@ class CreateOfferFormLoader():
         })
 
 class CompanyForm(forms.Form):
-    nit = forms.CharField(label='NIT', widget=forms.TextInput())
+    nit = forms.RegexField(max_length=30, regex=r'(^[0-9]{5,12}-[0-9]$)', error_message = ('El formato de NIT no es valido, debe ser por Ej.: 123456789-1' ), help_text='Esta información no sera compartida con terceros')
     name = forms.CharField(label='Nombre', widget=forms.TextInput())
-    locationCompany = forms.CharField(label='Localización',widget=forms.TextInput())
+    locationCompany = forms.CharField(label='Ciudad',widget=forms.TextInput({'placeholder':'Bogotá'}))
     website = forms.CharField(label='Sitio Web',widget=forms.TextInput())
     email = forms.EmailField(label='Email', widget=forms.TextInput())
-    phone = forms.IntegerField(label='Teléfono',widget=forms.TextInput())
+    phone = forms.RegexField(max_length=30, label='Teléfono',widget=forms.TextInput(), help_text="Código de area + N°. Ej.: (57) 765-4321", error_message = ('El teléfono no es valido'), regex=r'(\d{3}[-\.\s]\d{3}[-\.\s]\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]\d{4}|\d{3}[-\.\s]\d{4})' )  
     # image = forms.ImageField(require(d=False)
 
 class CompanyFormLoader():
