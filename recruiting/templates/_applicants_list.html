@@ -1,17 +1,18 @@
 <div class="accordion" id="accordion-one">
 	{% for application in applications %}
 	  	<div class="accordion-group">
-		    {% if application.state %}
-		    <div class="accordion-heading confirmed-applicant">
-		    {% else %}
-		    <div class="accordion-heading not-confirmed-applicant">
-		    {% endif %}	
+		    <div class="accordion-heading">
 			    <a class="accordion-toggle normal" data-toggle="collapse" data-parent="#accordionOne" href="#collapse{{application.id}}">
 			        {{application.applicant.full_name}} - {{application.applicant.mail}}
+			        {% if application.state %}
+			        <span class="label label-success pull-right">Confirmado</span>
+			        {% else %}
+			        <span class="label label-warning pull-right">Pendiente</span>
+			        {% endif %}	
 			    </a>
 		    </div>
 		    <div id="collapse{{application.id}}" class="accordion-body collapse">
-			    <div class="accordion-inner">
+			    <div class="accordion-inner content-accordion">
 				    <strong>Observación:</strong> {{application.observation}}
 			    </div>
 		    </div>

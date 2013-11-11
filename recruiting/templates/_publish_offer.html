@@ -1,16 +1,13 @@
 <div class="borderedB" align = "center">
     {% if published_offers %}
-        {% if card %}
-            {% ifequal offer.state 0%}
-                <a href="/purchase/?offer={{offer.id}}" class="btn btn-success">Pagar y Publicar</a> 
-                {% endifequal %}
-           {% else %}
-                {% ifequal offer.state 0%}
-                <a href="/user/card/?offer={{offer.id}}" class="btn btn-success">Pagar y Publicar</a>  
-                {% endifequal %}
-           {% endif %}
+        <form action="https://gateway.payulatam.com/ppp-web-gateway/" method="POST">
+            <button type="submit" class="btn">Pagar y publicar</button>
+        </form>
+        <form action="https://gatewaylap.pagosonline.net/" method="POST">
+            <button type="submit" class="btn btn-primary btn-large">Pagar y publicar oferta resaltada</button>
+        </form>
     {% else %}
-        <a href="/purchase/?offer={{offer.id}}" class="btn btn-success">Publicar</a> 
+        <a href="/purchase/?offer={{offer.id}}" class="btn btn-success center-horizontal">Publicar</a> 
     {% endif %} 
-    <a class="btn pull-right btn-primary" href="/positions/details/{{offer.slug}}">Continuar Editando</a>
+    <a class="btn pull-right" href="/positions/details/{{offer.slug}}">Continuar Editando</a>
 </div>

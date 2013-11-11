@@ -41,8 +41,26 @@ body {
 .borderedB {
     border-color: #000;
     border-radius: 10px;
-    padding: 40px;
+    padding: 10px;
     margin: 0 15% 2% 15%;
+
+}
+
+.center-horizontal {
+    position: absolute;
+    left: 45%;
+}
+
+.center-vertical {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.borderedB2 {
+    border-color: #000;
+    border-radius: 10px;
+    padding: 2px;
+    margin: 0 15% 0 15%;
 
 }
 
@@ -94,6 +112,9 @@ body {
     width: 90%;
 }
 
+.content-accordion {
+    background-color: #e9eaee;
+}
 
 input.required,
 error {

@@ -1,9 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
-    <div class="span12 bordered2" align="center">
-    	<form action="" method="POST">
+    <div class="span12 bordered2">
+    	<form  action="" method="POST" class="form-horizontal">
             <legend>Detalles de la Empresa </legend>
-
             {% include '_form_fields.html' %}
             {% csrf_token %}
             <div class="control-group">
