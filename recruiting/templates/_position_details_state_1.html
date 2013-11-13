@@ -40,6 +40,17 @@
                 {% endfor %}
             </p>
          </br>  
+         {% if offer.clarification %}
+            <div class="row-fluid">
+                <div class="span12">
+                    <h3>Aclaraciones</h3>
+                </div>
+                <div class="span12">
+                    {{offer.clarification}}          
+                </div>
+            </div>
+        {% endif %}
         </div>
+        </br>  
     </div>
 </div>

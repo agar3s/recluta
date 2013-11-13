@@ -2,15 +2,14 @@ from datetime import datetime, timedelta
 from django.utils import timezone
 from empleo_desarrolladores.factories.company_factory import CompanyFactory
 from empleo_desarrolladores.factories.offer_factory import OfferFactory
-from empleo_desarrolladores.factories.card_factory import CardFactory
 from empleo_desarrolladores.factories.user_factory import UserFactory
 from empleo_desarrolladores.factories.offer_applicant_factory import OfferApplicantFactory
 from empleo_desarrolladores.factories.applicant_factory import ApplicantFactory
 from django.http import HttpRequest
 from django.test import TestCase
 from empleo_desarrolladores.models import Applicant, OfferApplicant 
-from empleo_desarrolladores.views import offerDetailsView, userProfileEditView, createPositionView, terminatePositionView, positionsListView, oldPositionsListView, completeCompanyInfoView, companyDetailView, positionDashBoardView,successfulApplicationView, positionPreviewView, cardDataView
-from empleo_desarrolladores.views import plansAndPricingView, indexView
+from empleo_desarrolladores.views import offerDetailsView, userProfileEditView, createPositionView, terminatePositionView, positionsListView, oldPositionsListView, completeCompanyInfoView, companyDetailView, positionDashBoardView,successfulApplicationView, positionPreviewView
+from empleo_desarrolladores.views import plansAndPricingView, indexView, positionClarificationsView, positionDetailsView
 from django.test.client import RequestFactory
 
 class CompanyTest(TestCase):
@@ -137,6 +136,22 @@ class OfferDetailsViewTest(TestCase):
         applicant = applicants[0]
         applications = OfferApplicant.objects.filter(applicant=applicant, offer=offer, state=False, observation='well, none')
         self.assertEqual(applications.count(), 1)
+
+    def test_GET_should_render_the_correct_template_content_when_offer_has_a_clarification(self):
+        offer = OfferFactory(state=2, clarification="A clarification")
+
+        user = UserFactory()
+        user.userprofile.company = offer.company
+        user.userprofile.save()
+
+        factory = RequestFactory()
+        request = factory.get('/offer/%s' % (offer.slug))
+        request.user = user
+        result = offerDetailsView(request, offer.slug)
+
+        self.assertEqual(result.status_code, 200)
+        self.assertIn('Aclaraciones', result.content)
+
 
 class UserProfileEditViewTest(TestCase):
     def test_POST_should_redirect_to_home_when_the_given_data_is_valid(self):
@@ -318,12 +333,12 @@ class CompleteCompanyInfoViewTest(TestCase):
         factory = RequestFactory()
         request = factory.post('/company/complete/')
         request.user = user
-        request.POST['nit'] = 23432
+        request.POST['nit'] = "123456789-9"
         request.POST['name'] = 'CompanyName'
         request.POST['locationCompany'] = 'Bogota'
         request.POST['website']='company.com'
         request.POST['email']='company@gmail.com'
-        request.POST['phone']=23433434
+        request.POST['phone']='(57)233-3433'
         result = completeCompanyInfoView(request)
 
         self.assertEqual(result.status_code, 302)
@@ -395,16 +410,16 @@ class SuccessfulApplicationTest(TestCase):
         self.assertEqual(valid_applications.count(), 1)
 
 class PositionDetailViewTest(TestCase):
-    def test_GET_should_render_position_preview_template(self):
-        offer = OfferFactory()
+    def test_GET_should_render_position_details_template(self):
+        offer = OfferFactory(state=0)
 
         user = UserFactory()
         user.userprofile.company = offer.company
 
         factory = RequestFactory()
-        request = factory.get('/positions/preview/%s' % offer.slug)
+        request = factory.get('positions/details/%s' % offer.slug)
         request.user = user
-        result = positionPreviewView(request, offer.slug)
+        result = positionDetailsView(request, offer.slug)
         self.assertEqual(result.status_code, 200)
 
     def test_GET_should_redirect_http_404_when_user_company_different_offer_company(self):
@@ -419,32 +434,21 @@ class PositionDetailViewTest(TestCase):
         factory = RequestFactory()
         request = factory.get('/positions/preview/%s' % offer.slug)
         request.user = user
-        result = positionPreviewView(request, offer.slug)
+        result = positionDetailsView(request, offer.slug)
 
         self.assertEqual(result.status_code, 404)
 
-class CardDataViewTest(TestCase):
-    def test_POST_should_redirect_to_purchase_details_when_the_given_data_is_valid(self):
-         
+    def test_GET_should_redirect_clarifications_when_position_state_equal_2(self):
         user = UserFactory()
-
-        offer = OfferFactory()
-
+        offer = OfferFactory(state=2)
         factory = RequestFactory()
-        request = factory.post('/user/card/?offer=%s' %(offer.id))
+        request = factory.get('/positons/details/%s' % offer.slug)
         request.user = user
-        request.POST['card_type'] = 'VS'
-        request.POST['number'] = 2343345
-        request.POST['expiration'] = '2015-10-23'
-        request.POST['owner']='Juan Martinez'
-        request.POST['ccv2']=34454545
-        request.POST['address']='KR 153B 138B 45'
-        request.POST['city']='Bogota'
-        request.POST['province']='Cundinamarca'
-        result = cardDataView(request)
+        result = positionDetailsView(request, offer.slug)
 
         self.assertEqual(result.status_code, 302)
-        self.assertEqual(result['location'],'/purchase/?offer=%s' %(offer.id))
+        self.assertEqual(result['location'],'/positions/clarifications/%s' % offer.slug)
+
 
 class PurchaseResultViewTest(TestCase):
     pass
@@ -461,65 +465,26 @@ class PositionPreviewViewTest(TestCase):
         user = UserFactory()
         user.userprofile.company = company
 
-        card = CardFactory()
-        user.userprofile.card = card
-
         factory = RequestFactory()
         request = factory.get('/positions/preview/%s' % offer2.slug)
         request.user = user
         result = positionPreviewView(request, offer2.slug)
-        self.assertIn('Pagar y Publicar', result.content)
+        self.assertIn('Pagar y publicar', result.content)
         self.assertEqual(result.status_code, 200)
 
     def test_GET_should_render_position_preview_template_with_correct_button_when_user_dont_have_published_offers(self):
 
-        offer2 = OfferFactory()
-
-        card = CardFactory()
+        offer2 = OfferFactory(state=0)
 
         user = UserFactory()
         user.userprofile.company = offer2.company
-        user.userprofile.card = card
 
         factory = RequestFactory()
         request = factory.get('/positions/preview/%s' % offer2.slug)
         request.user = user
         result = positionPreviewView(request, offer2.slug)
-        self.assertIn('Publicar', result.content)
+        self.assertIn('Publicar Gratis', result.content)
         self.assertEqual(result.status_code, 200)
-
-    def test_GET_should_render_the_correct_template_data_when_user_have_card(self):
-        offer2 = OfferFactory()
-
-        card = CardFactory()
-
-        user = UserFactory()
-        user.userprofile.company = offer2.company
-        user.userprofile.card = card
-
-        factory = RequestFactory()
-        request = factory.get('/positions/preview/%s' % offer2.slug)
-        request.user = user
-        result = positionPreviewView(request, offer2.slug)
-        self.assertIn('href="/purchase/?offer=%s"' % (offer2.id), result.content)
-        self.assertEqual(result.status_code, 200)        
-
-    def test_GET_should_render_the_correct_template_data_when_user_dont_have_card(self):
-        company = CompanyFactory()
-
-        offer = OfferFactory(offer_valid_time = datetime.now(), state=2, job_title='oferta1',company=company)
-
-        offer2 = OfferFactory(offer_valid_time = datetime.now(), state=0, job_title= 'oferta2', company=company)
-
-        user = UserFactory()
-        user.userprofile.company = company
-
-        factory = RequestFactory()
-        request = factory.get('/positions/preview/%s' % offer2.slug)
-        request.user = user
-        result = positionPreviewView(request, offer2.slug)
-        self.assertIn('href="/user/card/?offer=%s"' % (offer2.id), result.content)
-        self.assertEqual(result.status_code, 200) 
 
 class IndexViewTest(TestCase):
     def test_GET_should_render_index_view_template(self):
@@ -528,3 +493,78 @@ class IndexViewTest(TestCase):
         result = indexView(request)
 
         self.assertEqual(result.status_code, 200)
+
+class PositionClarificationsViewTest(TestCase):
+    def test_GET_should_render_position_clarifications_view_template(self):
+        offer = OfferFactory(state=2)
+
+        user = UserFactory()
+        user.userprofile.company = offer.company
+
+        factory = RequestFactory()
+        request = factory.get('positions/clarifications/%s' % offer.slug)
+        request.user = user
+        result = positionClarificationsView(request, offer.slug)
+        self.assertEqual(result.status_code, 200)
+
+    def test_GET_should_redirect_http_404_when_user_company_different_offer_company(self):
+        
+        company2 = CompanyFactory(name='Apple', nit=444)        
+
+        user = UserFactory()
+        user.userprofile.company = company2
+
+        offer = OfferFactory()
+
+        factory = RequestFactory()
+        request = factory.get('/positions/clarifications/%s' % offer.slug)
+        request.user = user
+        result = positionClarificationsView(request, offer.slug)
+
+        self.assertEqual(result.status_code, 404)
+
+    def test_GET_should_redirect_http_404_when_offer_state_different_2(self):
+        
+        company2 = CompanyFactory(name='Apple', nit=444)        
+
+        user = UserFactory()
+        user.userprofile.company = company2
+
+        offer = OfferFactory(state=0)
+
+        factory = RequestFactory()
+        request = factory.get('/positions/clarifications/%s' % offer.slug)
+        request.user = user
+        result = positionPreviewView(request, offer.slug)
+
+        self.assertEqual(result.status_code, 404)
+
+    def test_POST__should_redirect_to_the_same_offer_clarification_template(self):
+        user = UserFactory()
+
+        offer = OfferFactory(state=2)
+
+        factory = RequestFactory()
+        request = factory.post('/positions/clarifications/%s' % offer.slug)
+        request.user = user
+        request.POST['aclaration']='This is a clarification'
+        result = positionClarificationsView(request, offer.slug)
+
+        self.assertEqual(result.status_code, 302)
+        self.assertEqual(result['location'],'/positions/clarifications/%s' % offer.slug)
+
+    def test_GET_should_render_the_correct_template_content_when_offer_has_a_clarification(self):
+        offer = OfferFactory(state=2, clarification="A clarification")
+
+        user = UserFactory()
+        user.userprofile.company = offer.company
+        user.userprofile.save()
+
+        factory = RequestFactory()
+        request = factory.get('/positions/clarifications/%s' % (offer.slug))
+        request.user = user
+        result = positionClarificationsView(request, offer.slug)
+
+        self.assertEqual(result.status_code, 200)
+        self.assertIn('Aclaraciones', result.content)
+

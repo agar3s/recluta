@@ -1,4 +1,4 @@
-from models import Applicant, OfferApplicant, Card, Offer, Company
+from models import Applicant, OfferApplicant, Offer, Company
 from hashids import Hashids
 from datetime import datetime, timedelta
 
@@ -35,22 +35,6 @@ class OfferApplicantFactory():
             offer_applicant.save()
 
         return offer_applicant
-
-class CardFactory():
-    def save_instance_form(self, form, user):
-        card = Card()
-        card.card_type = form.cleaned_data['card_type']
-        card.number = form.cleaned_data['number']
-        card.expiration = form.cleaned_data['expiration']
-        card.owner = form.cleaned_data['owner']
-        card.ccv2 = form.cleaned_data['ccv2']
-        card.address = form.cleaned_data['address']
-        card.city = form.cleaned_data['city']
-        card.province = form.cleaned_data['province']
-        card.postal_code = form.cleaned_data['postal_code']
-        card.save()
-        user.card = card
-        user.save()
 
 class UserProfileFactory():
     def save_instance_form(self, form, user):

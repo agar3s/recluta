@@ -22,3 +22,4 @@ admin.site.unregister(get_user_model())
 admin.site.register(get_user_model(), UserProfileAdmin)
 admin.site.register(Applicant)
 admin.site.register(OfferApplicant)
+

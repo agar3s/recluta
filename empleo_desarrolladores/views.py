@@ -1,5 +1,5 @@
 from models import Offer, Company, OfferApplicant
-from forms import CompanyForm, ApplicantForm, CreateOfferForm, UserEditForm, CreditCardForm, CreateOfferFormLoader, CompanyFormLoader, UserEditFormLoader
+from forms import CompanyForm, ApplicantForm, CreateOfferForm, UserEditForm, CreateOfferFormLoader, CompanyFormLoader, UserEditFormLoader, ClarificationForm
 from django.shortcuts import render_to_response
 from django.template import RequestContext, Context, loader
 from django.http import HttpResponseRedirect, HttpResponseNotFound
@@ -8,7 +8,7 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 from messaging_handler import OfferApplicantMessage
 from django.template import defaultfilters
-from models_factory import ApplicantFactory, OfferApplicantFactory, CardFactory, UserProfileFactory, OfferFactory, CompanyFactory
+from models_factory import ApplicantFactory, OfferApplicantFactory, UserProfileFactory, OfferFactory, CompanyFactory
 from datetime import datetime
 
 def error404(request):
@@ -92,13 +92,8 @@ def positionPreviewView(request, slug_offer):
         if offer.company != user.company:
             return error404(request)
     published_offers = Offer.objects.filter(state=2, company=user.company).count()
-    if user.card:
-        card = True
-    else:
-        card = False
-    ctx = {'offer': offer, 'published_offers': published_offers, 'card': card}
+    ctx = {'offer': offer, 'published_offers': published_offers}
     return render_to_response('position_preview.html', ctx, context_instance=RequestContext(request))
-
 
 
 @login_required()
@@ -107,14 +102,18 @@ def positionDetailsView(request, slug_offer):
     company = user.company
     offer = get_object_or_404(Offer, slug=slug_offer)
     applicants = OfferApplicant.objects.filter(offer=offer)
-    if request.method == "POST":
+
+    if offer.is_published():
+        return HttpResponseRedirect("/positions/clarifications/%s" % (offer.slug))
+
+    if request.method == 'POST':
         form = CreateOfferForm(request.POST)
         if form.is_valid():
             offer_factory = OfferFactory()
             offer_factory.update_instance_form(offer=offer, form=form, company=company)
 
             return HttpResponseRedirect("/positions/preview/%s" % (offer.slug))
-    if request.method == "GET":
+    if request.method == 'GET':
         if offer.company != user.company:
             return error404(request)
 
@@ -125,6 +124,31 @@ def positionDetailsView(request, slug_offer):
     ctx = {'form': form, 'offer': offer, 'applicants': applicants, 'offers':offers}
     return render_to_response('createPosition.html', ctx, context_instance=RequestContext(request))
 
+@login_required()
+def positionClarificationsView(request, slug_offer):
+    offer = get_object_or_404(Offer, slug=slug_offer)
+    form = ClarificationForm()
+
+    if offer.clarification:
+        form = ClarificationForm(initial={
+            'aclaration':offer.clarification})
+
+    if request.method == 'POST':
+        form = ClarificationForm(request.POST)
+        if form.is_valid():
+            offer.clarification = form.cleaned_data['aclaration']
+            offer.save()
+            return HttpResponseRedirect("/positions/clarifications/%s" % (offer.slug))
+
+    user = request.user.userprofile
+    if request.method == "GET":
+        if not offer.is_published():
+            return error404(request)
+        if offer.company != user.company:
+            return error404(request)
+
+    ctx = {'form': form, 'offer':offer}
+    return render_to_response('position_clarification.html', ctx, context_instance=RequestContext(request))
 
 @login_required()
 def terminatePositionView(request, slug_offer):
@@ -212,26 +236,6 @@ def successfulApplicationView(request, offer_applicant_token):
     offerApplicant.save()
     ctx ={'offerapplicant':offerApplicant}
     return render_to_response('offer_successful_application.html', ctx, context_instance=RequestContext(request))
-
-@login_required()
-def cardDataView(request):
-
-    user = request.user.userprofile
-
-    if request.method=='POST':
-        form = CreditCardForm(request.POST)
-        if form.is_valid():
-            card_factory = CardFactory()
-            card_factory.save_instance_form(form=form, user=user)
-
-            if request.GET['offer']:
-                return HttpResponseRedirect('/purchase/?offer=%s' % (request.GET['offer']))
-            else:
-                return HttpResponseRedirect('positions/list')
-    else:
-        form = CreditCardForm()
-    ctx = {'form': form}
-    return render_to_response('card_data.html', ctx, context_instance=RequestContext(request))
 
 
 @login_required()

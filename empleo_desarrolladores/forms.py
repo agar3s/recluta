@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 from django import forms
-from models import Offer, Card
+from models import Offer
 from taggit.forms import *
 
 class ApplicantForm(forms.Form):
@@ -67,13 +67,5 @@ class UserEditFormLoader():
             'email':user.email,
         })
 
-class CreditCardForm(forms.Form):
-    card_type = forms.ChoiceField(label='Tipo de Tarjeta',choices=Card.CARD_TYPE)
-    number = forms.IntegerField(label='Número', widget=forms.TextInput())
-    expiration = forms.DateTimeField(label='Vencimiento', widget=forms.TextInput())
-    owner = forms.CharField(label='Propietario', widget=forms.TextInput())
-    ccv2 = forms.IntegerField(label='CCV2 / Código de Seguridad', widget=forms.TextInput())
-    address = forms.CharField(label='Dirección', widget=forms.TextInput())
-    city = forms.CharField(label='Ciudad', widget=forms.TextInput())
-    province = forms.CharField(label='Departamento', widget=forms.TextInput())
-    postal_code = forms.IntegerField(label='Código', widget=forms.TextInput(), required=False)
+class ClarificationForm(forms.Form):
+    aclaration = forms.CharField(label='Aclaración', widget=forms.Textarea())

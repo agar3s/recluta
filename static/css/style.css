@@ -79,6 +79,11 @@ body {
     left: 50%;
 }
 
+#id_aclaration {
+    width: 100%;
+    height: 40px;
+}
+
 #id_job_title {
     width: 90%;
 }
