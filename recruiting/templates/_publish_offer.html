@@ -7,7 +7,10 @@
             <button type="submit" class="btn btn-primary btn-large">Pagar y publicar oferta resaltada</button>
         </form>
     {% else %}
-        <a href="/purchase/?offer={{offer.id}}" class="btn btn-success center-horizontal">Publicar</a> 
+        <a href="/purchase/?offer={{offer.id}}" class="btn btn-success center-horizontal">Publicar Gratis</a> 
+        <form action="https://gatewaylap.pagosonline.net/" method="POST">
+            <button type="submit" class="btn btn-primary btn-large">Pagar y publicar oferta resaltada</button>
+        </form>
     {% endif %} 
     <a class="btn pull-right" href="/positions/details/{{offer.slug}}">Continuar Editando</a>
 </div>

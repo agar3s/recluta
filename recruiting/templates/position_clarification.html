@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+	<div class="container">
+		<div class="alert alert-info">
+			<button type="button" class="close" data-dismiss="alert">x</button>
+			<strong>Información:</strong> esta oferta ya esta publicada por lo tanto  no puede ser editada, sin embargo se pueden agregar aclaraciones
+		</div>
+	</div>
+	{% include '_position_details_state_1.html' %}
+	<br>
+	
+	<div class="row-fluid">
+		<div class="borderedB2">
+			<form action="" method="POST" class="form-horizontal">
+				<legend>Ingresa aclaraciones sobre la oferta a continuación:</legend>
+					{% csrf_token %}
+					{% for field in form %}
+						{{field}}
+					{% endfor %}
+					<button type="inpunt" class="btn btn-primary pull-right">Agregar Aclaraciones</button>
+				
+			</form>
+		</div>	
+	</div>
+{% endblock %}

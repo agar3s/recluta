@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% block content  %}
-{% ifequal offer.state 2%}
-{% else %}
+{% if not offer.is_published%}
 <div class="borderedB2">
     <div class="row-fluid">
         <div class="span5">
@@ -15,7 +14,7 @@
         
     </div>
 </div>
-{% endifequal %}
+{% endif %}
 <div class="bordered2">
     <div class="row-fluid">
         <div class="span11">
