@@ -2,6 +2,11 @@ from company_factory import CompanyFactory
 from empleo_desarrolladores.models import Offer
 import factory
 
+class State():
+	published = 2
+	finished = 1
+	draft = 0
+
 class OfferFactory(factory.DjangoModelFactory):
 	FACTORY_FOR = Offer
 

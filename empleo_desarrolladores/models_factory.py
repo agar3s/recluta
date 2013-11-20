@@ -17,6 +17,7 @@ class ApplicantFactory():
         return applicant
 
 class OfferApplicantFactory():
+
     def get_instance_form(self, applicant, offer, form):
         hashid = Hashids(salt='codetag Job Post')
         if OfferApplicant.objects.filter(applicant=applicant, offer=offer).exists():
@@ -35,6 +36,11 @@ class OfferApplicantFactory():
             offer_applicant.save()
 
         return offer_applicant
+
+class State():
+    published = 2
+    finished = 1
+    draft = 0
 
 class UserProfileFactory():
     def save_instance_form(self, form, user):

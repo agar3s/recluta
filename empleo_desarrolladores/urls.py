@@ -15,6 +15,6 @@ urlpatterns = patterns('empleo_desarrolladores.views',
     url(r'plans_and_pricing/$', 'plansAndPricingView',name="plans_and_pricing"),
     url(r'^company/complete$', 'completeCompanyInfoView',name="complete_company"),
     url(r'^company/details$', 'companyDetailView',name="company_detail"),
-    url(r'^purchase/$', 'purchaseResultView',name="purchase_result_view"),
-    url(r'^index$', 'indexView',name="index_view"),
+    url(r'^purchase/success/(?P<slug_offer>[-\w]+)$', 'purchaseSuccessView',name="purchase_success_view"),
+    url(r'^purchase/fail/(?P<slug_offer>[-\w]+)$', 'purchaseFailView',name="purchase_fail_view"),
 )

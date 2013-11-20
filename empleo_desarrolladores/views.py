@@ -8,7 +8,7 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 from messaging_handler import OfferApplicantMessage
 from django.template import defaultfilters
-from models_factory import ApplicantFactory, OfferApplicantFactory, UserProfileFactory, OfferFactory, CompanyFactory
+from models_factory import ApplicantFactory, OfferApplicantFactory, UserProfileFactory, OfferFactory, CompanyFactory, State
 from datetime import datetime
 
 def error404(request):
@@ -38,7 +38,7 @@ def offerDetailsView(request, slug_offer):
 
             return HttpResponseRedirect("/")
     if request.method == "GET":
-        if offer.state == 1 or offer.state == 0:
+        if offer.is_finished() or offer.is_draft():
             return error404(request)
         form = ApplicantForm()
     applicants_number = OfferApplicant.objects.filter(offer=offer, state=True).count()
@@ -79,19 +79,23 @@ def createPositionView(request):
             return HttpResponseRedirect("/positions/preview/%s" % (offer.slug))
     else:
         form = CreateOfferForm()
-    offers = len(Offer.objects.filter(company=company,state=2))
+    offers = len(Offer.objects.filter(company=company,state=State.published))
     ctx = {'form': form, 'offers':offers}
     return render_to_response('createPosition.html', ctx, context_instance=RequestContext(request))
 
 @login_required()
 def positionPreviewView(request, slug_offer):
-
     offer = get_object_or_404( Offer, slug=slug_offer)
     user = request.user.userprofile
     if request.method == "GET":
         if offer.company != user.company:
             return error404(request)
-    published_offers = Offer.objects.filter(state=2, company=user.company).count()
+    if request.method == "POST":
+        if '_free_publish' in request.POST:
+            offer.set_state('published')
+            offer.save()
+            return HttpResponseRedirect('/purchase/success/%s' % offer.slug)
+    published_offers = Offer.objects.filter(state=State.published, company=user.company).count()
     ctx = {'offer': offer, 'published_offers': published_offers}
     return render_to_response('position_preview.html', ctx, context_instance=RequestContext(request))
 
@@ -120,7 +124,7 @@ def positionDetailsView(request, slug_offer):
         form_loader = CreateOfferFormLoader()
         form = form_loader.load_initial_data(offer)
 
-    offers = len(Offer.objects.filter(company=company,state=2))
+    offers = len(Offer.objects.filter(company=company,state=State.published))
     ctx = {'form': form, 'offer': offer, 'applicants': applicants, 'offers':offers}
     return render_to_response('createPosition.html', ctx, context_instance=RequestContext(request))
 
@@ -158,7 +162,7 @@ def terminatePositionView(request, slug_offer):
 
     if offer.company != user.company:
         return error404(request)
-    offer.state = 1
+    offer.set_state('finished')
     offer.offer_valid_time = datetime.now()
     offer.save()
     return HttpResponseRedirect('/positions/list')
@@ -179,7 +183,7 @@ def positionsListView(request):
 @login_required()
 def oldPositionsListView(request):
     user = request.user.userprofile
-    offers = Offer.objects.filter(state=1, company=user.company)
+    offers = Offer.objects.filter(state=State.finished, company=user.company)
     ctx = {'offers': offers}
     return render_to_response('old_positions.html', ctx, context_instance=RequestContext(request))
 
@@ -239,29 +243,30 @@ def successfulApplicationView(request, offer_applicant_token):
 
 
 @login_required()
-def purchaseResultView(request):
+def purchaseSuccessView(request, slug_offer):
 
-    offer = Offer.objects.get(id=request.GET['offer'])
+    offer = get_object_or_404( Offer, slug=slug_offer)
     user = request.user.userprofile
-    published_offers = Offer.objects.filter(company=user.company, state=2).count()
-    #falta implementar lo de la oferta resaltada
-    # TO-DO
-    if published_offers:
-        price = 20
-    else:
-        price = 0
+    published_offers = Offer.objects.filter(company=user.company, state=State.published).count()
+    
+    if offer.company != user.company:
+        return error404(request)
 
-    if request.method=='POST':
-        
-        #faltan hacer verificaciones como saldo en la cuenta y demas
-        offer.state=2
-        offer.save()
-        return HttpResponseRedirect('/positions/list')
-    ctx = {'price': price, 'published_offers':published_offers, 'offer': offer}
-    return render_to_response('purchase_result.html', ctx, context_instance=RequestContext(request))
+    ctx = {'published_offers':published_offers, 'offer': offer}
+    return render_to_response('purchase_success.html', ctx, context_instance=RequestContext(request))
 
-def indexView(request):
-    return render_to_response('index.html')
+@login_required()
+def purchaseFailView(request, slug_offer):
+
+    offer = get_object_or_404( Offer, slug=slug_offer)
+    user = request.user.userprofile
+    published_offers = Offer.objects.filter(company=user.company, state=State.published).count()
+
+    if offer.company != user.company:
+        return error404(request)
+
+    ctx = {'published_offers':published_offers, 'offer': offer}
+    return render_to_response('purchase_fail.html', ctx, context_instance=RequestContext(request))
 
 def processorUrlSite(request):
     ctx = {

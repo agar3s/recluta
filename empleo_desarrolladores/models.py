@@ -62,7 +62,7 @@ class Offer(models.Model):
         (55, '5.000.000 - Más'),
     )
 
-    STATE_CHOICES = ((0, 'Draft'), (1, 'Terminate'), (2, 'Live'))
+    STATE_CHOICES = ((0, 'draft'), (1, 'finished'), (2, 'published'))
     state = models.IntegerField(choices=STATE_CHOICES, default=0)
     applicants = models.ManyToManyField(Applicant, through="OfferApplicant")
     salary = models.IntegerField(max_length=2, choices=SALARY_CHOICES, default=0)
@@ -88,13 +88,18 @@ class Offer(models.Model):
             if self.salary == i[0]:
                 return i[1]
 
+    def set_state(self, state):
+        for i in self.STATE_CHOICES:
+            if state == i[1]:
+                self.state  = i[0]
+
     def is_published(self):
         return True if self.state==2 else False
 
     def is_draft(self):
         return True if self.state==0 else False
 
-    def is_terminated(self):
+    def is_finished(self):
         return True if self.state==1 else False
 
     def __unicode__(self):
