@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+	<div class="hero-unit">
+		<h1>Publicación exitosa</h1>
+		<p>
+			<small>La oferta "{{offer.job_title}}" estará publicada durante 30 días o hasta que decidas terminarla</small>
+		</p>
+		<p>
+			<span class="pull-right"> <a href="/positions/list" class="btn btn-primary btn-large">Regresar</a> </span>
+		</p>
+	</div>
+</div>
+{% endblock %}

@@ -1,6 +1,12 @@
 {% extends 'base.html' %}
 {% block content  %}
 {% if not offer.is_published%}
+<div class="container">
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">x</button>
+        <strong>Advertencia:</strong> Antes de publicar debes estar totalmente seguro de los datos ingresados, ya que la oferta de trabajo no podrá ser editada, solo se podrán añadir aclaraciones, además la oferta estara publicada durante 30 días o cuando decidas finalizarla.
+    </div>
+</div>
 <div class="borderedB2">
     <div class="row-fluid">
         <div class="span5">

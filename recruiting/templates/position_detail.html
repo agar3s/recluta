@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 {% include '_published_offers.html' %}
-	{% ifequal offer.state 1%}
+	{% if offer.is_finished %}
 	    {% include '_position_details_state_1.html' %}
 	{% else %}
 	    {% include '_position_details_state_different_1.html'%}

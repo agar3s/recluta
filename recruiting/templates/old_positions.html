@@ -1,20 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
-	<div class="row-fluid">
-		<div class="span9">
-			<strong>Oferta</strong>
-		</div>	
-		
-		<div class="span1" align="center">
-			<strong>Aplicantes</strong>
-		</div>
+	{% if offers %}
+		<div class="row-fluid">
+			<div class="span9">
+				<strong>Oferta</strong>
+			</div>	
+			
+			<div class="span1" align="center">
+				<strong>Aplicantes</strong>
+			</div>
 
-		<div class="span2" align="center">
-			<p>
-			    <strong>Finalizó</strong>
-			</p>
-		</div>	
-	</div>
+			<div class="span2" align="center">
+				<p>
+				    <strong>Finalizó</strong>
+				</p>
+			</div>	
+		</div>
+	{% endif %}
 	{% include '_old_positions_list.html' %}
 	<a href="/positions/list" class="btn btn-primary pull-right">Regresar</a>
 {% endblock %}

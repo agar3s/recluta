@@ -8,14 +8,14 @@ class ApplicantForm(forms.Form):
     mail = forms.EmailField(label='Email', widget=forms.TextInput())
     first_name = forms.CharField(label='Nombres', widget=forms.TextInput())
     last_name = forms.CharField(label='Apellidos', widget=forms.TextInput())
-    observation = forms.CharField(label='Observación', widget=forms.Textarea())
+    observation = forms.CharField(label='Observación', widget=forms.Textarea({'placeholder':'Ingresa alguna observación que tengas con respecto a la oferta o a tus habilidades'}))
 
 
 class CreateOfferForm(forms.Form):
     job_title = forms.CharField(label='Título',widget=forms.TextInput())
     job_description = forms.CharField(label='Descripción',widget=forms.Textarea())
     skills = TagField(label='Conocimientos')
-    location = forms.CharField(label='Ciudad', widget=forms.TextInput())
+    location = forms.CharField(label='Ciudad', widget=forms.TextInput({'placeholder':'Bogotá'}))
     type_contract = forms.ChoiceField(label='Tipo de contrato', choices=Offer.TYPE_OF_CONTRACT)
     salary = forms.ChoiceField(label='Salario', choices=Offer.SALARY_CHOICES)
 
@@ -38,9 +38,9 @@ class CompanyForm(forms.Form):
     nit = forms.RegexField(max_length=30, regex=r'(^[0-9]{5,12}-[0-9]$)', error_message = ('El formato de NIT no es valido, debe ser por Ej.: 123456789-1' ), help_text='Esta información no sera compartida con terceros')
     name = forms.CharField(label='Nombre', widget=forms.TextInput())
     locationCompany = forms.CharField(label='Ciudad',widget=forms.TextInput({'placeholder':'Bogotá'}))
-    website = forms.CharField(label='Sitio Web',widget=forms.TextInput())
+    website = forms.CharField(label='Sitio Web', required=False, widget=forms.TextInput())
     email = forms.EmailField(label='Email', widget=forms.TextInput())
-    phone = forms.RegexField(max_length=30, label='Teléfono',widget=forms.TextInput(), help_text="Código de area + N°. Ej.: (57) 765-4321", error_message = ('El teléfono no es valido'), regex=r'(\d{3}[-\.\s]\d{3}[-\.\s]\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]\d{4}|\d{3}[-\.\s]\d{4})' )  
+    phone = forms.RegexField(max_length=30, label='Teléfono', required=False, widget=forms.TextInput(), help_text="Código de area + N°. Ej.: (57) 765-4321", error_message = ('El teléfono no es valido'), regex=r'(\d{3}[-\.\s]\d{3}[-\.\s]\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]\d{4}|\d{3}[-\.\s]\d{4})' )  
     # image = forms.ImageField(require(d=False)
 
 class CompanyFormLoader():
@@ -55,8 +55,8 @@ class CompanyFormLoader():
         })
     
 class UserEditForm(forms.Form):
-    first_name = forms.CharField(label='Nombre',widget=forms.TextInput())
-    last_name = forms.CharField(label='Apellidos', widget=forms.TextInput())
+    first_name = forms.CharField(required=False, label='Nombre',widget=forms.TextInput())
+    last_name = forms.CharField(required=False, label='Apellidos', widget=forms.TextInput())
     email = forms.EmailField(label='Email', widget=forms.TextInput())
 
 class UserEditFormLoader():

@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-    {% ifequal offer.state 2%}
-    {% else %}
+    {% if not offer.is_published %}
     <div class="borderedB2">
         <div class="row-fluid">
             <div class="span5">
@@ -14,7 +13,7 @@
             </div>
         </div>
     </div>
-    {% endifequal %}
+    {% endif %}
     {% include '_published_offers.html' %}
     <div class='bordered2'>
         <form action="." method="POST">

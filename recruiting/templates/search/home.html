@@ -1,21 +1,24 @@
 {% extends 'base.html' %}
 {% block content %}
-	<div class="row-fluid">
-	    <div class="span6">
-	        <strong>Oferta</strong>
-	    </div>
-	    <div class="span3">
-	        <strong>Finaliza en</strong>
-	    </div>
-	    <div class="span1">
-	        <strong>Ciudad</strong>
-	    </div>
-	    <div class="span1" align="center"><strong>Aplicantes</strong></div>
-	</div>
-	{% include '_offers_list.html' %}
+	{% if page.object_list %}
+		<div class="row-fluid">
+		    <div class="span6">
+		        <strong>Oferta</strong>
+		    </div>
+		    <div class="span3">
+		        <strong>Finaliza en</strong>
+		    </div>
+		    <div class="span1">
+		        <strong>Ciudad</strong>
+		    </div>
+		    <div class="span1" align="center"><strong>Aplicantes</strong></div>
+		</div>
 
-	{% if page.has_previous or page.has_next %}
-	    {% include '_offers_pagination.html' %}        
-	{% endif %}   
-    
+		{% include '_offers_list.html' %}
+		{% if page.has_previous or page.has_next %}
+	    	{% include '_offers_pagination.html' %}        
+		{% endif %}   
+	{% else %}
+		<h3>No hay ofertas Publicadas</h3>
+	{% endif %}
 {% endblock %}
