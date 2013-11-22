@@ -7,10 +7,15 @@ from empleo_desarrolladores.factories.offer_applicant_factory import OfferApplic
 from empleo_desarrolladores.factories.applicant_factory import ApplicantFactory
 from django.http import HttpRequest
 from django.test import TestCase
+from django.test.utils import override_settings
 from empleo_desarrolladores.models import Applicant, OfferApplicant 
+from search.views import homeSearch
 from empleo_desarrolladores.views import offerDetailsView, userProfileEditView, createPositionView, terminatePositionView, positionsListView, oldPositionsListView, completeCompanyInfoView, companyDetailView, positionDashBoardView,successfulApplicationView, positionPreviewView
 from empleo_desarrolladores.views import plansAndPricingView, positionClarificationsView, positionDetailsView, purchaseFailView, purchaseSuccessView
 from django.test.client import RequestFactory
+import haystack
+from django.core.management import call_command
+from django_nose import FastFixtureTestCase
 
 class CompanyTest(TestCase):
     def test_url_should_return_the_path_to_the_company_logo(self):
@@ -586,3 +591,44 @@ class PositionClarificationsViewTest(TestCase):
         self.assertEqual(result.status_code, 200)
         self.assertIn('Aclaraciones', result.content)
 
+TEST_INDEX = {
+    'default': {
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'http://127.0.0.1:9200/',
+        'INDEX_NAME': 'test_index',
+    },
+}
+
+class HomeSearchViewTest(FastFixtureTestCase):
+    @classmethod
+    def setUpClass(cls):
+        haystack.connections.reload('default')
+        super(HomeSearchViewTest,cls).setUpClass()
+
+    def test_GET_should_render_the_correct_info_when_there_are_highlighted_offers(self):
+        offer = OfferFactory(highlighted=True, state=State.published)
+        call_command('rebuild_index', interactive=False)
+
+        factory = RequestFactory()
+        request = factory.get('/')
+        result = homeSearch(request)
+        self.assertEqual(result.status_code, 200)
+        self.assertIn('higlighted-offer', result.content)
+
+    def test_GET_should_render_the_correct_info_when_there_are_ordinary_offers(self):
+        offer = OfferFactory(highlighted=False, state=State.published)
+        call_command('rebuild_index', interactive=False)
+
+        factory = RequestFactory()
+        request = factory.get('/')
+        result = homeSearch(request)
+        self.assertEqual(result.status_code, 200)
+        self.assertIn('ordinary-offer', result.content)
+
+    def test_GET_should_render_the_correct_info_when_there_are_not_published_offers(self):
+        call_command('rebuild_index', interactive=False)
+        factory = RequestFactory()
+        request = factory.get('/')
+        result = homeSearch(request)
+        self.assertEqual(result.status_code, 200)        
+        self.assertIn('No hay ofertas Publicadas', result.content)
