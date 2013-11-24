@@ -73,6 +73,34 @@ body {
     background-color: #e9eaee;
 }
 
+.ordinary-offer {
+    border-color: #000;
+    border-radius: 10px;
+    border: 10px;
+    padding: 2px;
+    margin: 2px;
+    background-color: #e9eaee;
+    cursor: pointer;
+}
+
+.ordinary-offer:hover {
+    background-color: #F1F1F1; 
+}
+
+.higlighted-offer {
+    border-color: #000;
+    border-radius: 10px;
+    border: 10px;
+    padding: 2px;
+    margin: 2px;
+    background-color: #0089FF;
+    cursor: pointer;
+}
+
+.higlighted-offer:hover {
+    background-color: #38A3FF ;
+}
+
 .fixed {
     position: fixed;
     bottom:0px;

@@ -9,6 +9,7 @@ class OfferIndex(indexes.SearchIndex, indexes.Indexable):
     location = indexes.CharField(model_attr='location')
     job_description = indexes.CharField(model_attr="job_description")
     offer_valid_time = indexes.DateTimeField(model_attr="offer_valid_time")
+    highlighted = indexes.BooleanField(model_attr="highlighted")
 
     def get_model(self):
         return Offer

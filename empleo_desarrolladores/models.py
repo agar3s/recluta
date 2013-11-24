@@ -72,6 +72,7 @@ class Offer(models.Model):
     company = models.ForeignKey(Company, null=True)
     slug = models.SlugField(max_length=250, unique=True)
     clarification = models.TextField(null=True)
+    highlighted = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if not self.id:

@@ -10,3 +10,4 @@ hashids==0.8.3
 Pillow==2.2.1
 requests==2.0.1
 pyelasticsearch==0.6.1
+django-nose==1.2

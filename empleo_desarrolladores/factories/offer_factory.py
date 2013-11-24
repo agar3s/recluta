@@ -16,4 +16,5 @@ class OfferFactory(factory.DjangoModelFactory):
 	salary = 0
 	offer_valid_time = '2014-10-10'
  	job_description = 'A description'
+ 	highlighted = False
 	company = factory.SubFactory(CompanyFactory)
