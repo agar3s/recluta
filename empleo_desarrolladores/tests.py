@@ -198,7 +198,6 @@ class CreatePositionViewTest(TestCase):
         request.POST['location'] = 'Bogota'
         request.POST['type_contract'] = 1
         request.POST['salary']=15
-        request.POST['offer_valid_time']='23-12-2013'
         request.POST['skills']='Java'
         request.POST['job_description']='This is a description'
         request.POST['_save']=1
@@ -632,3 +631,20 @@ class HomeSearchViewTest(FastFixtureTestCase):
         result = homeSearch(request)
         self.assertEqual(result.status_code, 200)        
         self.assertIn('No hay ofertas Publicadas', result.content)
+
+    def test_GET_should_render_the_correct_info_when_page_equal_1_and_user_is_not_authenticated(self):
+        factory = RequestFactory()
+        request = factory.get('/')
+        result = homeSearch(request)
+        self.assertEqual(result.status_code, 200)
+        self.assertIn('landing-page', result.content)
+
+    def test_GET_should_render_the_correct_info_when_user_is_not_authenticated(self):
+        user = UserFactory()
+
+        factory = RequestFactory()
+        request = factory.get('/')
+        request.user = user
+        result = homeSearch(request)
+        self.assertEqual(result.status_code, 200)
+        self.assertNotIn('landing-page', result.content)
