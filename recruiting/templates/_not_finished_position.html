@@ -1,0 +1,50 @@
+<div class="row-fluid">
+    <div class="span6">
+		<strong>Oferta</strong>
+    </div>	
+    <div class="span2" align="center">
+		<strong>Finaliza en</strong>
+    </div>
+    <div class="span1" align="center">
+		<strong>Aplicantes</strong>
+    </div>
+    <div class="span1" align="center">
+	    <strong>Estado</strong>
+    </div>			
+    <div class="span2">
+    	
+    </div>
+</div>
+<div class="row-fluid bordered1">
+	
+	<div class="span6">
+		<a href="/positions/details/{{offer.slug}}"><h5>{{offer.job_title| upper}}</h5></a>
+	</div>	
+
+	<div class="span2" align="center">
+		<span>{{offer.days_remaining}} días</span>
+	</div>
+	
+	<div class="span1" align="center">
+		<span><i class="icon-user"></i>{{offer.applicants.count}}</span>
+	</div>
+
+	<div class="span1" align="center">
+	{% if offer.is_draft %}
+		<span class="label label-warning indicator">Borrador</span>
+	{% else %}
+		<span class="label label-success indicator">Pública</span>
+	{% endif %}	
+	</div>			
+
+	<div class="span1">
+		{% if offer.is_published %}
+			<span class="pull-right"><a href="/positions/dashboard/{{offer.slug}}">Dashboard</a></span>
+		{% endif %}
+	</div>		
+
+	<div class="span1">
+		<span style="margin-top:10px;" ><a href="/positions/terminate/{{offer.slug}}">Terminar</a> </span>
+	</div>
+	
+</div>

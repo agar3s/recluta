@@ -1,39 +1,7 @@
 {% for offer in offers %}
-	{% ifnotequal offer.state 1 %}
-		<div class="row-fluid bordered1">
-			
-			<div class="span6">
-				<a href="/positions/details/{{offer.slug}}"><h5>{{offer.job_title| upper}}</h5></a>
-			</div>	
-
-			<div class="span2" align="center">
-				<span>{{offer.days_remaining}} días</span>
-			</div>
-			
-			<div class="span1" align="center">
-				<span><i class="icon-user"></i>{{offer.applicants.count}}</span>
-			</div>
-
-			<div class="span1" align="center">
-			{% ifequal offer.state 0 %}
-				<span class="label label-warning indicator">Borrador</span>
-			{% else %}
-				<span class="label label-success indicator">Pública</span>
-			{% endifequal %}	
-			</div>			
-
-			<div class="span1">
-				{% ifequal offer.state 2%}
-					<span class="pull-right"><a href="/positions/dashboard/{{offer.slug}}">Dashboard</a></span>
-				{% endifequal %}
-			</div>		
-
-			<div class="span1">
-				<span style="margin-top:10px;" ><a href="/positions/terminate/{{offer.slug}}">Terminar</a> </span>
-			</div>
-			
-		</div>
-	{% endifnotequal %}
+	{% if not offer.is_finished %}
+		{% include '_not_finished_position.html' %}
+	{% endif %}
 {% empty %}
 	<div class="bordered2" align="center">
 		<p>
@@ -46,5 +14,3 @@
 		</p>
 	</div>
 {% endfor %}
-
-
