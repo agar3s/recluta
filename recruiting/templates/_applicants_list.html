@@ -17,5 +17,15 @@
 			    </div>
 		    </div>
 		</div>
+	{% empty %}
+		<div class="bordered2">
+			<p align="center" >
+				<h3>Esta oferta no tiene aplicantes hasta el momento</h3>	
+			</p>
+			<a href="/positions/list" class="btn btn-primary btn-large pull-right">Regresar</a>
+			<br>
+			<br>
+		</div>
+
 	{% endfor %}
 </div>

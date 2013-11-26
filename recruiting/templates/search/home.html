@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-	{% if not user.is_authenticated and not page.has_previous %}
+	{% if not user.is_authenticated and not page.has_previous and not query %}
 		{% include '_landing_page.html' %}
 	{% endif %}
 	{% if page.object_list %}

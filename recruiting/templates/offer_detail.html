@@ -50,7 +50,11 @@
                 <p align="justify">
                     <strong>Habilidades: </strong> 
                     {% for tag in offer.skills.all %}
-                        <span class="label label-info">{{tag.name}}</span>
+                        <a href="/?q={{tag.name}}">
+                        <span class="label label-info tag-link">
+                            {{tag.name}}            
+                        </span>
+                        </a>
                     {% endfor %}
                     
                 </p>
