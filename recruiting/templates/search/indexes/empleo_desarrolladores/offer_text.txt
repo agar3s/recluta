@@ -2,3 +2,4 @@
 {{ object.job_title }}
 {{ object.location }}
 {{ object.job_description }}
+{{ object.get_skills }}

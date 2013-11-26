@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# encoding: utf-8
+
 from datetime import datetime, timedelta
 from django.utils import timezone
 from empleo_desarrolladores.factories.company_factory import CompanyFactory
@@ -67,6 +70,35 @@ class OfferTest(TestCase):
         offer = OfferFactory(offer_valid_time = timezone.make_aware(next_week, timezone.get_default_timezone()))
 
         self.assertEqual(offer.days_remaining(), 6)
+
+    def test_is_published_function_return_the_correct_value_when_offer_is_published(self):
+        offer = OfferFactory(state=State.published)
+        self.assertEqual(offer.is_published(),True)
+
+    def test_is_published_function_return_the_correct_value_when_offer_is_not_published(self):
+        offer = OfferFactory(state=State.draft)
+        self.assertEqual(offer.is_published(),False)
+
+
+    def test_is_finished_function_return_the_correct_value_when_offer_is_finished(self):
+        offer = OfferFactory(state=State.finished)
+        self.assertEqual(offer.is_finished(),True)
+
+    def test_is_finished_function_return_the_correct_value_when_offer_is_not_finished(self):
+        offer = OfferFactory(state=State.draft)
+        self.assertEqual(offer.is_finished(),False)
+
+    def test_is_draft_function_return_the_correct_value_when_offer_is_draft(self):
+        offer = OfferFactory(state=State.draft)
+        self.assertEqual(offer.is_draft(),True)
+
+
+    def test_is_draft_function_return_the_correct_value_when_offer_is_not_draft(self):
+        offer = OfferFactory(state=State.finished)
+        self.assertEqual(offer.is_draft(),False)
+
+    def test_get_skills_function_return_the_correct_value(self):
+        pass
 
 class OfferDetailsViewTest(TestCase):
     def test_GET_should_redirect_http_404_when_the_given_offer_is_finished(self):
@@ -315,6 +347,40 @@ class PositionsListViewTest(TestCase):
 
         self.assertEqual(result.status_code, 200)
 
+    def test_GET_should_render_the_correct_info_when_there_are_draft_or_published_positions_and_user_has_company(self):
+        user = UserFactory()
+        company = CompanyFactory()
+        user.userprofile.company = company
+        offer = OfferFactory(company=user.userprofile.company, state=State.published)
+        factory = RequestFactory()
+        request = factory.get('/positions/list/')
+        request.user = user
+        result = positionsListView(request)
+
+        self.assertEqual(result.status_code, 200)
+        self.assertNotIn('Crea una oferta de trabajo', result.content)
+
+    def test_GET_should_render_the_correct_info_when_there_are_not_draft_or_published_positions(self):
+        user = UserFactory()
+        company = CompanyFactory()
+        user.userprofile.company = company
+        factory = RequestFactory()
+        request = factory.get('/positions/list/')
+        request.user = user
+        result = positionsListView(request)
+
+        self.assertEqual(result.status_code, 200)
+        self.assertIn('Crea una oferta de trabajo', result.content)
+
+    def test_GET_should_render_the_correct_info_when_user_dont_has_company(self):
+        user = UserFactory()
+        factory = RequestFactory()
+        request = factory.get('/positions/list/')
+        request.user = user
+        result = positionsListView(request)
+
+        self.assertEqual(result.status_code, 200)
+        self.assertIn('<h1>Completa la información de la empresa para crear una oferta</h1> ', result.content)
 
 class OldPositionListViewTest(TestCase):
     def test_GET_should_redirect_old_positions_list_template(self):
@@ -484,7 +550,7 @@ class PurchaseFailViewTest(TestCase):
         self.assertEqual(result.status_code, 200)
 
 class PositionPreviewViewTest(TestCase):
-    def test_GET_should_render_position_preview_template_with_correct_button_when_user_have_published_offers(self):
+    def test_GET_should_render_position_preview_template_with_correct_button_when_user_has_published_offers(self):
 
         company = CompanyFactory()
 
@@ -502,7 +568,7 @@ class PositionPreviewViewTest(TestCase):
         self.assertIn('Pagar y publicar', result.content)
         self.assertEqual(result.status_code, 200)
 
-    def test_GET_should_render_position_preview_template_with_correct_button_when_user_dont_have_published_offers(self):
+    def test_GET_should_render_position_preview_template_with_correct_button_when_user_dont_has_published_offers(self):
 
         offer2 = OfferFactory(state=State.draft)
 

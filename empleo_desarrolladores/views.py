@@ -174,9 +174,12 @@ def positionsListView(request):
     if user.company:
         company = Company.objects.get(id=user.company.id)
         offers = Offer.objects.filter(company=company).order_by('-state')
+        published_and_draft_offers = Offer.objects.filter(state=State.draft, company=company).count() + Offer.objects.filter(state = State.published, company=company).count()
     else:
         offers = []
-    ctx = {'offers': offers}
+        published_and_draft_offers = 0
+    
+    ctx = {'offers': offers, 'published_and_draft_offers': published_and_draft_offers}
     return render_to_response('positions.html', ctx, context_instance=RequestContext(request))
 
 

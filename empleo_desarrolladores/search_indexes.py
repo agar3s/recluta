@@ -7,9 +7,10 @@ class OfferIndex(indexes.SearchIndex, indexes.Indexable):
     company = indexes.CharField(model_attr='company')
     job_title = indexes.CharField(model_attr='job_title')
     location = indexes.CharField(model_attr='location')
-    job_description = indexes.CharField(model_attr="job_description")
-    offer_valid_time = indexes.DateTimeField(model_attr="offer_valid_time")
-    highlighted = indexes.BooleanField(model_attr="highlighted")
+    job_description = indexes.CharField(model_attr='job_description')
+    offer_valid_time = indexes.DateTimeField(model_attr='offer_valid_time')
+    highlighted = indexes.BooleanField(model_attr='highlighted')
+    skills = indexes.CharField(model_attr='skills')
 
     def get_model(self):
         return Offer

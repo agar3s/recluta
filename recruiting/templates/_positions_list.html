@@ -1,16 +1,11 @@
-{% for offer in offers %}
-	{% if not offer.is_finished %}
-		{% include '_not_finished_position.html' %}
+{% if published_and_draft_offers %}
+	{% include '_published_and_draft_offers.html' %}
+{% else %}
+	{% if user.userprofile.company %}
+		{% include '_has_company.html' %}
+	{% else %}
+		{% include '_dont_have_company.html' %}
 	{% endif %}
-{% empty %}
-	<div class="bordered2" align="center">
-		<p>
-			{% if user.userprofile.company %}
-			<h1>¡Crea una oferta de trabajo!</h1>
-			{% else %}
-			<h1>Completa la información de la empresa para crear una oferta</h1> 
-			<a href="{% url 'complete_company' %}" class="pull-right btn btn-primary" >Aquí</a>
-			{% endif %}
-		</p>
-	</div>
-{% endfor %}
+{% endif %}
+
+

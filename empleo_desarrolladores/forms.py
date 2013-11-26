@@ -14,7 +14,7 @@ class ApplicantForm(forms.Form):
 class CreateOfferForm(forms.Form):
     job_title = forms.CharField(label='Título',widget=forms.TextInput())
     job_description = forms.CharField(label='Descripción',widget=forms.Textarea())
-    skills = TagField(label='Conocimientos')
+    skills = TagField(label='Conocimientos', help_text='Separe los conocimientos que debe tener el desarrollador con comas', widget=forms.TextInput({'placeholder':'Python,Django,SQL'}))
     location = forms.CharField(label='Ciudad', widget=forms.TextInput({'placeholder':'Bogotá'}))
     type_contract = forms.ChoiceField(label='Tipo de contrato', choices=Offer.TYPE_OF_CONTRACT)
     salary = forms.ChoiceField(label='Salario', choices=Offer.SALARY_CHOICES)

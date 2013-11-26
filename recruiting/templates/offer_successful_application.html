@@ -1,10 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="bordered2">
-	<h3>Aplicaste a esta oferta con exito: {{offerapplicant.offer.job_title}}</h3>
+	<h2>Aplicaste a esta oferta con exito: {{offerapplicant.offer.job_title}}</h2>
 	<p> <strong>Nombres:</strong> {{offerapplicant.applicant.first_name}}</p>
 	<p> <strong>Apellidos:</strong> {{offerapplicant.applicant.last_name}}</p>
 	<p> <strong>Observación hecha:</strong> </p>
 	<p>{{offerapplicant.observation}}</p>
+	<a href="/" class="btn btn-primary btn-large pull-right">Regresar</a>
+	<br>
+	<br>
 </div>
 {% endblock %}

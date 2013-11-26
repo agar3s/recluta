@@ -109,6 +109,8 @@ class Offer(models.Model):
     def valid_time(self):
         return self.offer_valid_time >= timezone.now() 
 
+    def get_skills(self):
+        return ' '.join([x.name for x in self.skills.all()])
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, unique=True)

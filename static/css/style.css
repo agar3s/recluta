@@ -81,6 +81,8 @@ body {
     margin: 2px;
     background-color: #e9eaee;
     cursor: pointer;
+    text-decoration:none;
+    color:black;
 }
 
 .ordinary-offer:hover {
@@ -95,6 +97,8 @@ body {
     margin: 2px;
     background-color: #0089FF;
     cursor: pointer;
+    text-decoration:none;
+    color: black;
 }
 
 .higlighted-offer:hover {
@@ -108,7 +112,7 @@ body {
 }
 
 #id_aclaration {
-    width: 100%;
+    width: 70%;
     height: 40px;
 }
 
@@ -121,6 +125,12 @@ body {
 }
 
 #id_observation{
+    border-color: #000;
+    border-radius: 10px;
+    padding: 40px;
+    padding-top: 0;
+    margin: 0 15% 0 15%;
+    background-color: #e9eaee;
     width: 95%;
     height: 50px;
 }
@@ -181,8 +191,56 @@ error {
     background: #f7f7f9;
 }
 
+.landing-page {
+    margin: 30px auto 0 auto;
+}
+
 .landing-step {
     padding: 10px;
     border: 1px solid #e1e1e8;
     box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.1);
+    height: 200px;
+}
+
+.landing-step ol {
+    list-style: none;
+    margin: 20px 0;
+}
+.landing-step li {
+    margin-top: 10px;
+}
+
+.div-click {
+    border-color: #000;
+    border-radius: 10px;
+    padding: 40px;
+    padding-top: 0;
+    margin: 0 15% 0 15%;
+    background-color: #e9eaee;
+    cursor:pointer;
+    color:black;
+    text-decoration:none;
+}
+
+.div-click:hover {
+    background-color: #0089FF;
+    text-decoration: none;
+    color:white;
+}
+
+.tag-link {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.tag-link:hover {
+    background-color: #38A3FF ;
+    text-decoration: none;
+}
+
+.edit-button-group {
+    border-color: #000;
+    border-radius: 10px;
+    padding: 0;
+    margin: 0 15% 0 15%;
 }
