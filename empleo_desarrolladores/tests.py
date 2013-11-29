@@ -106,7 +106,7 @@ class OfferApplicantTest(TestCase):
     def test_url_function_return_the_correct_value(self):
         offer = OfferFactory(id=3)
         offer_applicant = OfferApplicantFactory(offer=offer)
-        self.assertEqual(offer_applicant.url('resume123.pdf'),'multimedia_data/resumes/3-yo bender/resume123.pdf')
+        self.assertEqual(offer_applicant.url('resume123.pdf'),'multimedia_data/resumes/%s/resume123.pdf' % (offer_applicant.token))
 
 class OfferDetailsViewTest(TestCase):
     def test_GET_should_redirect_http_404_when_the_given_offer_is_finished(self):

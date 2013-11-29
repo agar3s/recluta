@@ -123,7 +123,7 @@ class UserProfile(models.Model):
 class OfferApplicant(models.Model):
    
     def url(self, filename):
-        path = "multimedia_data/resumes/%s-%s/%s" % (self.offer.id, self.applicant.full_name(),filename)
+        path = "multimedia_data/resumes/%s/%s" % (self.token, filename)
         return path
     
     offer = models.ForeignKey(Offer)
