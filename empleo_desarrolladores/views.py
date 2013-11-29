@@ -10,6 +10,7 @@ from messaging_handler import OfferApplicantMessage
 from django.template import defaultfilters
 from models_factory import ApplicantFactory, OfferApplicantFactory, UserProfileFactory, OfferFactory, CompanyFactory, State
 from datetime import datetime
+from django.http import HttpResponse
 
 def error404(request):
     template = loader.get_template('404.html')
@@ -24,7 +25,7 @@ def offerDetailsView(request, slug_offer):
     offer = get_object_or_404( Offer, slug=slug_offer)
 
     if request.method == "POST":
-        form = ApplicantForm(request.POST)
+        form = ApplicantForm(request.POST, request.FILES)
         if form.is_valid():
 
             applicant_factory = ApplicantFactory()
@@ -270,6 +271,22 @@ def purchaseFailView(request, slug_offer):
 
     ctx = {'published_offers':published_offers, 'offer': offer}
     return render_to_response('purchase_fail.html', ctx, context_instance=RequestContext(request))
+
+@login_required()
+def resumeDownloadView(request, token):
+
+    offer_applicant = get_object_or_404(OfferApplicant, token=token)
+    user = request.user.userprofile
+
+    if user.company != offer_applicant.offer.company:
+        return error404(request)
+
+    filename = offer_applicant.resume.name.split('/')[-1]
+    response = HttpResponse(offer_applicant.resume, content_type='text/plain')
+    response['Content-Disposition'] = 'attachment; filename=%s' % filename
+
+    return response
+
 
 def processorUrlSite(request):
     ctx = {

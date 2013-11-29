@@ -23,6 +23,7 @@ class OfferApplicantFactory():
         if OfferApplicant.objects.filter(applicant=applicant, offer=offer).exists():
             offer_applicant = OfferApplicant.objects.get(applicant=applicant, offer=offer)
             offer_applicant.observation = form.cleaned_data['observation']
+            offer_applicant.resume = form.cleaned_data['resume']
             offer_applicant.state = False
             offer_applicant.token = hashid.encrypt(offer.id, applicant.id)
             offer_applicant.save()
@@ -31,6 +32,7 @@ class OfferApplicantFactory():
             offer_applicant.applicant = applicant
             offer_applicant.offer = offer
             offer_applicant.observation = form.cleaned_data['observation']
+            offer_applicant.resume = form.cleaned_data['resume']
             offer_applicant.state = False
             offer_applicant.token = hashid.encrypt(offer.id, applicant.id)
             offer_applicant.save()

@@ -11,3 +11,4 @@ class OfferApplicantFactory(factory.DjangoModelFactory):
 	state = False
 	token = 'Mytoken1234567'
 	observation = 'I need the job'
+	resume = None

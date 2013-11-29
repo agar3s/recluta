@@ -10,15 +10,17 @@ from empleo_desarrolladores.factories.offer_applicant_factory import OfferApplic
 from empleo_desarrolladores.factories.applicant_factory import ApplicantFactory
 from django.http import HttpRequest
 from django.test import TestCase
-from django.test.utils import override_settings
 from empleo_desarrolladores.models import Applicant, OfferApplicant 
 from search.views import homeSearch
 from empleo_desarrolladores.views import offerDetailsView, userProfileEditView, createPositionView, terminatePositionView, positionsListView, oldPositionsListView, completeCompanyInfoView, companyDetailView, positionDashBoardView,successfulApplicationView, positionPreviewView
-from empleo_desarrolladores.views import plansAndPricingView, positionClarificationsView, positionDetailsView, purchaseFailView, purchaseSuccessView
+from empleo_desarrolladores.views import plansAndPricingView, positionClarificationsView, positionDetailsView, purchaseFailView, purchaseSuccessView, resumeDownloadView
 from django.test.client import RequestFactory
 import haystack
 from django.core.management import call_command
 from django_nose import FastFixtureTestCase
+from django.core.files.uploadedfile import SimpleUploadedFile
+import os
+
 
 class CompanyTest(TestCase):
     def test_url_should_return_the_path_to_the_company_logo(self):
@@ -100,6 +102,12 @@ class OfferTest(TestCase):
     def test_get_skills_function_return_the_correct_value(self):
         pass
 
+class OfferApplicantTest(TestCase):
+    def test_url_function_return_the_correct_value(self):
+        offer = OfferFactory(id=3)
+        offer_applicant = OfferApplicantFactory(offer=offer)
+        self.assertEqual(offer_applicant.url('resume123.pdf'),'multimedia_data/resumes/3-yo bender/resume123.pdf')
+
 class OfferDetailsViewTest(TestCase):
     def test_GET_should_redirect_http_404_when_the_given_offer_is_finished(self):
         offer = OfferFactory()
@@ -134,12 +142,17 @@ class OfferDetailsViewTest(TestCase):
 
         offer = OfferFactory()
 
+        path = os.path.normpath(os.path.join(os.path.dirname(__file__),'testdata/resume.txt'))
+        upload_file = open(path, 'rb')
+
         request = HttpRequest()
         request.method = 'POST'
         request.POST['first_name'] = 'yo'
         request.POST['last_name'] = 'bender'
         request.POST['mail'] = 'bender@gmail.com'
+        request.POST['resume'] = 'resume.pdf'
         request.POST['observation'] = 'well, none'
+        request.FILES['resume'] = SimpleUploadedFile(upload_file.name, upload_file.read())
 
         result = offerDetailsView(request, offer.slug)
 
@@ -157,12 +170,17 @@ class OfferDetailsViewTest(TestCase):
 
         applicant = ApplicantFactory()
 
+        path = os.path.normpath(os.path.join(os.path.dirname(__file__),'testdata/resume.txt'))
+        upload_file = open(path, 'rb')
+
         request = HttpRequest()
         request.method = 'POST'
         request.POST['first_name'] = 'yo'
         request.POST['last_name'] = 'bender'
         request.POST['mail'] = 'bender@gmail.com'
         request.POST['observation'] = 'well, none'
+        request.FILES['resume'] = SimpleUploadedFile(upload_file.name, upload_file.read())
+
 
         result = offerDetailsView(request, offer.slug)
 
@@ -714,3 +732,22 @@ class HomeSearchViewTest(FastFixtureTestCase):
         result = homeSearch(request)
         self.assertEqual(result.status_code, 200)
         self.assertNotIn('landing-page', result.content)
+
+class ResumeDownloadViewTest(TestCase):
+    def test_GET_should_redirect_http_404_when_user_company_different_offer_company(self):
+        path = os.path.normpath(os.path.join(os.path.dirname(__file__),'testdata/resume.txt'))
+        upload_file = open(path, 'rb')
+        resume = SimpleUploadedFile(upload_file.name, upload_file.read())
+        company2 = CompanyFactory(name='apple', nit=444)        
+
+        user = UserFactory()
+        user.userprofile.company = company2
+
+        offer_applicant = OfferApplicantFactory(resume=resume)
+
+        factory = RequestFactory()
+        request = factory.get('/applicants/resumes/%s' % offer_applicant.token)
+        request.user = user
+        result = resumeDownloadView(request, offer_applicant.token)
+
+        self.assertEqual(result.status_code, 404)
