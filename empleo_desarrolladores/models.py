@@ -71,7 +71,7 @@ class Offer(models.Model):
     job_description = models.TextField(null=False)
     company = models.ForeignKey(Company, null=True)
     slug = models.SlugField(max_length=250, unique=True)
-    clarification = models.TextField(null=True)
+    clarification = models.TextField(null=True, blank=True)
     highlighted = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
@@ -121,12 +121,17 @@ class UserProfile(models.Model):
 
 
 class OfferApplicant(models.Model):
-
+   
+    def url(self, filename):
+        path = "multimedia_data/resumes/%s/%s" % (self.token, filename)
+        return path
+    
     offer = models.ForeignKey(Offer)
     applicant = models.ForeignKey(Applicant)
-    observation = models.TextField()
+    observation = models.TextField(blank=True)
     state = models.BooleanField()
     token = models.TextField(unique=True)
+    resume = models.FileField(upload_to=url)
 
     def __unicode__(self):
         return "Offer: " + self.offer.job_title + " Applicant: " + self.applicant.mail
