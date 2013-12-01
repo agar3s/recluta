@@ -13,12 +13,13 @@ from django.test import TestCase
 from empleo_desarrolladores.models import Applicant, OfferApplicant 
 from search.views import homeSearch
 from empleo_desarrolladores.views import offerDetailsView, userProfileEditView, createPositionView, terminatePositionView, positionsListView, oldPositionsListView, completeCompanyInfoView, companyDetailView, positionDashBoardView,successfulApplicationView, positionPreviewView
-from empleo_desarrolladores.views import plansAndPricingView, positionClarificationsView, positionDetailsView, purchaseFailView, purchaseSuccessView, resumeDownloadView
+from empleo_desarrolladores.views import plansAndPricingView, positionClarificationsView, positionDetailsView, purchaseFailView, purchaseSuccessView, resumeDownloadView, positionRenew
 from django.test.client import RequestFactory
 import haystack
 from django.core.management import call_command
 from django_nose import FastFixtureTestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
+from models import Offer
 import os
 
 
@@ -101,6 +102,11 @@ class OfferTest(TestCase):
 
     def test_get_skills_function_return_the_correct_value(self):
         pass
+
+    def test_ten_days_left_function_return_the_correct_value(self):
+        next_week = datetime.now() + timedelta(days=7)
+        offer = OfferFactory(offer_valid_time=timezone.make_aware(next_week, timezone.get_default_timezone()))
+        self.assertEqual(offer.ten_days_left(), True)
 
 class OfferApplicantTest(TestCase):
     def test_url_function_return_the_correct_value(self):
@@ -389,6 +395,19 @@ class PositionsListViewTest(TestCase):
 
         self.assertEqual(result.status_code, 200)
         self.assertIn('Crea una oferta de trabajo', result.content)
+
+    def test_GET_should_render_the_correct_info_when_there_are_ten_days_left_positions(self):
+        user = UserFactory()
+        company = CompanyFactory()
+        user.userprofile.company = company
+        offer = OfferFactory(company=user.userprofile.company, state=State.published, offer_valid_time=datetime.now() + timedelta(days=9))
+        factory = RequestFactory()
+        request = factory.get('/positions/list/')
+        request.user = user
+        result = positionsListView(request)
+
+        self.assertEqual(result.status_code, 200)
+        self.assertIn('Renovar', result.content)
 
     def test_GET_should_render_the_correct_info_when_user_dont_has_company(self):
         user = UserFactory()
@@ -751,3 +770,71 @@ class ResumeDownloadViewTest(TestCase):
         result = resumeDownloadView(request, offer_applicant.token)
 
         self.assertEqual(result.status_code, 404)
+
+class PositionRenewTest(TestCase):
+    def test_GET_should_redirect_http_404_when_user_company_different_offer_company(self):
+        company2 = CompanyFactory(name='apple', nit=444)        
+
+        user = UserFactory()
+        user.userprofile.company = company2
+
+        offer = OfferFactory()
+
+        factory = RequestFactory()
+        request = factory.get('/positions/renew/%s' % offer.slug)
+        request.user = user
+        result = positionRenew(request, offer.slug)
+
+        self.assertEqual(result.status_code, 404)
+
+    def test_GET_should_redirect_http_404_when_offer_is_not_published(self):
+        company = CompanyFactory()        
+
+        user = UserFactory()
+        user.userprofile.company = company
+
+        offer = OfferFactory(company= company, state=State.draft)
+
+        factory = RequestFactory()
+        request = factory.get('/positions/renew/%s' % offer.slug)
+        request.user = user
+        result = positionRenew(request, offer.slug)
+
+        self.assertEqual(result.status_code, 404)
+
+    def test_GET_should_redirect_list_positions_when_company_has_exactly_1_published_offer(self):
+        company = CompanyFactory()        
+
+        user = UserFactory()
+        user.userprofile.company = company
+
+        offer = OfferFactory(company= company, state=State.published)
+
+        factory = RequestFactory()
+        request = factory.get('/positions/renew/%s' % offer.slug)
+        request.user = user
+        result = positionRenew(request, offer.slug)
+
+        self.assertEqual(result.status_code, 302)
+        self.assertEqual(result['location'],'/positions/list')
+
+    def test_GET_should_redirect_list_positions_when_company_has_exactly_1_published_offer_and_offer_valid_time_has_thirty_days_more(self):
+        company = CompanyFactory()        
+
+        user = UserFactory()
+        user.userprofile.company = company
+
+        offer = OfferFactory(company= company, state=State.published)
+        after_days = offer.days_remaining()
+
+        factory = RequestFactory()
+        request = factory.get('/positions/renew/%s' % offer.slug)
+        request.user = user
+        result = positionRenew(request, offer.slug)
+
+        offer_before = Offer.objects.get(slug=offer.slug) 
+
+        self.assertEqual(result.status_code, 302)
+        self.assertEqual(after_days, offer_before.days_remaining() - 30)
+        self.assertEqual(result['location'],'/positions/list')
+

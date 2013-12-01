@@ -1,4 +1,7 @@
 {% extends 'base.html' %}
+{% block script %}
+    <script src="/static/js/popover.js"></script>
+{% endblock %}
 {% block content %}
 	<div class="row-fluid">
 		{% if user.userprofile.company %}

@@ -1,8 +1,21 @@
 <div class="row-fluid bordered1">
 	
-	<div class="span6">
+	<div class="span5">
 		<a href="/positions/details/{{offer.slug}}"><h5>{{offer.job_title| upper}}</h5></a>
 	</div>	
+	
+
+	<div class="span1">
+		{% if offer.ten_days_left %}
+			<!-- dirige a la vista que renueva segun si hay mas ofertas publicadas -->
+			<!-- segun cuantos dias queden se le suman 30 dias mas -->
+			<a href="/positions/renew/{{offer.slug}}" class="tooltip-group" data-toggle="tooltip" data-placement="top" data-original-title="Click para renovar el tiempo de la oferta">
+				<span class="label label-info tag-link indicator">
+						Renovar
+				</span>
+			</a>
+		{% endif %}
+	</div>
 
 	<div class="span2" align="center">
 		<span>{{offer.days_remaining}} días</span>

@@ -13,7 +13,7 @@ class Company(models.Model):
         path = "media_data/company_image/%s/%s" % (self.name, str(filename))
         return path
 
-    nit = models.CharField(max_length=30)
+    nit = models.CharField(max_length=30, blank=True, null=True)
     name = models.CharField(max_length=100)
     location = models.CharField(max_length=100)
     website = models.CharField(max_length=100, blank=True, null=True)
@@ -83,6 +83,9 @@ class Offer(models.Model):
         now = timezone.make_aware(datetime.now(), timezone.get_default_timezone())
         days_remaining = self.offer_valid_time - now
         return days_remaining.days
+
+    def ten_days_left(self):
+        return self.days_remaining() <= 10
 
     def get_salary(self):
         for i in self.SALARY_CHOICES:

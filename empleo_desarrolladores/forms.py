@@ -36,7 +36,7 @@ class CreateOfferFormLoader():
         })
 
 class CompanyForm(forms.Form):
-    nit = forms.RegexField(max_length=30, regex=r'(^[0-9]{5,12}-[0-9]$)', error_message = ('El formato de NIT no es valido, debe ser por Ej.: 123456789-1' ), help_text='Esta información no sera compartida con terceros')
+    nit = forms.RegexField(max_length=30, regex=r'(^[0-9]{5,12}-[0-9]$)', error_message = ('El formato de NIT no es valido, debe ser por Ej.: 123456789-1' ), help_text='Esta información no sera compartida con terceros',required=False)
     name = forms.CharField(label='Nombre', widget=forms.TextInput())
     locationCompany = forms.CharField(label='Ciudad',widget=forms.TextInput({'placeholder':'Bogotá'}))
     website = forms.CharField(label='Sitio Web', required=False, widget=forms.TextInput())
