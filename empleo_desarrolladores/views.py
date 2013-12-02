@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from messaging_handler import OfferApplicantMessage
 from django.template import defaultfilters
 from models_factory import ApplicantFactory, OfferApplicantFactory, UserProfileFactory, OfferFactory, CompanyFactory, State
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.http import HttpResponse
 
 def error404(request):
@@ -286,6 +286,27 @@ def resumeDownloadView(request, token):
     response['Content-Disposition'] = 'attachment; filename=%s' % filename
 
     return response
+
+@login_required()
+def positionRenew(request, slug_offer):
+    offer = get_object_or_404( Offer, slug=slug_offer)
+    user = request.user.userprofile
+
+    if offer.company != user.company:
+        return error404(request)
+
+    if offer.is_published():
+        published_offers = Offer.objects.filter(company=user.company, state=State.published).count()
+        if published_offers == 1:
+            offer.offer_valid_time = offer.offer_valid_time + timedelta(days=30)
+            offer.save()
+            return HttpResponseRedirect('/positions/list')
+        else:
+            # TODO: si tiene mas de una oferta publicada quiere decir que hay que pagar
+            # hay que revisar como es la respuesta de payu :(
+            pass   
+    else:
+        return error404(request)
 
 
 def processorUrlSite(request):

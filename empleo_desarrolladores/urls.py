@@ -9,6 +9,7 @@ urlpatterns = patterns('empleo_desarrolladores.views',
     url(r'^positions/create/$', 'createPositionView', name='create_position_view'),
     url(r'^positions/preview/(?P<slug_offer>[-\w]+)$', 'positionPreviewView', name='position_preview_view'),
     url(r'^positions/terminate/(?P<slug_offer>[-\w]+)/$', 'terminatePositionView', name='terminate_position_view'),
+     url(r'^positions/renew/(?P<slug_offer>[-\w]+)$', 'positionRenew', name='position_renew_view'),
     url(r'^positions/old/$', 'oldPositionsListView', name='old_positions_list_view'),
     url(r'edit_profile/$', 'userProfileEditView',name="edit_profile"),
     url(r'^positions/clarifications/(?P<slug_offer>[-\w]+)$', 'positionClarificationsView', name='position_clarifications_view'),
@@ -18,5 +19,4 @@ urlpatterns = patterns('empleo_desarrolladores.views',
     url(r'^purchase/success/(?P<slug_offer>[-\w]+)$', 'purchaseSuccessView',name="purchase_success_view"),
     url(r'^purchase/fail/(?P<slug_offer>[-\w]+)$', 'purchaseFailView',name="purchase_fail_view"),
     url(r'^applicants/resumes/(?P<token>.*)$', 'resumeDownloadView', name="resume_download_view"),
-
 )

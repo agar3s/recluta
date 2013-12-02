@@ -1,4 +1,7 @@
 {% extends 'base.html' %}
+{% block script %}
+    <script src="/static/js/popover.js"></script>
+{% endblock %}
 {% block content  %}
     {% if offer.clarification %}
         <div class="container">
@@ -50,7 +53,7 @@
                 <p align="justify">
                     <strong>Habilidades: </strong> 
                     {% for tag in offer.skills.all %}
-                        <a href="/?q={{tag.name}}">
+                        <a href="/?q={{tag.name}}" class="tooltip-group" data-toggle="tooltip" data-placement="bottom" data-original-title="Buscar ofertas relacionadas con {{tag.name}}">
                         <span class="label label-info tag-link">
                             {{tag.name}}            
                         </span>
