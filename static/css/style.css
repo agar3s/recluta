@@ -242,3 +242,20 @@ error {
 .center {
     text-align: center;
 }
+
+.errors {
+    color:rgb(204, 0, 0);
+}
+
+.medium-icon {
+    background-image: url("/static/img/glyphicons-halflings.png");
+    width: 25px;
+    height: 25px;
+    background-size: 588px 224px;
+}
+
+.about-step {
+    padding: 10px;
+    border: 1px solid #e1e1e8;
+    box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.1);
+}

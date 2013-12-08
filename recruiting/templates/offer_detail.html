@@ -11,6 +11,14 @@
             </div>
         </div>
     {% endif %}
+    {% if request.GET.success %}
+        <div class="container">
+            <div class="alert alert-success">
+                <button type="button" class="close" data-dismiss="alert">x</button>
+                <strong>Nota:</strong> Para terminar con la aplicación a esta oferta se ha enviado un mensaje al correo electrónico que ingresaste
+            </div>
+        </div>
+    {% endif %}
     <div class="bordered2">
         <div class="row-fluid">
             <div class="span11">
@@ -73,26 +81,16 @@
                 </div>
             </div>
         {% endif %}
-     </br>  
-     <a class="btn btn-primary pull-right" href="#window" role="button" data-toggle="modal">Aplicar</a>
-
+     </br> 
     </div>
     
-    <div id="window" class="modal hide fade">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" area-hidden="true">x</button>
-            <h3>Aplicar a {{offer.job_title}}</h3>
-        </div>
-        <div class="modal-body">
-            <form action= "" method= "POST" enctype="multipart/form-data">
-               {% csrf_token %}
-               {{form.as_p}}
-               <input type= "submit" value= "Aplicar a la oferta" class="btn btn-primary" id='btn-apply' data-toggle="tooltip">
-               <input type= "reset" value= "Limpiar" class="btn">
-            </form>
-        </div>
-        <div class="modal-footer">
-            <a href="#" class="btn" data-dismiss="modal">Cancelar</a>
-        </div>
+    <div class="borderedB">
+        <legend>Aplicar a esta oferta</legend>
+        <form action="" method="POST" class="form-horizontal" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% include '_form_fields.html' %}
+            <button type='submit' class="btn btn-primary btn-large pull-right"> Aplicar</button>
+        </form>
     </div>
+
 {% endblock  %}

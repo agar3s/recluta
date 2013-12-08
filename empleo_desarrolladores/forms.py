@@ -5,9 +5,9 @@ from models import Offer
 from taggit.forms import *
 
 class ApplicantForm(forms.Form):
-    mail = forms.EmailField(label='Email', widget=forms.TextInput())
-    first_name = forms.CharField(label='Nombres', widget=forms.TextInput())
-    last_name = forms.CharField(label='Apellidos', widget=forms.TextInput())
+    mail = forms.EmailField(label='Email', widget=forms.TextInput({}))
+    first_name = forms.CharField(label='Nombre', widget=forms.TextInput())
+    last_name = forms.CharField(label='Apellido', widget=forms.TextInput())
     resume = forms.FileField(label='Hoja de vida')
     observation = forms.CharField(label='Observación', widget=forms.Textarea({'placeholder':'Ingresa alguna observación que tengas con respecto a la oferta o a tus habilidades'}), required=False)
 

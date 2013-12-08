@@ -19,4 +19,5 @@ urlpatterns = patterns('empleo_desarrolladores.views',
     url(r'^purchase/success/(?P<slug_offer>[-\w]+)$', 'purchaseSuccessView',name="purchase_success_view"),
     url(r'^purchase/fail/(?P<slug_offer>[-\w]+)$', 'purchaseFailView',name="purchase_fail_view"),
     url(r'^applicants/resumes/(?P<token>.*)$', 'resumeDownloadView', name="resume_download_view"),
+    url(r'^about/$','aboutUsView'),
 )

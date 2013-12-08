@@ -13,9 +13,11 @@
 		    </div>
 		    <div id="collapse{{application.id}}" class="accordion-body collapse">
 			    <div class="accordion-inner content-accordion">
-				  	<p>
-				    	<strong>Observación:</strong> {{application.observation}}
-				    </p>
+			    	{% if application.observation %}
+					  	<p>
+					    	<strong>Observación:</strong> {{application.observation}}
+					    </p>
+				    {% endif %}
 				    <p align="right">
 				    	<a href="/applicants/resumes/{{application.token}}">Ver currículum</a>
 				    </p>
