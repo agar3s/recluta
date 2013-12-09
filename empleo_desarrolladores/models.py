@@ -13,16 +13,18 @@ class Company(models.Model):
         path = "media_data/company_image/%s/%s" % (self.name, str(filename))
         return path
 
-    nit = models.CharField(max_length=30, blank=True, null=True)
+    nit = models.CharField(max_length=30, blank=True, null=True, unique=True)
     name = models.CharField(max_length=100)
     location = models.CharField(max_length=100)
     website = models.CharField(max_length=100, blank=True, null=True)
     email = models.EmailField(max_length=100)
     phone = models.CharField(max_length=40)
-    image = models.ImageField(upload_to=url, blank=True, null=True)
 
     def __unicode__(self):
         return self.name
+
+    class Meta:
+        verbose_name='Compañia'
 
 
 class Applicant(models.Model):
@@ -44,8 +46,8 @@ class Offer(models.Model):
     TYPE_OF_CONTRACT = (
         ('FT', 'Tiempo Completo'),
         ('PT', 'Medio Tiempo'),
-        ('TL', 'Telecommute'),
-        ('CT', 'Contractor'),
+        ('FL', 'Freelance'),
+        ('OT', 'Otro'),
     )
     type_contract = models.CharField(max_length=2, choices=TYPE_OF_CONTRACT, default='FT')
     SALARY_CHOICES = (

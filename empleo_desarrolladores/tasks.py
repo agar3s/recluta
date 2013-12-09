@@ -6,7 +6,7 @@ def terminate_offers():
 	offers = Offer.objects.filter(state=State.published)
 	for offer in offers:
 		if not (offer.valid_time()):
-			offer.state = 1
+			offer.state = State.finished
 			offer.save()
 
 def ten_days_left():

@@ -421,6 +421,32 @@ class PositionsListViewTest(TestCase):
         self.assertEqual(result.status_code, 200)
         self.assertIn('<h1>Completa la información de la empresa para crear una oferta</h1> ', result.content)
 
+    def test_GET_should_render_the_correct_info_when_there_are_draft_offers(self):
+        user = UserFactory()
+        company = CompanyFactory()
+        user.userprofile.company = company
+        offer = OfferFactory(company=user.userprofile.company, state=State.draft)
+        factory = RequestFactory()
+        request = factory.get('/positions/list/')
+        request.user = user
+        result = positionsListView(request)
+
+        self.assertEqual(result.status_code, 200)
+        self.assertIn('N/A', result.content)
+
+    def test_GET_should_render_the_correct_info_when_there_are_not_draft_offers(self):
+        user = UserFactory()
+        company = CompanyFactory()
+        user.userprofile.company = company
+        offer = OfferFactory(company=user.userprofile.company, state=State.published)
+        factory = RequestFactory()
+        request = factory.get('/positions/list/')
+        request.user = user
+        result = positionsListView(request)
+
+        self.assertEqual(result.status_code, 200)
+        self.assertNotIn('N/A', result.content)
+
 class OldPositionListViewTest(TestCase):
     def test_GET_should_redirect_old_positions_list_template(self):
         
@@ -444,7 +470,7 @@ class CompleteCompanyInfoViewTest(TestCase):
         request.user = user
         request.POST['nit'] = "123456789-9"
         request.POST['name'] = 'CompanyName'
-        request.POST['locationCompany'] = 'Bogota'
+        request.POST['location'] = 'Bogota'
         request.POST['website']='company.com'
         request.POST['email']='company@gmail.com'
         request.POST['phone']='(57)233-3433'

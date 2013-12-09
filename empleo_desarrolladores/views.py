@@ -87,6 +87,8 @@ def createPositionView(request):
 @login_required()
 def positionPreviewView(request, slug_offer):
     offer = get_object_or_404( Offer, slug=slug_offer)
+    offer.offer_valid_time = datetime.now() + timedelta(days=30)
+    offer.save()
     user = request.user.userprofile
     if request.method == "GET":
         if offer.company != user.company:

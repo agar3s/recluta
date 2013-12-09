@@ -6,7 +6,7 @@
 	
 
 	<div class="span1">
-		{% if offer.ten_days_left %}
+		{% if offer.ten_days_left and offer.is_published %}
 			<!-- dirige a la vista que renueva segun si hay mas ofertas publicadas -->
 			<!-- segun cuantos dias queden se le suman 30 dias mas -->
 			<a href="/positions/renew/{{offer.slug}}" class="tooltip-group" data-toggle="tooltip" data-placement="top" data-original-title="Click para renovar el tiempo de la oferta">
@@ -18,7 +18,11 @@
 	</div>
 
 	<div class="span2" align="center">
-		<span>{{offer.days_remaining}} días</span>
+		{% if offer.is_published %}
+			<span>{{offer.days_remaining}} días</span>
+		{% else %}
+			<span>N/A</span>
+		{% endif %}
 	</div>
 	
 	<div class="span1" align="center">
