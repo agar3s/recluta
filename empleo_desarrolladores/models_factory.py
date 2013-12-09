@@ -89,7 +89,7 @@ class CompanyFactory():
         company = Company()
         company.nit = form.cleaned_data['nit']
         company.name = form.cleaned_data['name']
-        company.location = form.cleaned_data['locationCompany']
+        company.location = form.cleaned_data['location']
         company.website = form.cleaned_data['website']
         company.email = form.cleaned_data['email']
         company.phone = form.cleaned_data['phone']
@@ -100,7 +100,7 @@ class CompanyFactory():
     def update_instance_form(self, company, form):
         company.nit = form.cleaned_data['nit']
         company.name = form.cleaned_data['name']
-        company.location = form.cleaned_data['locationCompany']
+        company.location = form.cleaned_data['location']
         company.website = form.cleaned_data['website']
         company.email = form.cleaned_data['email']
         company.phone = form.cleaned_data['phone']

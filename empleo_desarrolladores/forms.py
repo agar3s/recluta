@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 from django import forms
-from models import Offer
+from models import Offer, Company
 from taggit.forms import *
 
 class ApplicantForm(forms.Form):
@@ -35,21 +35,23 @@ class CreateOfferFormLoader():
             'job_description': offer.job_description,
         })
 
-class CompanyForm(forms.Form):
+class CompanyForm(forms.ModelForm):
     nit = forms.RegexField(max_length=30, regex=r'(^[0-9]{5,12}-[0-9]$)', error_message = ('El formato de NIT no es valido, debe ser por Ej.: 123456789-1' ), help_text='Esta información no sera compartida con terceros',required=False)
     name = forms.CharField(label='Nombre', widget=forms.TextInput())
-    locationCompany = forms.CharField(label='Ciudad',widget=forms.TextInput({'placeholder':'Bogotá'}))
+    location = forms.CharField(label='Ciudad',widget=forms.TextInput({'placeholder':'Bogotá', 'id':'company-location'}))
     website = forms.CharField(label='Sitio Web', required=False, widget=forms.TextInput())
     email = forms.EmailField(label='Email', widget=forms.TextInput())
-    phone = forms.RegexField(max_length=30, label='Teléfono', required=False, widget=forms.TextInput(), help_text="Código de area + N°. Ej.: (57) 765-4321", error_message = ('El teléfono no es valido'), regex=r'(\d{3}[-\.\s]\d{3}[-\.\s]\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]\d{4}|\d{3}[-\.\s]\d{4})' )  
-    # image = forms.ImageField(require(d=False)
+    phone = forms.RegexField(max_length=30, label='Teléfono', required=False, widget=forms.TextInput(), help_text="Código de area + N°. Ej.: (57) 765-4321", error_message = ('El teléfono no es valido'), regex=r'(\d{3}[-\.\s]\d{3}[-\.\s]\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]\d{4}|\d{3}[-\.\s]\d{4})' )
+    
+    class Meta:
+        model = Company
 
 class CompanyFormLoader():
     def load_initial_data(self, company):
         return CompanyForm(initial={
             'nit':company.nit,
             'name':company.name,
-            'locationCompany':company.location,
+            'location':company.location,
             'website':company.website,
             'email':company.email,
             'phone':company.phone,
