@@ -37,7 +37,7 @@ def offerDetailsView(request, slug_offer):
             offer_applicant_message = OfferApplicantMessage()
             offer_applicant_message.send(offer_applicant)
 
-            return HttpResponseRedirect("/")
+            return HttpResponseRedirect("/offer/%s/?success=1" % (offer.slug))
     if request.method == "GET":
         if offer.is_finished() or offer.is_draft():
             return error404(request)
@@ -307,6 +307,9 @@ def positionRenew(request, slug_offer):
             pass   
     else:
         return error404(request)
+
+def aboutUsView(request):
+    return render_to_response('about_us.html')
 
 
 def processorUrlSite(request):

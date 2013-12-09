@@ -50,6 +50,11 @@
                 </div>
             </div>
         {% endif %}
+        {% if not offer.highlighted %}
+            <div class="row-fluid">
+                <a href="" class="btn btn-success pull-right">Resaltar esta oferta</a>
+            </div>
+        {% endif %}
         </div>
         </br>  
     </div>

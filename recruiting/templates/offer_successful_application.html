@@ -4,8 +4,10 @@
 	<h2>Aplicaste a esta oferta con exito: {{offerapplicant.offer.job_title}}</h2>
 	<p> <strong>Nombres:</strong> {{offerapplicant.applicant.first_name}}</p>
 	<p> <strong>Apellidos:</strong> {{offerapplicant.applicant.last_name}}</p>
-	<p> <strong>Observación hecha:</strong> </p>
-	<p>{{offerapplicant.observation}}</p>
+	{% if offerapplicant.observation %}
+		<p> <strong>Observación hecha:</strong> </p>
+		<p>{{offerapplicant.observation}}</p>
+	{% endif %}
 	<a href="/" class="btn btn-primary btn-large pull-right">Regresar</a>
 	<br>
 	<br>

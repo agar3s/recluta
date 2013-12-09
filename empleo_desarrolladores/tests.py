@@ -13,7 +13,7 @@ from django.test import TestCase
 from empleo_desarrolladores.models import Applicant, OfferApplicant 
 from search.views import homeSearch
 from empleo_desarrolladores.views import offerDetailsView, userProfileEditView, createPositionView, terminatePositionView, positionsListView, oldPositionsListView, completeCompanyInfoView, companyDetailView, positionDashBoardView,successfulApplicationView, positionPreviewView
-from empleo_desarrolladores.views import plansAndPricingView, positionClarificationsView, positionDetailsView, purchaseFailView, purchaseSuccessView, resumeDownloadView, positionRenew
+from empleo_desarrolladores.views import plansAndPricingView, positionClarificationsView, positionDetailsView, purchaseFailView, purchaseSuccessView, resumeDownloadView, positionRenew, aboutUsView
 from django.test.client import RequestFactory
 import haystack
 from django.core.management import call_command
@@ -144,7 +144,7 @@ class OfferDetailsViewTest(TestCase):
 
         self.assertEqual(result.status_code, 200)
 
-    def test_POST_should_redirect_to_home_when_the_given_data_is_valid(self):
+    def test_POST_should_redirect_to_same_offer_when_the_given_data_is_valid(self):
 
         offer = OfferFactory()
 
@@ -163,14 +163,15 @@ class OfferDetailsViewTest(TestCase):
         result = offerDetailsView(request, offer.slug)
 
         self.assertEqual(result.status_code, 302)
-        self.assertEqual(result['location'], '/')
+        self.assertEqual(result['location'], '/offer/%s/?success=1' % (offer.slug))
+        self.assertIn(result.content, 'e ha enviado un mensaje al correo')
         applicants = Applicant.objects.filter(mail='bender@gmail.com')
         self.assertEqual(applicants.count(),1)
         applicant = applicants[0]
         applications = OfferApplicant.objects.filter(applicant=applicant, offer=offer, state=False, observation='well, none')
         self.assertEqual(applications.count(), 1)
 
-    def test_POST_should_redirect_to_home_when_the_given_data_is_valid_and_should_not_duplicate_the_applicants_when_it_already_exists(self):
+    def test_POST_should_redirect_to_same_offer_when_the_given_data_is_valid_and_should_not_duplicate_the_applicants_when_it_already_exists(self):
 
         offer = OfferFactory()
 
@@ -191,7 +192,8 @@ class OfferDetailsViewTest(TestCase):
         result = offerDetailsView(request, offer.slug)
 
         self.assertEqual(result.status_code, 302)
-        self.assertEqual(result['location'], '/')
+        self.assertEqual(result['location'], '/offer/%s/?success=1' % (offer.slug))
+        self.assertIn(result.content, 'e ha enviado un mensaje al correo')
         applicants = Applicant.objects.filter(mail='bender@gmail.com')
         self.assertEqual(applicants.count(),1)
         applicant = applicants[0]
@@ -692,6 +694,45 @@ class PositionClarificationsViewTest(TestCase):
 
         self.assertEqual(result.status_code, 200)
         self.assertIn('Aclaraciones', result.content)
+
+    def test_GET_should_render_the_correct_info_when_offer_is_not_highlighted(self):
+        offer = OfferFactory(state=State.published)
+
+        user = UserFactory()
+        user.userprofile.company = offer.company
+        user.userprofile.save()
+
+        factory = RequestFactory()
+        request = factory.get('/positions/clarifications/%s' % (offer.slug))
+        request.user = user
+        result = positionClarificationsView(request, offer.slug)
+
+        self.assertEqual(result.status_code, 200)
+        self.assertIn('Resaltar', result.content)
+
+
+    def test_GET_should_render_the_correct_info_when_offer_is_highlighted(self):
+        offer = OfferFactory(state=State.published, highlighted=True)
+
+        user = UserFactory()
+        user.userprofile.company = offer.company
+        user.userprofile.save()
+
+        factory = RequestFactory()
+        request = factory.get('/positions/clarifications/%s' % (offer.slug))
+        request.user = user
+        result = positionClarificationsView(request, offer.slug)
+
+        self.assertEqual(result.status_code, 200)
+        self.assertNotIn('Resaltar', result.content)
+
+class AboutUsViewTest(TestCase):
+    def test_GET_should_render_the_about_us_view_template(self):
+        factory = RequestFactory()
+        request = factory.get('/about/')
+        result = aboutUsView(request)
+        self.assertEqual(result.status_code, 200)
+
 
 TEST_INDEX = {
     'default': {
