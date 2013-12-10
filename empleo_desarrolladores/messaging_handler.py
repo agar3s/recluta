@@ -15,8 +15,9 @@ class OfferApplicantMessage():
 
 class TenDaysLeftMessage():
 	def send(self, offer):
-		users = [u.email for u in UserProfile.objects.filter(company=offer.company)]
-		template = loader.get_template('ten_days_left_mail.html')
+		emails = [profile.user.email for profile in UserProfile.objects.filter(company=offer.company)]
+		template = loader.get_template('ten_days_left_message.html')
 		html = template.render(Context({'offer':offer}))
-		msg = EmailMultiAlternatives('La oferta "%s" terminará en 10 días' % (offer.job_title), html, 'notification@codetag.me', users)
+		msg = EmailMultiAlternatives(u'La oferta "%s" terminará en 10 días' % (offer.job_title), html, 'notification@codetag.me', emails)
+		msg.attach_alternative(html, 'text/html')
 		msg.send()

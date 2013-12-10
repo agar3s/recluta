@@ -75,6 +75,7 @@ class Offer(models.Model):
     slug = models.SlugField(max_length=250, unique=True)
     clarification = models.TextField(null=True, blank=True)
     highlighted = models.BooleanField(default=False)
+    ten_days_left_message = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if not self.id:

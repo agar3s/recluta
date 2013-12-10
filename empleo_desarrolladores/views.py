@@ -301,6 +301,7 @@ def positionRenew(request, slug_offer):
         published_offers = Offer.objects.filter(company=user.company, state=State.published).count()
         if published_offers == 1:
             offer.offer_valid_time = offer.offer_valid_time + timedelta(days=30)
+            offer.ten_days_left_message = False
             offer.save()
             return HttpResponseRedirect('/positions/list')
         else:
