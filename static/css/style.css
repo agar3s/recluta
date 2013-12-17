@@ -271,3 +271,7 @@ error {
 .progress .third-step {
     width: 100%;
 }
+
+.center-form {
+    text-align: center;
+}
