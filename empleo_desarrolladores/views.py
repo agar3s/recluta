@@ -232,7 +232,7 @@ def positionDashBoardView(request, slug_offer):
     user = request.user.userprofile
     offer = get_object_or_404( Offer, slug=slug_offer)
     
-    applications = OfferApplicant.objects.filter(offer=offer)
+    applications = OfferApplicant.objects.filter(offer=offer).order_by('-state')
 
     if user.company != offer.company:
         return error404(request)
